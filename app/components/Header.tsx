@@ -29,6 +29,18 @@ export function Header({
       <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
         <strong>{shop.name}</strong>
       </NavLink>
+      <span
+        style={{
+          marginLeft: '12px',
+          padding: '2px 6px',
+          background: '#ff3b3b',
+          color: 'white',
+          fontSize: '12px',
+          borderRadius: '4px',
+        }}
+      >
+        HYDROGEN LIVE Juan
+      </span>
       <HeaderMenu
         menu={menu}
         viewport="desktop"

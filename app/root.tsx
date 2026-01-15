@@ -15,7 +15,9 @@ import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
+import tailwindStyles from '~/styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import Root from './componentsMockup/Root'
 
 export type RootLoader = typeof loader;
 
@@ -151,12 +153,13 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
+        <link rel="stylesheet" href={tailwindStyles}></link>
         <Meta />
         <Links />
       </head>
       <body>
         {children}
-        <ScrollRestoration nonce={nonce} />
+        {/* <ScrollRestoration nonce={nonce} /> */}
         <Scripts nonce={nonce} />
       </body>
     </html>
@@ -176,9 +179,10 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      <PageLayout {...data}>
+      {/* <PageLayout {...data}>
         <Outlet />
-      </PageLayout>
+      </PageLayout> */}
+      <Root />
     </Analytics.Provider>
   );
 }
