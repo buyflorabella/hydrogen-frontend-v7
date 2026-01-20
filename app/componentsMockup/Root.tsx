@@ -1,5 +1,3 @@
-import AnnouncementBar from './AnnouncementBar';
-import Header from './Header';
 import HeroSection from './HeroSection';
 import ReassuranceStrip from './ReassuranceStrip';
 import FeatureProduct from './FeatureProduct';
@@ -10,14 +8,36 @@ import SocialProof from './SocialProof';
 import VideoReels from './VideoReels';
 import EducationSection from './EducationSection';
 import CommunityCallout from './CommunityCallout';
-import Footer from './Footer';
-import './index.css';
+import { useState } from 'react';
+import { useLoaderData } from 'react-router';
 
-function Root() {
+export const LandingPage = () => {
+  const { STORE_PASSWORD, PUBLIC_STORE_LOCKED } = useLoaderData().env;
+  const [passwordLocked, setPasswordLocked] = useState(PUBLIC_STORE_LOCKED === "true");
+  const [password, setPassword] = useState('')
+
+  if (passwordLocked) {
+    return <div style={{
+      padding: '5rem',
+      margin: '5rem',
+      color: 'black',
+      alignSelf: 'center',
+      textAlign: 'center',
+    }}>
+      <label htmlFor='password' style={{color: 'white'}}> Password </label>
+      <input type='text' id='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+      <br />
+      <button style={{
+        padding: '2px',
+        borderRadius: '2px',
+        backgroundColor: 'white'
+      }} onClick={() => setPasswordLocked(password !== STORE_PASSWORD)}>
+        Submit
+      </button>
+    </div>
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0015]">
-      <AnnouncementBar />
-      <Header />
       <main>
         <HeroSection />
         <ReassuranceStrip />
@@ -30,9 +50,5 @@ function Root() {
         <EducationSection />
         <CommunityCallout />
       </main>
-      <Footer />
-    </div>
   );
 }
-
-export default Root;

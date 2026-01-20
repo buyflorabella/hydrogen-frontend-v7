@@ -1,3 +1,5 @@
+@reference "./app.css";
+@reference "./reset.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
