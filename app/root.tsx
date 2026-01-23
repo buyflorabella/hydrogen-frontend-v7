@@ -19,6 +19,7 @@ import tailwindStyles from '~/styles/tailwind.css?url';
 // import {PageLayout} from './components/PageLayout';
 import { PageLayout } from './newComponents/PageLayout';
 import { LandingPage } from './componentsMockup/Root'
+import Mockup2Root from './componentsMockup2/App';
 
 export type RootLoader = typeof loader;
 
@@ -186,9 +187,12 @@ export default function App() {
         <Outlet />
       </PageLayout> */}
       {/* <MockupLandingPage /> */}
-      <PageLayout>
+      {/* <PageLayout>
         <Outlet />
-      </PageLayout>
+      </PageLayout> */}
+      <Mockup2Root>
+        <Outlet />
+      </Mockup2Root>
     </Analytics.Provider>
   );
 }

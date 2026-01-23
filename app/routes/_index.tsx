@@ -11,7 +11,7 @@ import type {
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
-import { LandingPage } from '~/componentsMockup/Root';
+import LandingPage from '../componentsMockup2/pages/HomePage'
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
