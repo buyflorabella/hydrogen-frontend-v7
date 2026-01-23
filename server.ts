@@ -25,7 +25,7 @@ export default {
       const handleRequest = createRequestHandler({
         build: serverBuild,
         mode: process.env.NODE_ENV,
-        getLoadContext: () => hydrogenContext,
+        getLoadContext: () => hydrogenContext
       });
 
       const response = await handleRequest(request);

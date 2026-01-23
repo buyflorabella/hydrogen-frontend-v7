@@ -16,8 +16,10 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindStyles from '~/styles/tailwind.css?url';
-import {PageLayout} from './components/PageLayout';
-import Root from './componentsMockup/Root'
+// import {PageLayout} from './components/PageLayout';
+import { PageLayout } from './newComponents/PageLayout';
+import { LandingPage } from './componentsMockup/Root'
+import Mockup2Root from './componentsMockup2/App';
 
 export type RootLoader = typeof loader;
 
@@ -64,6 +66,7 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'stylesheet', href: tailwindStyles},
   ];
 }
 
@@ -92,6 +95,7 @@ export async function loader(args: Route.LoaderArgs) {
       country: args.context.storefront.i18n.country,
       language: args.context.storefront.i18n.language,
     },
+    env,
   };
 }
 
@@ -121,7 +125,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const {storefront, customerAccount, cart} = context;
+  const {storefront, customerAccount, cart, env} = context;
 
   // defer the footer query (below the fold)
   const footer = storefront
@@ -140,6 +144,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
     footer,
+    env,
   };
 }
 
@@ -153,7 +158,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
-        <link rel="stylesheet" href={tailwindStyles}></link>
         <Meta />
         <Links />
       </head>
@@ -182,7 +186,13 @@ export default function App() {
       {/* <PageLayout {...data}>
         <Outlet />
       </PageLayout> */}
-      <Root />
+      {/* <MockupLandingPage /> */}
+      {/* <PageLayout>
+        <Outlet />
+      </PageLayout> */}
+      <Mockup2Root>
+        <Outlet />
+      </Mockup2Root>
     </Analytics.Provider>
   );
 }

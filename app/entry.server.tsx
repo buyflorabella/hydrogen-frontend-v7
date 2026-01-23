@@ -25,6 +25,9 @@ export default async function handleRequest(
       "data:",
       "blob:",
       "https://images.pexels.com"
+    ],
+    styleSrc: [
+      "'self'",
     ]
   });
 
