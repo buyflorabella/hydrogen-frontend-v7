@@ -4,13 +4,38 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
 
-if (typeof process === 'undefined') {
-  console.log('process is undefined (browser / Vite client)');
-} else if (!process.env) {
-  console.log('process.env exists but is empty');
-} else {
-  console.log('process.env =', process.env);
-}
+export const HeaderDebug = () => {
+  useEffect(() => {
+    // 1️⃣ Log all import.meta.env (Vite / Hydrogen frontend env)
+    console.group('🛠️ IMPORT.META.ENV VARIABLES');
+    console.table(import.meta.env);
+    console.groupEnd();
+
+    // 2️⃣ Log any Shopify global variables, if present
+    if (typeof window !== 'undefined' && (window as any).Shopify) {
+      console.group('🏷️ SHOPIFY WINDOW VARIABLES');
+      const shopifyVars = Object.keys((window as any).Shopify).reduce((acc, key) => {
+        acc[key] = (window as any).Shopify[key];
+        return acc;
+      }, {} as Record<string, any>);
+      console.table(shopifyVars);
+      console.groupEnd();
+    } else {
+      console.log('Shopify global window object not found.');
+    }
+
+    // 3️⃣ Log the dynamic contact page URL for reference
+    const CONTACT_PAGE_URL =
+      import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
+      import.meta.env.VITE_CONTACT_PAGE_URL ??
+      'https://devcontact.buyflorabella.com';
+    console.group('📌 CONTACT_PAGE_URL');
+    console.log(CONTACT_PAGE_URL);
+    console.groupEnd();
+  }, []);
+
+  return null; // purely for logging, no UI
+};
 
 
 // DEV-only env var with safe fallback
@@ -95,6 +120,7 @@ export default function Header() {
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
+        <HeaderDebug /> {/* logs environment variables */}          
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
