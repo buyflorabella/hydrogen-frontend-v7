@@ -138,7 +138,7 @@ export default function LearnPage() {
     console.groupEnd();
   }, [blogs, featuredArticle, filteredArticles]);
 
-  const SHOW_GUIDES_IN_BLOG_LISTINGS = false; // 🔹 set to false in production
+  const SHOW_GUIDES_IN_BLOG_LISTINGS = true; // 🔹 set to false in production
 
   return (
     <>
@@ -242,7 +242,7 @@ export default function LearnPage() {
                   return topGuides.map((guide) => (
                     <Link
                       key={guide.id}
-                      to={`/guides/${guide.handle}`}
+                      to={`/article/${guide.blogHandle}/${guide.handle}`}
                       className="bg-white border border-gray-200 shadow-md rounded-2xl p-6 hover:border-[#7cb342] hover:shadow-lg transition-all duration-300 hover:scale-105 group no-underline hover:no-underline"
                     >
                       <div className="w-12 h-12 rounded-xl bg-[#7cb342]/20 flex items-center justify-center mb-4 group-hover:bg-[#7cb342]/30 transition-colors group-hover:scale-110 duration-300">
