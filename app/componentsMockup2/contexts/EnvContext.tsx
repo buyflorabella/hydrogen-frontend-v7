@@ -1,10 +1,23 @@
 import { createContext, useContext, type ReactNode } from "react";
 
+// The clean types used by your components
 export interface EnvValues {
   storeLocked: boolean;
   message1: string;
   message2: string;
   message3: string;
+}
+
+// The raw types coming from Shopify / root.tsx loader
+export interface Env {
+  PUBLIC_STORE_LOCKED: string;
+  PUBLIC_STORE_MESSAGE1: string;
+  PUBLIC_STORE_MESSAGE2: string;
+  PUBLIC_STORE_MESSAGE3: string;
+  PUBLIC_STORE_DOMAIN: string;
+  PUBLIC_STOREFRONT_ID: string;
+  PUBLIC_CHECKOUT_DOMAIN: string;
+  PUBLIC_STOREFRONT_API_TOKEN: string;
 }
 
 const defaultEnv: EnvValues = {
@@ -16,27 +29,30 @@ const defaultEnv: EnvValues = {
 
 const EnvContext = createContext<EnvValues>(defaultEnv);
 
-
-// EnvProvider is a React functional component which
-// takes two props:
-// - children (anything you put 'inside' <EnvProvider />)
-// - env - the actual environment variables you want to expose
-//
-// -----
 export const EnvProvider = ({
   children,
   env,
 }: {
   children: ReactNode;
-  env: EnvValues;
+  env: Env; // Accept raw strings from the loader
 }) => {
+  
+  // FIX: Transform the raw string "true"/"false" into a real boolean
+  // and map the raw keys to your clean EnvValues interface.
+  const mappedValues: EnvValues = {
+    storeLocked: env?.PUBLIC_STORE_LOCKED === "true",
+    message1: env?.PUBLIC_STORE_MESSAGE1 ?? "",
+    message2: env?.PUBLIC_STORE_MESSAGE2 ?? "",
+    message3: env?.PUBLIC_STORE_MESSAGE3 ?? "",
+  };
 
-    console.log("EnvContext.tsx [ entry ]");
-    console.log(env);
-  // EnvContext.Provider: is the React mechanism for sharing data with the component tree.
-  // value={env} → this is the actual data that will be available to any component using useEnv() downstream.
-  // {children} → renders all the nested components inside EnvProvider, exactly as they were passed.
-  return <EnvContext.Provider value={env}>{children}</EnvContext.Provider>;
+  console.log("EnvProvider mapped values:", mappedValues);
+
+  return (
+    <EnvContext.Provider value={mappedValues}>
+      {children}
+    </EnvContext.Provider>
+  );
 };
 
 export const useEnv = () => useContext(EnvContext);

@@ -1,6 +1,6 @@
 import { Menu, Search, User, ShoppingCart, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
 //import type { LoaderFunctionArgs } from '@shopify/hydrogen';

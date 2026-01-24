@@ -28,27 +28,52 @@ import DiscountBanner from './components/DiscountBanner';
 // import PolicyPage from './pages/PolicyPage';
 // import TechnicalDocsPage from './pages/TechnicalDocsPage';
 
-function getEnvValues(context?: any): EnvValues {
-  // context?.env = Hydrogen server-side env
-  // import.meta.env = client-side env (Vite)
-  const env = context?.env ?? import.meta.env;
+import { useRouteLoaderData } from 'react-router';
+export type RootLoader = typeof loader;
 
-  return {
-    storeLocked: (env.VITE_PUBLIC_STORE_LOCKED ?? env.PUBLIC_STORE_LOCKED ?? "false") === "true",
-    message1: env.VITE_PUBLIC_STORE_MESSAGE1 ?? env.PUBLIC_STORE_MESSAGE1 ?? "",
-    message2: env.VITE_PUBLIC_STORE_MESSAGE2 ?? env.PUBLIC_STORE_MESSAGE2 ?? "",
-    message3: env.VITE_PUBLIC_STORE_MESSAGE3 ?? env.PUBLIC_STORE_MESSAGE3 ?? "",
+
+// 1. The Loader (Runs on Server)
+export async function loader({context}: Route.LoaderArgs) {
+  const { storefront, env } = args.context;
+
+  // Fetching data logic (placeholders for your existing functions)
+  const deferredData = {}; // loadDeferredData(args);
+  const criticalData = {}; // await loadCriticalData(args);
+
+  const loaderPayload = {
+    ...deferredData,
+    ...criticalData,
+    // We pass the RAW env object here. 
+    // The EnvProvider we built earlier will handle the "true" string conversion.
+    env: {
+      PUBLIC_STORE_LOCKED: env.PUBLIC_STORE_LOCKED,
+      PUBLIC_STORE_MESSAGE1: env.PUBLIC_STORE_MESSAGE1 || "",
+      PUBLIC_STORE_MESSAGE2: env.PUBLIC_STORE_MESSAGE2 || "",
+      PUBLIC_STORE_MESSAGE3: env.PUBLIC_STORE_MESSAGE3 || "",
+      PUBLIC_STORE_DOMAIN: env.PUBLIC_STORE_DOMAIN,
+      PUBLIC_STOREFRONT_ID: env.PUBLIC_STOREFRONT_ID,
+      PUBLIC_CHECKOUT_DOMAIN: env.PUBLIC_CHECKOUT_DOMAIN,
+      PUBLIC_STOREFRONT_API_TOKEN: env.PUBLIC_STOREFRONT_API_TOKEN,
+    },
   };
+
+
+  // This log only appears in the Shopify Oxygen Logs or your terminal
+  console.log("FINAL LOADER PAYLOAD:", JSON.stringify(loaderPayload, null, 2));
+
+  return loaderPayload;
 }
+
 
 const App: FC<{ children: ReactNode }> = ({children}) => {
   // DxB import the environment into our context
-  const envValues: EnvValues = getEnvValues();
+  const data = useRouteLoaderData<RootLoader>('root');
 
   // 'import.meta.env' is only available anyway in dev mode
-  if (import.meta.env.DEV)  console.log("DxB - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
+  //if (import.meta.env.DEV)  console.log("DxB [v1] - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
+  console.log("DxB [v1] - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
   return (
-    <EnvProvider env={envValues}>    
+    <EnvProvider env={data?.env}>    
       <FeatureFlagsProvider>
         <SavedItemsProvider>
           <WishlistProvider>
