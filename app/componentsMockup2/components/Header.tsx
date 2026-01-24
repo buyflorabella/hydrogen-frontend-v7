@@ -4,6 +4,36 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
 
+if (typeof process === 'undefined') {
+  console.log('process is undefined (browser / Vite client)');
+} else if (!process.env) {
+  console.log('process.env exists but is empty');
+} else {
+  console.log('process.env =', process.env);
+}
+
+
+// DEV-only env var with safe fallback
+console.log('import.meta.env =', import.meta.env);
+
+// Shopify-native env resolution with Vite dev support
+const DEFAULT_CONTACT_PAGE_URL="/contact";
+// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
+const CONTACT_PAGE_URL =
+  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
+  import.meta.env.VITE_CONTACT_PAGE_URL ??
+  DEFAULT_CONTACT_PAGE_URL;
+
+console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
+
+
+// helper: detect absolute URLs
+const isExternalUrl = (url: string): boolean => {
+    console.log("isExternalUrl(" + url + ")");
+
+    return /^https?:\/\//i.test(url);
+};
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -92,21 +122,48 @@ export default function Header() {
 
             <div className="flex items-center gap-6">
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
-                <Link style={{color: 'white'}} to="/shop" className="hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                <Link
+                  to="/shop"
+                  className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                >
                   Shop
                 </Link>
-                <Link style={{color: 'white'}} to="/learn" className="hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                <Link
+                  to="/learn"
+                  className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                >
                   Learn
                 </Link>
-                <Link style={{color: 'white'}} to="/about" className="hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                <Link
+                  to="/about"
+                  className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                >
                   About
                 </Link>
-                <Link style={{color: 'white'}} to="/community" className="hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                <Link
+                  to="/community"
+                  className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                >
                   Community
                 </Link>
-                <Link style={{color: 'white'}} to="/contact" className="hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1">
-                  Contact
-                </Link>
+
+                {/* EXTERNAL LINK — MUST use <a>, not <Link> */}
+                {isExternalUrl(CONTACT_PAGE_URL) ? (
+                  <a
+                    href={CONTACT_PAGE_URL}
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                  >
+                    Contact
+                  </a>
+                ) : (
+                  <Link
+                    to={CONTACT_PAGE_URL}
+                    className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                  >
+                    Contact
+                  </Link>
+                )}
               </nav>
               <Link to="/account" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
                 <User className="w-5 h-5 text-white" strokeWidth={2} />
