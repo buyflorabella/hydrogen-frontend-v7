@@ -143,6 +143,9 @@ export default function Header({ debugEnv }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount, openCart } = useCart();
 
+  const data = useLoaderData<{ debugEnv: Record<string, any> }>();
+  console.log('Loader data (server Hydrogen envs):', data.debugEnv);
+  
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
