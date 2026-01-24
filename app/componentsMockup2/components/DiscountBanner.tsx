@@ -39,7 +39,7 @@ export default function DiscountBanner({
         </div>
         {expiresAt && (
           <div className="hidden sm:block text-xs text-white/80">
-            Expires: {new Date(expiresAt).toLocaleDateString()}
+            Expires: {new Date(expiresAt).toISOString()}
           </div>
         )}
         <button

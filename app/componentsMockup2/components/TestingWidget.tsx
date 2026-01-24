@@ -1,11 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, X, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useFeatureFlags } from '../contexts/FeatureFlagsContext';
 
 export default function TestingWidget() {
+  const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const { flags, updateFlag, resetFlags } = useFeatureFlags();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Ctrl + i (or Cmd + i for Mac compatibility)
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'i') {
+        event.preventDefault();
+        setIsVisible(!isVisible);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isVisible]);
+
+  if (!isVisible) {
+    return <></>
+  }
 
   if (!isOpen) {
     return (

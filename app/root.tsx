@@ -7,7 +7,7 @@ import {
   Links,
   Meta,
   Scripts,
-  ScrollRestoration,
+  // ScrollRestoration,
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
@@ -17,8 +17,8 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindStyles from '~/styles/tailwind.css?url';
 // import {PageLayout} from './components/PageLayout';
-import { PageLayout } from './newComponents/PageLayout';
-import { LandingPage } from './componentsMockup/Root'
+// import { PageLayout } from './newComponents/PageLayout';
+// import { LandingPage } from './componentsMockup/Root'
 import Mockup2Root from './componentsMockup2/App';
 
 export type RootLoader = typeof loader;
@@ -132,11 +132,10 @@ function loadDeferredData({context}: Route.LoaderArgs) {
     .query(FOOTER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
-        footerMenuHandle: 'footer', // Adjust to your footer menu handle
+        footerMenuHandle: 'footer',
       },
     })
     .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
       console.error(error);
       return null;
     });

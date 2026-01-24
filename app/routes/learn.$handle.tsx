@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, ArrowRight, BookOpen } from 'lucide-react';
-import { articles as staticArticles, guides as staticGuides } from '../data/staticData';
-import PageBackground from '../components/PageBackground';
-import AnnouncementBar from '../components/AnnouncementBar';
+import { articles as staticArticles, guides as staticGuides } from '../componentsMockup2/data/staticData';
+import PageBackground from '../componentsMockup2/components/PageBackground';
+import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
+import type {Route} from './+types/blogs._index';
+import { getPaginationVariables } from '@shopify/hydrogen';
+import type {BlogsQuery} from 'storefrontapi.generated';
+import { useLoaderData } from 'react-router';
 
 interface Article {
   id: string;
@@ -19,19 +23,67 @@ interface Article {
   published_at: string;
 }
 
+
+export async function loader(args: Route.LoaderArgs) {
+  // Start fetching non-critical data without blocking time to first byte
+  const deferredData = loadDeferredData(args);
+  
+  // Await the critical data required to render initial state of the page
+  const criticalData = await loadCriticalData(args);
+  
+
+  return {...deferredData, ...criticalData, storefront: args.context.storefront, request: args.request};
+}
+
+/**
+ * Load data necessary for rendering content above the fold. This is the critical data
+ * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
+ */
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
+  const paginationVariables = getPaginationVariables(request, {
+    pageBy: 10,
+  });
+
+  const [{blogs}] = await Promise.all([
+    context.storefront.query(ARTICLES_QUERY, {
+      variables: {
+        ...paginationVariables,
+      },
+    }),
+    // Add other queries here, so that they are loaded in parallel
+  ]);
+
+  console.info(blogs);
+
+  return {blogs};
+}
+
+/**
+ * Load data for rendering content below the fold. This data is deferred and will be
+ * fetched after the initial page load. If it's unavailable, the page should still 200.
+ * Make sure to not throw any errors here, as it will cause the page to 500.
+ */
+function loadDeferredData({context, request}: Route.LoaderArgs) {
+  return {};
+}
+
+
 export default function LearnPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const {blogs} = useLoaderData<typeof loader>();
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const articles = staticArticles;
   const guides = staticGuides;
 
-  const categories = ['all', 'Soil Education', 'Sustainability'];
   const featuredArticle = articles.find(a => a.featured);
   const regularArticles = articles.filter(a => !a.featured);
 
   const filteredArticles = selectedCategory === 'all'
     ? regularArticles
     : regularArticles.filter(a => a.category === selectedCategory);
+
+  console.info(blogs);
 
   return (
     <>
@@ -124,7 +176,7 @@ export default function LearnPage() {
 
         <div className="mb-8">
           <div className="flex flex-wrap gap-3 justify-center">
-            {categories.map((category) => (
+            {[].map((category: string) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -141,12 +193,7 @@ export default function LearnPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredArticles.map((article) => {
-              //console.log('ARTICLE OBJECT:', article);
-              //console.log('ARTICLE TAGS:', article?.tags);
-              //console.log('ARTICLE KEYS:', Object.keys(article));
-
-            return (
+          {filteredArticles.map((article) => (
             <Link
               key={article.id}
               to={`/learn/${article.slug}`}
@@ -181,21 +228,8 @@ export default function LearnPage() {
                   <span className="text-sm text-gray-500">{article.author_name}</span>
                   <ArrowRight className="w-4 h-4 text-[#7cb342] group-hover:translate-x-2 transition-transform" />
                 </div>
-                {article.tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {article.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             </Link>
-            );
           ))}
         </div>
 
@@ -209,3 +243,93 @@ export default function LearnPage() {
     </>
   );
 }
+
+const BLOGS_QUERY = `#graphql
+  query Blogs(
+    $country: CountryCode
+    $endCursor: String
+    $first: Int
+    $language: LanguageCode
+    $last: Int
+    $startCursor: String
+  ) @inContext(country: $country, language: $language) {
+    blogs(
+      first: $first,
+      last: $last,
+      before: $startCursor,
+      after: $endCursor
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      nodes {
+        title
+        handle
+        seo {
+          title
+          description
+        }
+      }
+    }
+  }
+` as const;
+
+const ARTICLES_QUERY = `#graphql
+  query Blog(
+    $language: LanguageCode
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  ) @inContext(language: $language) {
+    blog() {
+      title
+      handle
+      seo {
+        title
+        description
+      }
+      articles(
+        first: $first,
+        last: $last,
+        before: $startCursor,
+        after: $endCursor
+      ) {
+        nodes {
+          ...ArticleItem
+        }
+        pageInfo {
+          hasPreviousPage
+          hasNextPage
+          hasNextPage
+          endCursor
+          startCursor
+        }
+
+      }
+    }
+  }
+  fragment ArticleItem on Article {
+    author: authorV2 {
+      name
+    }
+    contentHtml
+    handle
+    id
+    image {
+      id
+      altText
+      url
+      width
+      height
+    }
+    publishedAt
+    title
+    blog {
+      handle
+    }
+  }
+` as const;
