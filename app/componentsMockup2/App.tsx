@@ -5,7 +5,7 @@ import { FeatureFlagsProvider } from './contexts/FeatureFlagsContext';
 import { SavedItemsProvider } from './contexts/SavedItemsContext';
 import { WishlistProvider } from './contexts/WishlistContext';
 import { EnvProvider, type EnvValues } from "./contexts/EnvContext";
-import Header, { loader as headerLoader } from './components/Header';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import SurveyPopup from './components/SurveyPopup';
