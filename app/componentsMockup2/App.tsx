@@ -4,7 +4,8 @@ import { CartProvider } from './contexts/CartContext';
 import { FeatureFlagsProvider } from './contexts/FeatureFlagsContext';
 import { SavedItemsProvider } from './contexts/SavedItemsContext';
 import { WishlistProvider } from './contexts/WishlistContext';
-import Header from './components/Header';
+import { EnvProvider, type EnvValues } from "./contexts/EnvContext";
+import Header, { loader as headerLoader } from './components/Header';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import SurveyPopup from './components/SurveyPopup';
@@ -27,8 +28,27 @@ import DiscountBanner from './components/DiscountBanner';
 // import PolicyPage from './pages/PolicyPage';
 // import TechnicalDocsPage from './pages/TechnicalDocsPage';
 
+function getEnvValues(context?: any): EnvValues {
+  // context?.env = Hydrogen server-side env
+  // import.meta.env = client-side env (Vite)
+  const env = context?.env ?? import.meta.env;
+
+  return {
+    storeLocked: (env.VITE_PUBLIC_STORE_LOCKED ?? env.PUBLIC_STORE_LOCKED ?? "false") === "true",
+    message1: env.VITE_PUBLIC_STORE_MESSAGE1 ?? env.PUBLIC_STORE_MESSAGE1 ?? "",
+    message2: env.VITE_PUBLIC_STORE_MESSAGE2 ?? env.PUBLIC_STORE_MESSAGE2 ?? "",
+    message3: env.VITE_PUBLIC_STORE_MESSAGE3 ?? env.PUBLIC_STORE_MESSAGE3 ?? "",
+  };
+}
+
 const App: FC<{ children: ReactNode }> = ({children}) => {
+  // DxB import the environment into our context
+  const envValues: EnvValues = getEnvValues();
+
+  // 'import.meta.env' is only available anyway in dev mode
+  if (import.meta.env.DEV)  console.log("DxB - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
   return (
+    <EnvProvider env={envValues}>    
       <FeatureFlagsProvider>
         <SavedItemsProvider>
           <WishlistProvider>
@@ -61,6 +81,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
           </WishlistProvider>
         </SavedItemsProvider>
       </FeatureFlagsProvider>
+    </EnvProvider>
   );
 }
 

@@ -170,6 +170,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
 }
 
 export default function App() {
+  console.log("DxB - - - -- -- -- -- --- --- --- --- ---- ---- ---- ---- root.tsx ---- App()");
   const data = useRouteLoaderData<RootLoader>('root');
 
   if (!data) {

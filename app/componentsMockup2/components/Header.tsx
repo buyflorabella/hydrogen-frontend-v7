@@ -3,28 +3,34 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
-import type { LoaderFunctionArgs } from '@shopify/hydrogen';
+//import type { LoaderFunctionArgs } from '@shopify/hydrogen';
+//import { useLoaderData } from 'react-router-dom';
 
+import { useEnv } from "../contexts/EnvContext";
 
+/*
 export async function loader({ context }: LoaderFunctionArgs) {
   console.log("<------------ Loader ---------------------------------");
   return {
     debugEnv: context.env // this includes all Hydrogen env vars
   };
 }
-
 interface HeaderDebugProps {
   debugEnv?: LoaderFunctionArgs['context']['env']; // server-passed env
 }
-
 interface HeaderProps {
   debugEnv?: Record<string, any>;
 }
+*/
 
+
+// @TODO - remove this dev-only methodology (Dxb)
 
 // DEV-only env var with safe fallback
 console.log('import.meta.env =', import.meta.env);
-
+Object.entries(import.meta.env).forEach(([key, val]) =>
+  console.log(key, val)
+);
 // Shopify-native env resolution with Vite dev support
 const DEFAULT_CONTACT_PAGE_URL="/contact";
 // const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
@@ -136,15 +142,18 @@ export const HeaderDebug = ({ debugEnv }: { debugEnv?: Record<string, any> }) =>
 
 
 
-export default function Header({ debugEnv }: HeaderProps) {
+export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount, openCart } = useCart();
 
-  const data = useLoaderData<{ debugEnv: Record<string, any> }>();
-  console.log('Loader data (server Hydrogen envs):', data.debugEnv);
+  // DxB
+  const { storeLocked, message1, message2, message3 } = useEnv();
+
+  console.log("storeLocked="+storeLocked);
+  console.log("message1="+message1);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -185,6 +194,16 @@ export default function Header({ debugEnv }: HeaderProps) {
     setSearchQuery('');
   };
 
+  if (storeLocked) {
+    return (
+      <header className="locked-header">
+        <p>{message1}</p>
+        <p>{message2}</p>
+        <p>{message3}</p>
+      </header>
+    );
+  }  
+
   return (
     <>
       <header
@@ -200,7 +219,7 @@ export default function Header({ debugEnv }: HeaderProps) {
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
-        <HeaderDebug debugEnv={debugEnv} /> {/* logs environment variables */}          
+        {/* <HeaderDebug debugEnv={debugEnv} />  logs environment variables */}          
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
