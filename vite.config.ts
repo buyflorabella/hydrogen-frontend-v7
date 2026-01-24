@@ -28,6 +28,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['jmsm412.textreader.boardmansgame.com', 'traceminerals.boardmansgame.com', '.tryhydrogen.dev'],
+    allowedHosts: ['.boardmansgame.com', '.tryhydrogen.dev'],
   },
 });

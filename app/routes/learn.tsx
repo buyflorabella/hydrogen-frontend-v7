@@ -1,5 +1,6 @@
 import { type LoaderFunctionArgs, useLoaderData, Link } from 'react-router';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Clock, ArrowRight, BookOpen } from 'lucide-react';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 
@@ -59,10 +60,34 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 const calculateReadTime = (content: string) => {
-  const wordsPerMinute = 200;
+  const wordsPerMinute = 1;
   const words = content ? content.split(/\s+/).length : 0;
   return Math.ceil(words / wordsPerMinute) || 1;
 };
+
+// DxB Developer debugging
+function summarizeArticle(article: FlattenedArticle) {
+  return {
+    id: article.id,
+    title: article.title,
+    handle: article.handle,
+    blog: {
+      title: article.blogTitle,
+      handle: article.blogHandle,
+    },
+    author: article.authorV2?.name ?? '(unknown)',
+    publishedAt: article.publishedAt,
+    readTimeMin: calculateReadTime(article.content),
+    excerpt: article.excerpt || article.content.substring(0, 120) + '…',
+    tags: article.tags,
+    image: article.image
+      ? {
+          url: article.image.url,
+          altText: article.image.altText,
+        }
+      : null,
+  };
+}
 
 export default function LearnPage() {
   const { blogs } = useLoaderData<typeof loader>();
@@ -87,7 +112,33 @@ export default function LearnPage() {
     ? regularArticles
     : regularArticles.filter((a) => a.blogHandle === selectedHandle);
 
-  console.info(blogs);
+  //console.info(blogs);
+
+  // DxB Developer debugging
+  useEffect(() => {
+    console.group('📘 BLOGS');
+    blogs.forEach((blog) => {
+      console.log(`Blog: ${blog.title} (${blog.handle})`);
+      console.log(`Articles: ${blog.articles.nodes.length}`);
+    });
+    console.groupEnd();
+
+    if (featuredArticle) {
+      console.group('⭐ FEATURED ARTICLE');
+      console.table(summarizeArticle(featuredArticle));
+      console.groupEnd();
+    }
+
+    console.group('📰 FILTERED ARTICLES');
+    filteredArticles.forEach((article, index) => {
+      console.group(`Article ${index + 1}`);
+      console.table(summarizeArticle(article));
+      console.groupEnd();
+    });
+    console.groupEnd();
+  }, [blogs, featuredArticle, filteredArticles]);
+
+  const SHOW_GUIDES_IN_BLOG_LISTINGS = false; // 🔹 set to false in production
 
   return (
     <>
@@ -113,7 +164,7 @@ export default function LearnPage() {
           {featuredArticle && (
             <Link
               to={`/article/${featuredArticle.blogHandle}/${featuredArticle.handle}`}
-              className="block mb-16 bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden hover:border-[#7cb342] hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group"
+              className="block mb-16 bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden hover:border-[#7cb342] hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group hover:no-underline"
             >
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="relative h-[400px] md:h-auto overflow-hidden">
@@ -148,12 +199,84 @@ export default function LearnPage() {
                     <span className="text-gray-600">By {featuredArticle.authorV2?.name}</span>
                     <ArrowRight className="w-5 h-5 text-[#7cb342] group-hover:translate-x-2 transition-transform" />
                   </div>
+                        {featuredArticle.tags?.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {featuredArticle.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full transition-colors duration-200 hover:bg-yellow-100 hover:text-gray-800"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                 </div>
               </div>
             </Link>
           )}
 
-          <div className="mb-12">
+          {/* Step-by-Step Guides Section */}
+          {allArticles.some(a => a.blogTitle.toLowerCase() === 'guides') && (
+            <div className="mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 heading-font">Step-by-Step Guides</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                {(() => {
+                  const guides = allArticles.filter(a => a.blogTitle.toLowerCase() === 'guides');
+
+                  // Dumb ordering: featured1 first, featured2 second, featured3 third
+                  const pinnedOrder = ['featured1', 'featured2', 'featured3'];
+
+                  // Map guides to "order" number based on tags
+                  const guidesWithOrder = guides.map(g => {
+                    const pinIndex = pinnedOrder.findIndex(f => g.tags?.includes(f));
+                    return { ...g, pinIndex: pinIndex >= 0 ? pinIndex : 999 }; // 999 = unpinned
+                  });
+
+                  // Sort by pinIndex so feature1 comes first, unpinned last
+                  guidesWithOrder.sort((a, b) => a.pinIndex - b.pinIndex);
+
+                  // Limit to 3
+                  const topGuides = guidesWithOrder.slice(0, 3);
+
+                  return topGuides.map((guide) => (
+                    <Link
+                      key={guide.id}
+                      to={`/guides/${guide.handle}`}
+                      className="bg-white border border-gray-200 shadow-md rounded-2xl p-6 hover:border-[#7cb342] hover:shadow-lg transition-all duration-300 hover:scale-105 group no-underline hover:no-underline"
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-[#7cb342]/20 flex items-center justify-center mb-4 group-hover:bg-[#7cb342]/30 transition-colors group-hover:scale-110 duration-300">
+                        <BookOpen className="w-6 h-6 text-[#7cb342]" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#7cb342] transition-colors">
+                        {guide.title}
+                      </h3>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {guide.excerpt || guide.content.substring(0, 120) + '…'}
+                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-500">{calculateReadTime(guide.content)} min read</span>
+                      </div>
+                      {guide.tags?.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {guide.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full transition-colors duration-200 hover:bg-yellow-100 hover:text-gray-800 group-hover:no-underline"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </Link>
+                  ));
+                })()}
+              </div>
+            </div>
+          )}
+
+          <div className="mb-8">
             <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={() => setSelectedHandle('all')}
@@ -163,65 +286,90 @@ export default function LearnPage() {
                     : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                All Articles
+                All
               </button>
-              {blogs.map((blog) => (
-                <button
-                  key={blog.handle}
-                  onClick={() => setSelectedHandle(blog.handle)}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 capitalize ${
-                    selectedHandle === blog.handle
-                      ? 'bg-[#7cb342] text-white shadow-xl shadow-[#7cb342]/30 scale-105'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {blog.title}
-                </button>
-              ))}
+              {blogs
+                .slice() // ✅ create a copy so we don't mutate original
+                .sort((a, b) => a.title.localeCompare(b.title)) // ✅ sort and alphebetize
+                .filter(blog => SHOW_GUIDES_IN_BLOG_LISTINGS || blog.title.toLowerCase() !== 'guides') // 🔹 filter out guides if SHOW_GUIDES_IN_BLOG_LISTINGS = false
+                .map((blog) => {
+                    const isDevBlog = blog.title.toLowerCase() === 'guides'; // ✅ flag
+                    return (
+                      <button
+                        key={blog.handle}
+                        onClick={() => setSelectedHandle(blog.handle)}
+                        className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 capitalize ${
+                          selectedHandle === blog.handle
+                            ? 'bg-[#7cb342] text-white shadow-xl shadow-[#7cb342]/30 scale-105'
+                            : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        {blog.title}
+                      </button>
+                    );
+              })}
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredArticles.map((article) => (
-              <Link
-                key={article.id}
-                to={`/article/${article.blogHandle}/${article.handle}`}
-                className="bg-white rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-200 hover:border-[#7cb342]/30 hover:scale-105 hover:shadow-2xl hover:shadow-[#7cb342]/20 group cursor-pointer"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  {article.image && (
-                    <img
-                      src={article.image.url}
-                      alt={article.image.altText || article.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 inline-flex items-center justify-center w-12 h-12 bg-[#7cb342] rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
-                    <BookOpen className="w-6 h-6 text-white" />
+            {filteredArticles
+              .filter(article => SHOW_GUIDES_IN_BLOG_LISTINGS || article.blogTitle.toLowerCase() !== 'guides') // 🔹 filter guides if flag false            
+              .map((article) => {
+              return (
+                <Link
+                  key={article.id}
+                  to={`/article/${article.blogHandle}/${article.handle}`}
+                  className="bg-white rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-200 hover:border-[#7cb342]/30 hover:scale-105 hover:shadow-2xl hover:shadow-[#7cb342]/20 group cursor-pointer no-underline hover:no-underline" // ✅ added no-underline utilities
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    {article.image && (
+                      <img
+                        src={article.image.url}
+                        alt={article.image.altText || article.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 inline-flex items-center justify-center w-12 h-12 bg-[#7cb342] rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
+                      <BookOpen className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
+                      <Clock className="w-3 h-3 text-white" />
+                      <span className="text-white text-xs font-semibold">{calculateReadTime(article.content)} min</span>
+                    </div>
                   </div>
-                  <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <Clock className="w-3 h-3 text-white" />
-                    <span className="text-white text-xs font-semibold">{calculateReadTime(article.content)} min</span>
+                  <div className="p-6">
+                    <span className="text-[#7cb342] text-xs font-semibold uppercase tracking-wide group-hover:no-underline"> {/* ✅ added group-hover:no-underline */}
+                      {article.blogTitle}
+                    </span>
+                    <h3 className="text-lg font-bold text-gray-900 mt-2 mb-2 line-clamp-2 group-hover:no-underline"> {/* ✅ added group-hover:no-underline */}
+                      {article.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed text-sm mb-4 line-clamp-3 group-hover:no-underline"> {/* ✅ added group-hover:no-underline */}
+                      {article.excerpt || article.content.substring(0, 120)}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500 group-hover:no-underline"> {/* ✅ added group-hover:no-underline */}
+                        {article.authorV2?.name}
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-[#7cb342] group-hover:translate-x-2 transition-transform" />
+                    </div>
+                    {article.tags?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {article.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full transition-colors duration-200 hover:bg-yellow-100 hover:text-gray-800 group-hover:no-underline" // ✅ added group-hover:no-underline
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="p-6">
-                  <span className="text-[#7cb342] text-xs font-semibold uppercase tracking-wide">
-                    {article.blogTitle}
-                  </span>
-                  <h3 className="text-lg font-bold text-gray-900 mt-2 mb-2 line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm mb-4 line-clamp-3">
-                    {article.excerpt || article.content.substring(0, 120)}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{article.authorV2?.name}</span>
-                    <ArrowRight className="w-4 h-4 text-[#7cb342] group-hover:translate-x-2 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
 
           {filteredArticles.length === 0 && (

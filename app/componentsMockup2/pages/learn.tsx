@@ -141,7 +141,12 @@ export default function LearnPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredArticles.map((article) => (
+          {filteredArticles.map((article) => {
+              //console.log('ARTICLE OBJECT:', article);
+              //console.log('ARTICLE TAGS:', article?.tags);
+              //console.log('ARTICLE KEYS:', Object.keys(article));
+
+            return (
             <Link
               key={article.id}
               to={`/learn/${article.slug}`}
@@ -176,8 +181,21 @@ export default function LearnPage() {
                   <span className="text-sm text-gray-500">{article.author_name}</span>
                   <ArrowRight className="w-4 h-4 text-[#7cb342] group-hover:translate-x-2 transition-transform" />
                 </div>
+                {article.tags?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {article.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </Link>
+            );
           ))}
         </div>
 
