@@ -3,8 +3,47 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
+import type { LoaderFunctionArgs } from '@shopify/hydrogen';
 
-export const HeaderDebug = () => {
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  console.log("<------------ Loader ---------------------------------");
+  return {
+    debugEnv: context.env // this includes all Hydrogen env vars
+  };
+}
+
+interface HeaderDebugProps {
+  debugEnv?: LoaderFunctionArgs['context']['env']; // server-passed env
+}
+
+interface HeaderProps {
+  debugEnv?: Record<string, any>;
+}
+
+
+// DEV-only env var with safe fallback
+console.log('import.meta.env =', import.meta.env);
+
+// Shopify-native env resolution with Vite dev support
+const DEFAULT_CONTACT_PAGE_URL="/contact";
+// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
+const CONTACT_PAGE_URL =
+  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
+  import.meta.env.VITE_CONTACT_PAGE_URL ??
+  DEFAULT_CONTACT_PAGE_URL;
+
+console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
+
+
+// helper: detect absolute URLs
+const isExternalUrl = (url: string): boolean => {
+    console.log("isExternalUrl(" + url + ")");
+
+    return /^https?:\/\//i.test(url);
+};
+
+export const HeaderDebug = ({ debugEnv }: { debugEnv?: Record<string, any> }) => {
   useEffect(() => {
     // 1️⃣ Log all Vite / Hydrogen environment variables
     console.group('🛠️ IMPORT.META.ENV VARIABLES');
@@ -36,6 +75,15 @@ export const HeaderDebug = () => {
       } else {
         console.log('No Shopify window globals found.');
       }
+
+      // 3a️⃣ Log window.ENV if it exists
+      if ((window as any).ENV) {
+        console.group('🌐 WINDOW.ENV VARIABLES');
+        console.table((window as any).ENV);
+        console.groupEnd();
+      } else {
+        console.log('window.ENV not found.');
+      }      
     }
 
     // 4️⃣ Log meta tags that Shopify often injects
@@ -70,6 +118,16 @@ export const HeaderDebug = () => {
     sections.forEach((sec, idx) => {
       console.log(`Section ${idx}:`, sec.id, sec.dataset);
     });
+
+    // 8️⃣ Hydrogen server loader env variables
+    if (debugEnv) {
+      console.group('HYDROGEN LOADER CONTEXT.ENV VARIABLES');
+      console.table(debugEnv);
+      console.groupEnd();
+    } else {
+      console.log('debugEnv not passed. Loader context unavailable in client-only render.');
+    }
+
     console.groupEnd();
   }, []);
 
@@ -77,28 +135,8 @@ export const HeaderDebug = () => {
 };
 
 
-// DEV-only env var with safe fallback
-console.log('import.meta.env =', import.meta.env);
 
-// Shopify-native env resolution with Vite dev support
-const DEFAULT_CONTACT_PAGE_URL="/contact";
-// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
-const CONTACT_PAGE_URL =
-  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
-  import.meta.env.VITE_CONTACT_PAGE_URL ??
-  DEFAULT_CONTACT_PAGE_URL;
-
-console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
-
-
-// helper: detect absolute URLs
-const isExternalUrl = (url: string): boolean => {
-    console.log("isExternalUrl(" + url + ")");
-
-    return /^https?:\/\//i.test(url);
-};
-
-export default function Header() {
+export default function Header({ debugEnv }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -159,7 +197,7 @@ export default function Header() {
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
-        <HeaderDebug /> {/* logs environment variables */}          
+        <HeaderDebug debugEnv={debugEnv} /> {/* logs environment variables */}          
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
