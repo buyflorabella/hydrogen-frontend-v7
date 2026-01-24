@@ -6,35 +6,74 @@ import SearchDropdown from './SearchDropdown';
 
 export const HeaderDebug = () => {
   useEffect(() => {
-    // 1️⃣ Log all import.meta.env (Vite / Hydrogen frontend env)
+    // 1️⃣ Log all Vite / Hydrogen environment variables
     console.group('🛠️ IMPORT.META.ENV VARIABLES');
     console.table(import.meta.env);
     console.groupEnd();
 
-    // 2️⃣ Log any Shopify global variables, if present
-    if (typeof window !== 'undefined' && (window as any).Shopify) {
-      console.group('🏷️ SHOPIFY WINDOW VARIABLES');
-      const shopifyVars = Object.keys((window as any).Shopify).reduce((acc, key) => {
-        acc[key] = (window as any).Shopify[key];
-        return acc;
-      }, {} as Record<string, any>);
-      console.table(shopifyVars);
+    // 2️⃣ Log Node environment variables (if available in Hydrogen SSR)
+    if (typeof process !== 'undefined' && process.env) {
+      console.group('🟢 PROCESS.ENV VARIABLES');
+      console.table(process.env);
       console.groupEnd();
     } else {
-      console.log('Shopify global window object not found.');
+      console.log('process.env not available in browser runtime.');
     }
 
-    // 3️⃣ Log the dynamic contact page URL for reference
+    // 3️⃣ Log Shopify globals on window
+    if (typeof window !== 'undefined') {
+      const windowGlobals: Record<string, any> = {};
+      ['Shopify', 'ShopifyAnalytics', 'ShopifyCheckout', 'ShopifyPay', 'Shopify.theme'].forEach(key => {
+        if ((window as any)[key]) {
+          windowGlobals[key] = (window as any)[key];
+        }
+      });
+
+      if (Object.keys(windowGlobals).length > 0) {
+        console.group('🏷️ SHOPIFY WINDOW VARIABLES');
+        console.table(windowGlobals);
+        console.groupEnd();
+      } else {
+        console.log('No Shopify window globals found.');
+      }
+    }
+
+    // 4️⃣ Log meta tags that Shopify often injects
+    console.group('🔖 DOCUMENT META TAGS');
+    Array.from(document.getElementsByTagName('meta')).forEach(meta => {
+      console.log(meta.getAttribute('name') || meta.getAttribute('property'), meta.getAttribute('content'));
+    });
+    console.groupEnd();
+
+    // 5️⃣ Log body data attributes, sometimes Shopify uses these for theme/shop info
+    console.group('📝 BODY DATA ATTRIBUTES');
+    Array.from(document.body.attributes).forEach(attr => {
+      if (attr.name.startsWith('data-')) {
+        console.log(attr.name, attr.value);
+      }
+    });
+    console.groupEnd();
+
+    // 6️⃣ Log dynamic contact page URL
+    const DEFAULT_CONTACT_PAGE_URL = '/contact';
     const CONTACT_PAGE_URL =
       import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
       import.meta.env.VITE_CONTACT_PAGE_URL ??
-      'https://devcontact.buyflorabella.com';
+      DEFAULT_CONTACT_PAGE_URL;
     console.group('📌 CONTACT_PAGE_URL');
     console.log(CONTACT_PAGE_URL);
     console.groupEnd();
+
+    // 7️⃣ Log Shopify sections / divs (often includes data-shop or data-section)
+    console.group('🏗️ SHOPIFY SECTION DATA ATTRIBUTES');
+    const sections = document.querySelectorAll('[id^="shopify-section-"]');
+    sections.forEach((sec, idx) => {
+      console.log(`Section ${idx}:`, sec.id, sec.dataset);
+    });
+    console.groupEnd();
   }, []);
 
-  return null; // purely for logging, no UI
+  return null; // purely logging
 };
 
 
