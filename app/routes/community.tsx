@@ -44,7 +44,7 @@ export default function CommunityPage() {
     },
     {
       id: 5,
-      url: 'https://images.pexels.com/photos/1282169/pexels-photo-1282169.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://images.pexels.com/photos/3771116/pexels-photo-3771116.jpeg?auto=compress&cs=tinysrgb&w=1920',
       caption: 'Nature and wellness combined',
       author: 'Lisa K.',
       likes: 189
