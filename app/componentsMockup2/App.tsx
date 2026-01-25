@@ -32,6 +32,11 @@ import { useRouteLoaderData } from 'react-router';
 export type RootLoader = typeof loader;
 
 
+
+/*
+Deprecate - retest variable deploy if we take this ouT!!!
+
+
 // 1. The Loader (Runs on Server)
 export async function loader({context}: Route.LoaderArgs) {
   const { storefront, env } = args.context;
@@ -63,6 +68,9 @@ export async function loader({context}: Route.LoaderArgs) {
 
   return loaderPayload;
 }
+
+*/
+
 
 
 const App: FC<{ children: ReactNode }> = ({children}) => {

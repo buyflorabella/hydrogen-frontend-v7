@@ -70,40 +70,6 @@ export function links() {
   ];
 }
 
-
-/*
-DxB - default loader()
-
-export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
-
-  const {storefront, env} = args.context;
-
-  return {
-    ...deferredData,
-    ...criticalData,
-    publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
-    shop: getShopAnalytics({
-      storefront,
-      publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
-    }),
-    consent: {
-      checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
-      storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
-      withPrivacyBanner: false,
-      // localize the privacy banner
-      country: args.context.storefront.i18n.country,
-      language: args.context.storefront.i18n.language,
-    },
-    env,
-  };
-}
-*/
-
 export async function loader(args: Route.LoaderArgs) {
 
   console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
@@ -236,7 +202,7 @@ export default function App() {
 
   // Use Optional Chaining (?.) and Nullish Coalescing (??) 
   // to ensure storeLocked is a boolean even if the key is missing
-  const storeLocked = data?.env?.storeLocked ?? false;
+  const storeLocked = data?.env?.storeLocked === "true";  
 
   if (storeLocked) { 
       console.log("Store IS locked");

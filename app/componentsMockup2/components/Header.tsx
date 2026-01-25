@@ -220,6 +220,7 @@ export default function Header() {
             </Link>
 
             <div className="flex items-center gap-6">
+              <span>DxB v7.2</span>
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
                 <Link
                   to="/shop"
