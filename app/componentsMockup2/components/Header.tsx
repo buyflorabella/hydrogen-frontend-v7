@@ -263,9 +263,6 @@ export default function Header() {
               <Link to="/password" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
                 <User className="w-5 h-5 text-white" strokeWidth={2} />
               </Link>              
-              <Link to="/account" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
-                <User className="w-5 h-5 text-white" strokeWidth={2} />
-              </Link>
               <button
                 onClick={openCart}
                 className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 group relative"
