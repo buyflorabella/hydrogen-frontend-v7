@@ -74,14 +74,8 @@ export async function loader({context}: Route.LoaderArgs) {
 
 
 const App: FC<{ children: ReactNode }> = ({children}) => {
-  // DxB import the environment into our context
-  const data = useRouteLoaderData<RootLoader>('root');
 
-  // 'import.meta.env' is only available anyway in dev mode
-  //if (import.meta.env.DEV)  console.log("DxB [v1] - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
-  console.log("DxB [v1] - - - -- -- -- -- --- --- --- --- ---- ---- ---- App.tsx ---- ---- const App:");
   return (
-    <EnvProvider env={data?.env}>    
       <FeatureFlagsProvider>
         <SavedItemsProvider>
           <WishlistProvider>
@@ -114,7 +108,6 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
           </WishlistProvider>
         </SavedItemsProvider>
       </FeatureFlagsProvider>
-    </EnvProvider>
   );
 }
 

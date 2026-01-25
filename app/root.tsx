@@ -109,7 +109,8 @@ export async function loader(args: Route.LoaderArgs) {
   console.log("[DxB][loader] Session object:", session.data);
 
   //const passwordAllowed = session.has('passwordAllowed') && session.get('passwordAllowed') === true;
-  const passwordAllowed = session.get('passwordAllowed');
+  const passwordValue = await session.get('passwordAllowed');
+  const passwordAllowed = passwordValue === true;
   const storeLocked = env.PUBLIC_STORE_LOCKED === 'true';
   const adminBypass = env.PUBLIC_ADMIN_BYPASS_PASSWORD_ENABLED === 'true';
 

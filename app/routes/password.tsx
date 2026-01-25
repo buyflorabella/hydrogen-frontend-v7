@@ -58,6 +58,7 @@ export const action: ActionFunction = async ({ request, context }) => {
   //const session = await storage.getSession(request.headers.get('Cookie'));
   // Handle Logout
   if (_action === 'logout') {
+    console.log("---------------------- USER IS LOGGING OUT !!!!!!!!!!!!!!!!!");
     session.unset('passwordAllowed');
 
     // 2. IMPORTANT: We must commit the session to generate the 'Set-Cookie' header
@@ -68,7 +69,9 @@ export const action: ActionFunction = async ({ request, context }) => {
         'Set-Cookie': cookie,
       },
     });
-  }  
+  } else {
+    console.log("---------- NOT logging out ------");
+  }
 
 
   if (passwordAttempt === correctPassword) {
@@ -100,7 +103,7 @@ export default function PasswordPage() {
   const loaderData = useRouteLoaderData<RootLoader>('root');  
   const { isLoggedIn } = useLoaderData<typeof loader>();  
   const actionData = useActionData<{ error?: string }>();
-  const storePassword = loaderData?.env?.storePassword ?? 'UNKNOWN';  
+  //const storePassword = loaderData?.env?.storePassword ?? 'UNKNOWN';  
   const [fireworksEnabled, setFireworksEnabled] = useState(false); 
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);  
@@ -126,7 +129,8 @@ export default function PasswordPage() {
   //   return () => clearInterval(interval);
   // }, []);
 
-  const debugPassword = storePassword || '⚠️ Not set';
+  //const debugPassword = storePassword || '⚠️ Not set';
+  //const debugPassword = "storePassword" || '⚠️ Not set';
 
   return (
     <div className="password-page min-h-screen flex flex-col items-center justify-center bg-[#1a1a1a] p-6">
@@ -166,7 +170,7 @@ export default function PasswordPage() {
           {!isLoggedIn && (
             <>
               <p className="text-green-700 font-bold text-center text-sm">
-                Use password: '{debugPassword}'
+                Enter password below:
               </p>
 
               <div className="relative">
