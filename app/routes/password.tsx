@@ -107,6 +107,7 @@ export default function PasswordPage() {
   const [fireworksEnabled, setFireworksEnabled] = useState(false); 
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);  
+  const [errorVisible, setErrorVisible] = useState(false);  
   const navigate = useNavigate();
 
   const canEnterStore = isLoggedIn === true;
@@ -122,6 +123,16 @@ export default function PasswordPage() {
   useEffect(() => {
     setMounted(true);
   }, []);  
+
+  useEffect(() => {
+    if (actionData?.error) {
+      setErrorVisible(true); // show
+      const timeout = setTimeout(() => {
+        setErrorVisible(false); // hide after 5s
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [actionData?.error]);  
 
   // Simple sparkles trigger
   // useEffect(() => {
@@ -199,13 +210,17 @@ export default function PasswordPage() {
             {isLoggedIn ? 'Enter Store' : 'Unlock Store'}
           </button>
 
-          {actionData?.error && (
-            <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
-              <p className="text-red-600 text-sm text-center font-medium">
-                {actionData.error}
-              </p>
+          {actionData?.error && errorVisible && (
+            <div
+              className={`p-3 border rounded-lg border-red-100 bg-red-50 text-red-600 text-sm text-center font-medium
+                transition-opacity duration-500
+                ${errorVisible ? 'opacity-100' : 'opacity-0'}
+              `}
+            >
+              {actionData.error}
             </div>
           )}
+
         </Form>
 
         {/* --- LOGOUT SECTION --- */}

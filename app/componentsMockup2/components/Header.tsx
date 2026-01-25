@@ -319,13 +319,24 @@ export default function Header() {
             </div>
 
             <nav className="flex flex-col p-6 space-y-2">
-              <Link
-                to="/shop"
-                onClick={closeMobileMenu}
-                className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                Shop
-              </Link>
+              {isExternalUrl(shopPageUrl) ? (
+                <a
+                  href={shopPageUrl}
+                  rel="noopener noreferrer"
+                  onClick={closeMobileMenu}
+                  className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Shop
+                </a>
+              ) : (
+                <Link
+                  to={shopPageUrl}
+                  onClick={closeMobileMenu}
+                  className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Shop
+                </Link>
+              )}
               <Link
                 to="/learn"
                 onClick={closeMobileMenu}
@@ -347,13 +358,24 @@ export default function Header() {
               >
                 Community
               </Link>
-              <Link
-                to="/contact"
-                onClick={closeMobileMenu}
-                className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                Contact
-              </Link>
+              {isExternalUrl(contactPageUrl) ? (
+                <a
+                  href={contactPageUrl}
+                  rel="noopener noreferrer"
+                  onClick={closeMobileMenu}
+                  className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Contact
+                </a>
+              ) : (
+                <Link
+                  to={contactPageUrl}
+                  onClick={closeMobileMenu}
+                  className="text-white text-lg font-medium py-4 px-4 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Contact
+                </Link>
+              )}              
               <Link
                 to="/account"
                 onClick={closeMobileMenu}
