@@ -88,24 +88,6 @@ export const HeaderDebug = () => {
   return null; // purely logging
 };
 
-// Shopify-native env resolution with Vite dev support
-const DEFAULT_CONTACT_PAGE_URL="/contact";
-// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
-const CONTACT_PAGE_URL =
-  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
-  import.meta.env.VITE_CONTACT_PAGE_URL ??
-  DEFAULT_CONTACT_PAGE_URL;
-
-console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
-
-
-// helper: detect absolute URLs
-const isExternalUrl = (url: string): boolean => {
-    console.log("isExternalUrl(" + url + ")");
-
-    return /^https?:\/\//i.test(url);
-};
-
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -119,13 +101,17 @@ export default function Header() {
 
   console.log('SERVER rootData (from loader):', rootData);
 
-  // 2. Safely extract variables with defaults
+   // 2. Safely extract variables with defaults
   // Explicitly check for the string "true"
   // This ensures that "false" (string) doesn't trigger the locked state.
   const storeLocked = rootData?.env?.storeLocked === "true";
   const message1 = rootData?.env?.message1 ?? '';
   const message2 = rootData?.env?.message2 ?? '';
   const message3 = rootData?.env?.message3 ?? '';  
+  const contactPageUrl = rootData?.env?.contactPageUrl ?? '/contact';
+  const shopPageUrl = rootData?.env?.shopPageUrl ?? '/shop'; // fallback if you have a shop page
+  // helper: detect absolute URLs
+  const isExternalUrl = (url: string): boolean => /^https?:\/\//i.test(url);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -222,12 +208,22 @@ export default function Header() {
             <div className="flex items-center gap-6">
               <span>DxB v7.2</span>
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
-                <Link
-                  to="/shop"
-                  className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
-                >
-                  Shop
-                </Link>
+                {isExternalUrl(shopPageUrl) ? (
+                  <a
+                    href={shopPageUrl}
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                  >
+                    Shop
+                  </a>
+                ) : (
+                  <Link
+                    to={shopPageUrl}
+                    className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
+                  >
+                    Shop
+                  </Link>
+                )}
                 <Link
                   to="/learn"
                   className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
@@ -246,11 +242,10 @@ export default function Header() {
                 >
                   Community
                 </Link>
-
                 {/* EXTERNAL LINK — MUST use <a>, not <Link> */}
-                {isExternalUrl(CONTACT_PAGE_URL) ? (
+                {isExternalUrl(contactPageUrl) ? (
                   <a
-                    href={CONTACT_PAGE_URL}
+                    href={contactPageUrl}
                     rel="noopener noreferrer"
                     className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
                   >
@@ -258,13 +253,16 @@ export default function Header() {
                   </a>
                 ) : (
                   <Link
-                    to={CONTACT_PAGE_URL}
+                    to={contactPageUrl}
                     className="text-white hover:text-[#7cb342] transition-all duration-300 hover:scale-110 hover:-translate-y-1 no-underline"
                   >
                     Contact
                   </Link>
                 )}
               </nav>
+              <Link to="/password" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
+                <User className="w-5 h-5 text-white" strokeWidth={2} />
+              </Link>              
               <Link to="/account" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
                 <User className="w-5 h-5 text-white" strokeWidth={2} />
               </Link>

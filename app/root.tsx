@@ -20,8 +20,27 @@ import tailwindStyles from '~/styles/tailwind.css?url';
 // import { PageLayout } from './newComponents/PageLayout';
 // import { LandingPage } from './componentsMockup/Root'
 import Mockup2Root from './componentsMockup2/App';
+import { useState, useEffect } from 'react';
+
+//import { Navigate } from 'react-router';
+
+import { redirect } from 'react-router';
+//import { createCookieSessionStorage } from '@shopify/remix-oxygen';
 
 export type RootLoader = typeof loader;
+
+// Password Protection for the entire site
+// const sessionSecret = process.env.SESSION_SECRET || 'super-secret';
+// const storage = createCookieSessionStorage({
+//   cookie: {
+//     name: 'password-session',
+//     secure: true,
+//     secrets: [sessionSecret],
+//     sameSite: 'lax',
+//     path: '/',
+//     httpOnly: true,
+//   },
+// });
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -30,12 +49,17 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   formMethod,
   currentUrl,
   nextUrl,
+  actionResult, // Add this  
 }) => {
   // revalidate when a mutation is performed e.g add to cart, login...
   if (formMethod && formMethod !== 'GET') return true;
 
+  // If the action just happened, we MUST revalidate to check the new session state
+  if (actionResult) return true;
+
   // revalidate when manually revalidating via useRevalidator
-  if (currentUrl.toString() === nextUrl.toString()) return true;
+  if (currentUrl.pathname !== nextUrl.pathname) return true;
+  //if (currentUrl.toString() === nextUrl.toString()) return true;
 
   // Defaulting to no revalidation for root loader data to improve performance.
   // When using this feature, you risk your UI getting out of sync with your server.
@@ -73,6 +97,7 @@ export function links() {
 export async function loader(args: Route.LoaderArgs) {
 
   console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
+  const {storefront, env, session} = args.context; // session is an instance of AppSession
 
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
@@ -80,18 +105,52 @@ export async function loader(args: Route.LoaderArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  const {storefront, env} = args.context;
+  //const session = await storage.getSession(args.request.headers.get('Cookie'));
+  console.log("[DxB][loader] Session object:", session.data);
 
-  console.log("ENV:");
-  console.log(env);
+  //const passwordAllowed = session.has('passwordAllowed') && session.get('passwordAllowed') === true;
+  const passwordAllowed = session.get('passwordAllowed');
+  const storeLocked = env.PUBLIC_STORE_LOCKED === 'true';
+  const adminBypass = env.PUBLIC_ADMIN_BYPASS_PASSWORD_ENABLED === 'true';
+
+  console.log("[DxB][loader] storeLocked =", storeLocked);
+  console.log("[DxB][loader] adminBypass =", adminBypass);
+  console.log("[DxB][loader] passwordAllowed =", passwordAllowed);  
+
+  //console.log("ENV:");
+  //console.log(env);
+
+  const url = new URL(args.request.url);
+  console.log("[DxB][loader] pathname =", url.pathname);
+
+  if (storeLocked && !adminBypass && !passwordAllowed && url.pathname !== '/password') {
+    console.log("[DxB][loader] REDIRECTING to /password");    
+    return redirect('/password', {
+      headers: {
+        'Set-Cookie': await session.commit(),
+      },
+    });
+  } else {
+    console.log("[DxB][loader]2 storeLocked =", storeLocked);
+    console.log("[DxB][loader]2 adminBypass =", adminBypass);
+    console.log("[DxB][loader]2 passwordAllowed =", passwordAllowed);      
+    console.log("[DxB][loader]2 pathname =", url.pathname);
+    console.log("[DxB][loader] NO REDIRECT - continuing to render root");
+  }
 
   // 1. Prepare the return object
   const loaderPayload = {
     ...deferredData,
     ...criticalData,
+    serverPath: url.pathname, // useful for debugging in App()
+    passwordAllowed,    
     env: {
       //storeLocked: env.PUBLIC_STORE_LOCKED === "true",
-      storeLocked: env.PUBLIC_STORE_LOCKED,
+      storeLocked,
+      adminBypassPasswordEnabled: adminBypass,
+      storePassword: env.PUBLIC_STORE_PASSWORD || "ballz",
+      contactPageUrl: env.PUBLIC_CONTACT_PAGE_URL || "/contact",
+      shopPageUrl: env.PUBLIC_SHOP_PAGE_URL || "/shop",      
       message1: env.PUBLIC_STORE_MESSAGE1 || "",
       message2: env.PUBLIC_STORE_MESSAGE2 || "",
       message3: env.PUBLIC_STORE_MESSAGE3 || "",
@@ -113,7 +172,8 @@ export async function loader(args: Route.LoaderArgs) {
 
   // 2. Console log the payload
   // This will show up in your Shopify Admin -> Hydrogen -> Storefront -> Logs
-  console.log("FINAL LOADER PAYLOAD:", JSON.stringify(loaderPayload, null, 2));
+  //console.log("[DxB][loader] FINAL loader payload:", JSON.stringify(loaderPayload, null, 2));
+
 
   return loaderPayload;
 }
@@ -191,24 +251,28 @@ export function Layout({children}: {children?: React.ReactNode}) {
 export default function App() {
   console.log("DxB - - - -- -- -- -- --- --- --- --- ---- ---- ---- ---- root.tsx ---- App()");
   const data = useRouteLoaderData<RootLoader>('root');
+  const url = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  // Example: prevent site flash client-side
+  if (data?.serverPath === '/password') {
+    return <Outlet />; // Only render password page
+  }
+
+  console.log("[DxB][Past /password page check for url="+url);
+
+  // ---------------- CLIENT-SIDE PASSWORD PROTECTION ----------------
+  const [passwordBypass, setPasswordBypass] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPasswordBypass(localStorage.getItem('passwordBypass') === 'true');
+    }
+  }, []);
+
 
   if (!data) {
     return <Outlet />;
   }
-
-  // 'import.meta.env' is only available anyway in dev mode
-  console.log("DxB DATA: root.tsx:");
-  console.log(data);
-
-  // Use Optional Chaining (?.) and Nullish Coalescing (??) 
-  // to ensure storeLocked is a boolean even if the key is missing
-  const storeLocked = data?.env?.storeLocked === "true";  
-
-  if (storeLocked) { 
-      console.log("Store IS locked");
-  } else {
-      console.log("Store IS NOT locked");
-  }  
 
   return (
     <Analytics.Provider
