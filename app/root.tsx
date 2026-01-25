@@ -70,6 +70,10 @@ export function links() {
   ];
 }
 
+
+/*
+DxB - default loader()
+
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
@@ -97,6 +101,55 @@ export async function loader(args: Route.LoaderArgs) {
     },
     env,
   };
+}
+*/
+
+export async function loader(args: Route.LoaderArgs) {
+
+  console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
+
+  // Start fetching non-critical data without blocking time to first byte
+  const deferredData = loadDeferredData(args);
+
+  // Await the critical data required to render initial state of the page
+  const criticalData = await loadCriticalData(args);
+
+  const {storefront, env} = args.context;
+
+  console.log("ENV:");
+  console.log(env);
+
+  // 1. Prepare the return object
+  const loaderPayload = {
+    ...deferredData,
+    ...criticalData,
+    env: {
+      //storeLocked: env.PUBLIC_STORE_LOCKED === "true",
+      storeLocked: env.PUBLIC_STORE_LOCKED,
+      message1: env.PUBLIC_STORE_MESSAGE1 || "",
+      message2: env.PUBLIC_STORE_MESSAGE2 || "",
+      message3: env.PUBLIC_STORE_MESSAGE3 || "",
+      publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
+    },    
+    publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
+    shop: getShopAnalytics({
+      storefront,
+      publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
+    }),
+    consent: {
+      checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
+      storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
+      withPrivacyBanner: false,
+      country: args.context.storefront.i18n.country,
+      language: args.context.storefront.i18n.language,
+    },
+  };
+
+  // 2. Console log the payload
+  // This will show up in your Shopify Admin -> Hydrogen -> Storefront -> Logs
+  console.log("FINAL LOADER PAYLOAD:", JSON.stringify(loaderPayload, null, 2));
+
+  return loaderPayload;
 }
 
 /**
@@ -176,6 +229,20 @@ export default function App() {
   if (!data) {
     return <Outlet />;
   }
+
+  // 'import.meta.env' is only available anyway in dev mode
+  console.log("DxB DATA: root.tsx:");
+  console.log(data);
+
+  // Use Optional Chaining (?.) and Nullish Coalescing (??) 
+  // to ensure storeLocked is a boolean even if the key is missing
+  const storeLocked = data?.env?.storeLocked ?? false;
+
+  if (storeLocked) { 
+      console.log("Store IS locked");
+  } else {
+      console.log("Store IS NOT locked");
+  }  
 
   return (
     <Analytics.Provider

@@ -3,53 +3,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
-//import type { LoaderFunctionArgs } from '@shopify/hydrogen';
-//import { useLoaderData } from 'react-router-dom';
 
-import { useEnv } from "../contexts/EnvContext";
+import { useRouteLoaderData } from 'react-router';
+import type { RootLoader } from '~/routes/root';
 
-/*
-export async function loader({ context }: LoaderFunctionArgs) {
-  console.log("<------------ Loader ---------------------------------");
-  return {
-    debugEnv: context.env // this includes all Hydrogen env vars
-  };
-}
-interface HeaderDebugProps {
-  debugEnv?: LoaderFunctionArgs['context']['env']; // server-passed env
-}
-interface HeaderProps {
-  debugEnv?: Record<string, any>;
-}
-*/
-
-
-// @TODO - remove this dev-only methodology (Dxb)
-
-// DEV-only env var with safe fallback
-console.log('import.meta.env =', import.meta.env);
-Object.entries(import.meta.env).forEach(([key, val]) =>
-  console.log(key, val)
-);
-// Shopify-native env resolution with Vite dev support
-const DEFAULT_CONTACT_PAGE_URL="/contact";
-// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
-const CONTACT_PAGE_URL =
-  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
-  import.meta.env.VITE_CONTACT_PAGE_URL ??
-  DEFAULT_CONTACT_PAGE_URL;
-
-console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
-
-
-// helper: detect absolute URLs
-const isExternalUrl = (url: string): boolean => {
-    console.log("isExternalUrl(" + url + ")");
-
-    return /^https?:\/\//i.test(url);
-};
-
-export const HeaderDebug = ({ debugEnv }: { debugEnv?: Record<string, any> }) => {
+export const HeaderDebug = () => {
   useEffect(() => {
     // 1️⃣ Log all Vite / Hydrogen environment variables
     console.group('🛠️ IMPORT.META.ENV VARIABLES');
@@ -82,7 +40,7 @@ export const HeaderDebug = ({ debugEnv }: { debugEnv?: Record<string, any> }) =>
         console.log('No Shopify window globals found.');
       }
 
-      // 3a️⃣ Log window.ENV if it exists
+      // Log window.ENV if it exists
       if ((window as any).ENV) {
         console.group('🌐 WINDOW.ENV VARIABLES');
         console.table((window as any).ENV);
@@ -124,22 +82,29 @@ export const HeaderDebug = ({ debugEnv }: { debugEnv?: Record<string, any> }) =>
     sections.forEach((sec, idx) => {
       console.log(`Section ${idx}:`, sec.id, sec.dataset);
     });
-
-    // 8️⃣ Hydrogen server loader env variables
-    if (debugEnv) {
-      console.group('HYDROGEN LOADER CONTEXT.ENV VARIABLES');
-      console.table(debugEnv);
-      console.groupEnd();
-    } else {
-      console.log('debugEnv not passed. Loader context unavailable in client-only render.');
-    }
-
     console.groupEnd();
   }, []);
 
   return null; // purely logging
 };
 
+// Shopify-native env resolution with Vite dev support
+const DEFAULT_CONTACT_PAGE_URL="/contact";
+// const DEFAULT_CONTACT_PAGE_URL="https://devcontact.buyflorabella.com";
+const CONTACT_PAGE_URL =
+  import.meta.env.PUBLIC_CONTACT_PAGE_URL ??
+  import.meta.env.VITE_CONTACT_PAGE_URL ??
+  DEFAULT_CONTACT_PAGE_URL;
+
+console.log('CONTACT_PAGE_URL =', CONTACT_PAGE_URL);
+
+
+// helper: detect absolute URLs
+const isExternalUrl = (url: string): boolean => {
+    console.log("isExternalUrl(" + url + ")");
+
+    return /^https?:\/\//i.test(url);
+};
 
 
 export default function Header() {
@@ -149,11 +114,18 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount, openCart } = useCart();
 
-  // DxB
-  const { storeLocked, message1, message2, message3 } = useEnv();
+  // 1. Get the data from the root loader
+  const rootData = useRouteLoaderData<RootLoader>('root');
 
-  console.log("storeLocked="+storeLocked);
-  console.log("message1="+message1);
+  console.log('SERVER rootData (from loader):', rootData);
+
+  // 2. Safely extract variables with defaults
+  // Explicitly check for the string "true"
+  // This ensures that "false" (string) doesn't trigger the locked state.
+  const storeLocked = rootData?.env?.storeLocked === "true";
+  const message1 = rootData?.env?.message1 ?? '';
+  const message2 = rootData?.env?.message2 ?? '';
+  const message3 = rootData?.env?.message3 ?? '';  
   
   useEffect(() => {
     const handleScroll = () => {
@@ -194,15 +166,17 @@ export default function Header() {
     setSearchQuery('');
   };
 
+  // 3. Conditional Return for Locked State
   if (storeLocked) {
     return (
-      <header className="locked-header">
-        <p>{message1}</p>
-        <p>{message2}</p>
-        <p>{message3}</p>
+      <header className="locked-header p-4 text-center bg-gray-100 border-b">
+        <p className="font-bold">{message1}</p>
+        <p className="text-sm">{message2}</p>
+        <p className="text-xs italic">{message3}</p>
       </header>
     );
   }  
+
 
   return (
     <>

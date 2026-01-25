@@ -40,7 +40,7 @@ export const EnvProvider = ({
   // FIX: Transform the raw string "true"/"false" into a real boolean
   // and map the raw keys to your clean EnvValues interface.
   const mappedValues: EnvValues = {
-    storeLocked: env?.PUBLIC_STORE_LOCKED === "true",
+    storeLocked: env?.PUBLIC_STORE_LOCKED,
     message1: env?.PUBLIC_STORE_MESSAGE1 ?? "",
     message2: env?.PUBLIC_STORE_MESSAGE2 ?? "",
     message3: env?.PUBLIC_STORE_MESSAGE3 ?? "",
