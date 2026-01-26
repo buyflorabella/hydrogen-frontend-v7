@@ -3,6 +3,7 @@ import { CartForm } from '@shopify/hydrogen';
 import { useState } from 'react';
 import { Star, ShoppingCart } from 'lucide-react';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
+import { useCart } from '~/componentsMockup2/contexts/CartContext';
 
 interface ShopifyImage {
   url: string;
@@ -55,6 +56,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 export default function ShopPage() {
   const { products, collections } = useLoaderData<typeof loader>();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { openCart } = useCart();
 
   const filteredProducts = selectedCategory === 'all'
     ? products
@@ -191,12 +193,14 @@ export default function ShopPage() {
                                       {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
                                     </span>
                                   </button>
-                                  <Link
-                                    to="/checkout"
+                                  <button
+                                    type="submit"
+                                    onClick={openCart}
+                                    disabled={!product.availableForSale || fetcher.state !== 'idle'}
                                     className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
                                     >
-                                    <span className="relative z-10">Buy Now</span>
-                                  </Link>
+                                      <span className="relative z-10">Buy Now</span>
+                                  </button>
                                 </div>
                                 <br />
                                 <Link
