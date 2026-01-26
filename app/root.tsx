@@ -112,7 +112,12 @@ export async function loader(args: Route.LoaderArgs) {
   const passwordValue = await session.get('passwordAllowed');
   const passwordAllowed = passwordValue === true;
   const storeLocked = env.PUBLIC_STORE_LOCKED === 'true';
+  const storePassword = env.PUBLIC_STORE_PASSWORD || "012526";
   const adminBypass = env.PUBLIC_ADMIN_BYPASS_PASSWORD_ENABLED === 'true';
+  const contactPageUrl = env.PUBLIC_CONTACT_PAGE_URL || "/contact";
+  const shopPageUrl = env.PUBLIC_SHOP_PAGE_URL || "/shop";
+  const whatsAppEnabled = env.PUBLIC_WHATSAPP_ENABLED || false;
+  const siteSurveyEnabled = env.PUBLIC_SITE_SURVEY_ENABLED || false;
 
   console.log("[DxB][loader] storeLocked =", storeLocked);
   console.log("[DxB][loader] adminBypass =", adminBypass);
@@ -134,7 +139,10 @@ export async function loader(args: Route.LoaderArgs) {
   } else {
     console.log("[DxB][loader]2 storeLocked =", storeLocked);
     console.log("[DxB][loader]2 adminBypass =", adminBypass);
-    console.log("[DxB][loader]2 passwordAllowed =", passwordAllowed);      
+    // This variable is "IF" the user has bypassed the password page by entering a password
+    console.log("[DxB][loader]2 passwordAllowed =", passwordAllowed);
+    console.log("[DxB][loader]2 contactPageUrl =", contactPageUrl);      
+    console.log("[DxB][loader]2 shopPageUrl =", shopPageUrl);      
     console.log("[DxB][loader]2 pathname =", url.pathname);
     console.log("[DxB][loader] NO REDIRECT - continuing to render root");
   }
@@ -149,9 +157,11 @@ export async function loader(args: Route.LoaderArgs) {
       //storeLocked: env.PUBLIC_STORE_LOCKED === "true",
       storeLocked,
       adminBypassPasswordEnabled: adminBypass,
-      storePassword: env.PUBLIC_STORE_PASSWORD || "ballz",
-      contactPageUrl: env.PUBLIC_CONTACT_PAGE_URL || "/contact",
-      shopPageUrl: env.PUBLIC_SHOP_PAGE_URL || "/shop",      
+      storePassword: storePassword,
+      contactPageUrl: contactPageUrl,
+      shopPageUrl: shopPageUrl,
+      whatsAppEnabled: whatsAppEnabled,
+      siteSurveyEnabled: siteSurveyEnabled,
       message1: env.PUBLIC_STORE_MESSAGE1 || "",
       message2: env.PUBLIC_STORE_MESSAGE2 || "",
       message3: env.PUBLIC_STORE_MESSAGE3 || "",

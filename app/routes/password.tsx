@@ -109,6 +109,7 @@ export default function PasswordPage() {
   const [showPassword, setShowPassword] = useState(false);  
   const [errorVisible, setErrorVisible] = useState(false);  
   const navigate = useNavigate();
+  const storePassword = loaderData?.env?.storePassword || "unset";
 
   const canEnterStore = isLoggedIn === true;
   const handleSubmit = (e: React.FormEvent) => {
@@ -181,7 +182,7 @@ export default function PasswordPage() {
           {!isLoggedIn && (
             <>
               <p className="text-green-700 font-bold text-center text-sm">
-                Enter password below:
+                Enter password below '{storePassword}':
               </p>
 
               <div className="relative">
