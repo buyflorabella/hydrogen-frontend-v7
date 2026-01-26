@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { useLoaderData, Link, type LoaderFunctionArgs } from 'react-router';
 import { CartForm } from '@shopify/hydrogen';
 import { 
-  // Star, 
+  Star, 
   ShoppingCart, 
   Share2, 
   Heart, 
   Check, 
   Truck, 
   RefreshCw, 
-  Shield, 
+  Shield,
+  Package,
+  ChevronUp,
+  ChevronDown, 
   // ThumbsUp 
 } from 'lucide-react';
 
@@ -18,6 +21,7 @@ import { useWishlist } from '../componentsMockup2/contexts/WishlistContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import DiscountBox from '../componentsMockup2/components/DiscountBox';
+import { products, faqs } from '~/componentsMockup2/data/staticData';
 
 const PRODUCT_QUERY = `#graphql
   query Product($handle: String!) {
@@ -53,12 +57,49 @@ const PRODUCT_QUERY = `#graphql
           }
         }
       }
-      # Example of how to pull custom data via Metafields
-      ingredients: metafield(namespace: "custom", key: "ingredients") {
-        value
+      collections(first: 1) {
+        nodes {
+          id
+          handle
+          title
+        }
       }
-      benefits: metafield(namespace: "custom", key: "benefits") {
-        value
+    }
+  }
+`;
+
+const RELATED_PRODUCTS_QUERY = `#graphql
+  query RelatedProducts($handle: String!) {
+    collection(handle: $handle) {
+      id
+      title
+      products(first: 3) {
+        nodes {
+          title
+          handle
+          description
+          featuredImage {
+            url
+            altText
+            width
+            height
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          variants(first: 1) {
+            nodes {
+              id
+              availableForSale
+              price {
+                amount
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -79,16 +120,27 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
     throw new Response('Product Not Found', { status: 404 });
   }
 
-  return { product };
+  const { collection } = await storefront.query(RELATED_PRODUCTS_QUERY, {
+    variables: {
+      handle: product.collections.nodes[0].handle
+    },
+  });
+
+  return { product, related: collection.products.nodes };
 }
 
 export default function ProductDetailPage() {
-  const { product } = useLoaderData<typeof loader>();
+  const { product, related } = useLoaderData<typeof loader>();
+  const item = products.at(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'overview' | 'ingredients'>('overview');
+  const [purchaseType, setPurchaseType] = useState('one-time');
+  const [subscriptionFrequency, setSubscriptionFrequency] = useState();
+  const [activeTab, setActiveTab] = useState<'overview' | 'ingredients' | 'how-to' | 'technical' | 'faq'>('overview');
   
   const { openCart } = useCart();
+  const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
+
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { flags } = useFeatureFlags();
 
@@ -98,8 +150,8 @@ export default function ProductDetailPage() {
   const compareAtPrice = variant.compareAtPrice ? parseFloat(variant.compareAtPrice.amount) : null;
   
   // Parse metafields if they exist
-  const benefitsList = product.benefits ? JSON.parse(product.benefits.value) : [];
-  const ingredientsData = product.ingredients ? JSON.parse(product.ingredients.value) : [];
+  // const benefitsList = product.benefits ? JSON.parse(product.benefits.value) : [];
+  // const ingredientsData = product.ingredients ? JSON.parse(product.ingredients.value) : [];
 
   const handleToggleWishlist = () => {
     toggleWishlist({
@@ -110,6 +162,9 @@ export default function ProductDetailPage() {
       image: images[0]?.url,
     });
   };
+
+  const finalPrice = price * quantity;
+  const isBundle = false;
 
   return (
     <>
@@ -148,12 +203,21 @@ export default function ProductDetailPage() {
               )}
             </div>
 
+
             <div>
+              <div className="inline-block bg-[#7cb342] text-white px-4 py-1 rounded-full text-sm font-bold">
+                Best Seller
+              </div>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 {product.title}
               </h1>
+
+              <p className="text-xl text-white/70 mb-6">
+                {product.description.substr(0, 160)}
+                {product.description.length > 160 ? '...' : ''}
+              </p>
               
-              {/* <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
@@ -165,7 +229,7 @@ export default function ProductDetailPage() {
                   </div>
                   <span className="text-white/70">5.0 (Review Sync via App)</span>
                 </div>
-              </div> */}
+              </div>
 
               <div className="flex items-baseline gap-4 mb-8">
                 <span className="text-5xl font-bold text-white">
@@ -175,6 +239,65 @@ export default function ProductDetailPage() {
                   <span className="text-2xl text-white/40 line-through">
                     ${compareAtPrice.toFixed(2)}
                   </span>
+                )}
+              </div>
+
+              <div className="mb-6 space-y-3">
+                <label className="block text-white font-semibold mb-2">Purchase Options:</label>
+                <button
+                  onClick={() => setPurchaseType('one-time')}
+                  className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                    purchaseType === 'one-time'
+                      ? 'border-[#7cb342] bg-[#7cb342]/10'
+                      : 'border-white/20 hover:border-white/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-white font-semibold">One-time Purchase</div>
+                      <div className="text-white/70">${price}</div>
+                    </div>
+                    {purchaseType === 'one-time' && (
+                      <Check className="w-6 h-6 text-[#7cb342]" />
+                    )}
+                  </div>
+                </button>
+                <button
+                  onClick={() => setPurchaseType('subscription')}
+                  className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                    purchaseType === 'subscription'
+                      ? 'border-[#7cb342] bg-[#7cb342]/10'
+                      : 'border-white/20 hover:border-white/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-semibold">Subscribe & Save</span>
+                        <span className="bg-[#7cb342] text-white text-xs px-2 py-0.5 rounded-full">
+                          {(product as any).subscription_discount}% OFF
+                        </span>
+                      </div>
+                      <div className="text-white/70">${finalPrice.toFixed(2)} per delivery</div>
+                    </div>
+                    {purchaseType === 'subscription' && (
+                      <Check className="w-6 h-6 text-[#7cb342]" />
+                    )}
+                  </div>
+                </button>
+                {purchaseType === 'subscription' && (
+                  <div className="mt-3">
+                    <label className="block text-white/70 text-sm mb-2">Delivery Frequency:</label>
+                    <select
+                      value={subscriptionFrequency}
+                      onChange={(e) => setSubscriptionFrequency(e.target.value)}
+                      className="w-full p-3 glass border border-white/20 rounded-xl text-white bg-transparent"
+                    >
+                      <option value="30" className="bg-[#1a1a2e]">Every 30 days</option>
+                      <option value="60" className="bg-[#1a1a2e]">Every 60 days</option>
+                      <option value="90" className="bg-[#1a1a2e]">Every 90 days</option>
+                    </select>
+                  </div>
                 )}
               </div>
 
@@ -219,19 +342,19 @@ export default function ProductDetailPage() {
                         <ShoppingCart className="w-6 h-6" />
                         {variant.availableForSale ? 'Add to Cart' : 'Out of Stock'}
                       </button>
-                    {/* {flags.wishlistIcon && (
-                        <button
-                          onClick={handleToggleWishlist}
-                          className={`px-6 py-4 glass border rounded-xl transition-all ${
-                            isInWishlist(product.id) ? 'border-[#7cb342] bg-[#7cb342]/10' : 'border-white/20 hover:bg-white/10'
-                          }`}
-                        >
-                          <Heart className={`w-6 h-6 ${isInWishlist(product.id) ? 'fill-[#7cb342] text-[#7cb342]' : 'text-white'}`} />
+                      {flags.wishlistIcon && (
+                          <button
+                            onClick={handleToggleWishlist}
+                            className={`px-6 py-4 glass border rounded-xl transition-all ${
+                              isInWishlist(product.id) ? 'border-[#7cb342] bg-[#7cb342]/10' : 'border-white/20 hover:bg-white/10'
+                            }`}
+                          >
+                            <Heart className={`w-6 h-6 ${isInWishlist(product.id) ? 'fill-[#7cb342] text-[#7cb342]' : 'text-white'}`} />
+                          </button>
+                        )}
+                        <button className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all">
+                          <Share2 className="w-6 h-6" />
                         </button>
-                      )} */}
-                      {/* <button className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all">
-                        <Share2 className="w-6 h-6" />
-                      </button> */}
                     </div>
                   )}
                 </CartForm>
@@ -257,57 +380,59 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="mb-16">
-            <div className="flex gap-4 mb-8 border-b border-white/10 overflow-x-auto">
+          <div className="flex gap-4 mb-8 border-b border-white/10 overflow-x-auto">
+            {['overview', 'ingredients', 'how-to', 'technical', 'faq'].map((tab) => (
               <button
-                onClick={() => setActiveTab('overview')}
+                key={tab}
+                onClick={() => setActiveTab(tab as any)}
                 className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${
-                  activeTab === 'overview' ? 'text-[#7cb342] border-b-2 border-[#7cb342]' : 'text-white/50 hover:text-white'
+                  activeTab === tab
+                    ? 'text-[#7cb342] border-b-2 border-[#7cb342]'
+                    : 'text-white/50 hover:text-white'
                 }`}
               >
-                Overview
+                {tab === 'overview' && 'Overview'}
+                {tab === 'ingredients' && "What's Inside"}
+                {tab === 'how-to' && 'How to Use'}
+                {tab === 'technical' && 'Technical'}
+                {tab === 'faq' && 'FAQ'}
               </button>
-              {ingredientsData.length > 0 && (
-                <button
-                  onClick={() => setActiveTab('ingredients')}
-                  className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${
-                    activeTab === 'ingredients' ? 'text-[#7cb342] border-b-2 border-[#7cb342]' : 'text-white/50 hover:text-white'
-                  }`}
-                >
-                  What's Inside
-                </button>
-              )}
-            </div>
+            ))}
+          </div>
 
-            <div className="glass border border-white/10 rounded-2xl p-8">
-              {activeTab === 'overview' && (
-                <div>
-                  <h2 className="text-3xl font-bold text-white mb-6">Product Overview</h2>
-                  <div 
-                    className="text-white/70 text-lg leading-relaxed mb-8 prose prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-                  />
-                  {benefitsList.length > 0 && (
-                    <div>
-                      <h3 className="text-2xl font-bold text-white mb-4">Key Benefits</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        {benefitsList.map((benefit: string, idx: number) => (
-                          <div key={idx} className="flex items-start gap-3">
-                            <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
-                            <span className="text-white/80">{benefit}</span>
-                          </div>
-                        ))}
-                      </div>
+          <div className="glass border border-white/10 rounded-2xl p-8">
+            {activeTab === 'overview' && (
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-6">{isBundle ? 'Bundle' : 'Product'} Overview</h2>
+                <p className="text-white/70 text-lg leading-relaxed mb-8">
+                  {product.description}
+                </p>
+                {(item as any).benefits && (item as any).benefits.length > 0 && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Key Benefits</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {(item as any).benefits.map((benefit: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+                          <span className="text-white/80">{benefit}</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
+            )}
 
-              {activeTab === 'ingredients' && (
-                <div>
-                  <h2 className="text-3xl font-bold text-white mb-6">What's Inside</h2>
+            {!isBundle && activeTab === 'ingredients' && (
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-6">{"What's Inside"}</h2>
+                {(item as any).ingredients && (item as any).ingredients.length > 0 && (
                   <div className="space-y-4">
-                    {ingredientsData.map((ingredient: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-4 glass rounded-xl border border-white/10">
+                    {(item as any).ingredients.map((ingredient: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-4 glass rounded-xl border border-white/10"
+                      >
                         <div>
                           <div className="text-white font-semibold">{ingredient.name}</div>
                           <div className="text-white/50 text-sm">{ingredient.amount}</div>
@@ -316,10 +441,138 @@ export default function ProductDetailPage() {
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+            )}
+
+            {!isBundle && activeTab === 'how-to' && (
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-6">How to Use</h2>
+                <p className="text-white/70 text-lg leading-relaxed">
+                  {(item as any).how_to_use}
+                </p>
+              </div>
+            )}
+
+            {!isBundle && activeTab === 'technical' && (
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-6">Technical Information</h2>
+
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Formulation Overview</h3>
+                    <div className="space-y-4">
+                      <div className="p-4 glass rounded-xl border border-white/10">
+                        <div className="flex items-start gap-3">
+                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+                          <div>
+                            <span className="text-white font-semibold">Broad-spectrum trace minerals</span>
+                            <p className="text-white/60 text-sm mt-1">Complete mineral profile for optimal plant nutrition</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 glass rounded-xl border border-white/10">
+                        <div className="flex items-start gap-3">
+                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+                          <div>
+                            <span className="text-white font-semibold">Naturally occurring humic and fulvic compounds</span>
+                            <p className="text-white/60 text-sm mt-1">Enhances nutrient uptake and soil biology</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 glass rounded-xl border border-white/10">
+                        <div className="flex items-start gap-3">
+                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+                          <div>
+                            <span className="text-white font-semibold">Supports micronutrient availability</span>
+                            <p className="text-white/60 text-sm mt-1">Chelated minerals for maximum plant absorption</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 glass rounded-xl border border-white/10">
+                        <div className="flex items-start gap-3">
+                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+                          <div>
+                            <span className="text-white font-semibold">Compatible with soil, coco, and compost systems</span>
+                            <p className="text-white/60 text-sm mt-1">Versatile application across growing media</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Application Guidance</h3>
+                    <div className="bg-[#7cb342]/10 border border-[#7cb342]/30 rounded-xl p-6">
+                      <p className="text-white/80 leading-relaxed mb-4">
+                        For detailed application rates, guaranteed analysis, and commercial use information, please refer to our comprehensive technical documentation.
+                      </p>
+                      <Link
+                        to="/technical-docs"
+                        className="inline-flex items-center gap-2 text-[#7cb342] font-semibold hover:gap-4 transition-all"
+                      >
+                        View Technical Documentation →
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Safety & Handling</h3>
+                    <ul className="space-y-2 text-white/70">
+                      <li className="flex items-start gap-2">
+                        <span className="text-[#7cb342] mt-1">•</span>
+                        <span>Store in a cool, dry place away from direct sunlight</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[#7cb342] mt-1">•</span>
+                        <span>Keep out of reach of children and pets</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[#7cb342] mt-1">•</span>
+                        <span>Use appropriate protective equipment when handling</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-[#7cb342] mt-1">•</span>
+                        <span>Follow all label instructions and local regulations</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            {!isBundle && activeTab === 'faq' && (
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-6">Frequently Asked Questions</h2>
+                <div className="space-y-4">
+                  {faqs.map((faq) => (
+                    <div
+                      key={faq.id}
+                      className="glass border border-white/10 rounded-xl overflow-hidden"
+                    >
+                      <button
+                        onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
+                        className="w-full p-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                      >
+                        <span className="text-white font-semibold pr-4">{faq.question}</span>
+                        {expandedFAQ === faq.id ? (
+                          <ChevronUp className="w-5 h-5 text-[#7cb342] flex-shrink-0" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-white/50 flex-shrink-0" />
+                        )}
+                      </button>
+                      {expandedFAQ === faq.id && (
+                        <div className="px-6 pb-6 text-white/70 leading-relaxed">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+        </div>
 
           <div className="mb-16">
             <DiscountBox
@@ -329,6 +582,32 @@ export default function ProductDetailPage() {
               description="Get 15% off your first order of $50 or more. Use code at checkout."
             />
           </div>
+
+          {related.length > 0 && (
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-8">You May Also Like</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {related.map((relatedProduct) => (
+                <Link
+                  key={relatedProduct.id}
+                  to={`/product/${relatedProduct.handle}`}
+                  className="glass border border-white/10 rounded-2xl overflow-hidden hover:border-[#7cb342]/50 transition-all duration-300 hover:scale-105 group"
+                >
+                  <img
+                    src={relatedProduct.featuredImage.url}
+                    alt={relatedProduct.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2">{relatedProduct.title}</h3>
+                    <p className="text-white/70 mb-4 line-clamp-2">{relatedProduct.description}</p>
+                    <div className="text-2xl font-bold text-white">${relatedProduct.variants.nodes[0].price.amount}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </>

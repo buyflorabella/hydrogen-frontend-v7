@@ -353,83 +353,8 @@ export const SHOP_PRODUCTS_BY_COLLECTION_QUERY = `#graphql
               currencyCode
             }
           }
-
         }
       }
     }
   }
 `;
-
-
-const SHOP_PAGE_QUERY = `#graphql
-  query ShopPageData($firstProducts: Int!, $firstCollections: Int!) {
-    products(first: $firstProducts) {
-      nodes {
-        id
-        title
-        handle
-        description
-        availableForSale
-        productType
-        tags
-        variants(first: 1) {
-          nodes {
-            id
-          }
-        }
-        priceRange {
-          minVariantPrice {
-            amount
-            currencyCode
-          }
-        }
-        compareAtPriceRange {
-          maxVariantPrice {
-            amount
-            currencyCode
-          }
-        }
-        featuredImage {
-          url
-          altText
-        }
-      }
-    }
-    collections(first: $firstCollections) {
-      nodes {
-        id
-        title
-        handle
-      }
-    }
-  }
-`;
-
-
-{/*         
-        nodes {
-          id
-          title
-          handle
-          description
-          featuredImage {
-            url
-            altText
-            width
-            height
-          }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          compareAtPriceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-        }
-
-*/}
