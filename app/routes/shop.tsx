@@ -1,8 +1,8 @@
 import { useLoaderData, Link, type LoaderFunctionArgs } from 'react-router';
 import { CartForm } from '@shopify/hydrogen';
-import { useState } from 'react';
 import { Star, ShoppingCart } from 'lucide-react';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
+import { useCart } from '~/componentsMockup2/contexts/CartContext';
 
 interface ShopifyImage {
   url: string;
@@ -90,6 +90,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
 export default function ShopPage() {
   const { products, collections, activeCollection } = useLoaderData<typeof loader>();
+  const { openCart } = useCart();
   //const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   // const filteredProducts = selectedCategory === 'all'
@@ -204,7 +205,6 @@ export default function ShopPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex gap-3">
                         <CartForm
                           route="/cart"
                           action={CartForm.ACTIONS.LinesAdd}
@@ -219,33 +219,35 @@ export default function ShopPage() {
                         >
                             {(fetcher) => (
                               <>
-                                <button
-                                  type="submit"
-                                  disabled={!product.availableForSale || fetcher.state !== 'idle'}
-                                  className="w-full py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10"
-                                >
-                                  <span className="relative z-10 flex items-center justify-center gap-2">
-                                    <ShoppingCart className="w-5 h-5" />
-                                    {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
-                                  </span>
-                                </button>
+                                <div className="flex gap-3">
+                                  <button
+                                    type="submit"
+                                    disabled={!product.availableForSale || fetcher.state !== 'idle'}
+                                    className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10">
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                      <ShoppingCart className="w-5 h-5" />
+                                      {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
+                                    </span>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    onClick={openCart}
+                                    disabled={!product.availableForSale || fetcher.state !== 'idle'}
+                                    className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
+                                    >
+                                      <span className="relative z-10">Buy Now</span>
+                                  </button>
+                                </div>
+                                <br />
                                 <Link
-                                  to="/checkout"
-                                  // onClick={() => handleAddToCart(product)}
-                                  className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
+                                  to={`/product/${product.handle}`}
+                                  className="block w-full py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold text-center transition-all duration-300"
                                 >
-                                  <span className="relative z-10">Buy Now</span>
+                                  View Details
                                 </Link>
                               </>
                             )}
                         </CartForm>
-                      </div>
-                      <Link
-                        to={`/products/${product.handle}`}
-                        className="block w-full py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold text-center transition-all duration-300"
-                      >
-                        View Details
-                      </Link>
                     </div>
                   </div>
                 </div>
