@@ -3,7 +3,6 @@ import { CartForm } from '@shopify/hydrogen';
 import { useState } from 'react';
 import { Star, ShoppingCart } from 'lucide-react';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
-import { useCart } from '~/componentsMockup2/contexts/CartContext';
 
 interface ShopifyImage {
   url: string;
@@ -37,6 +36,41 @@ interface CollectionNode {
   handle: string;
 }
 
+export async function loader({ context, request }: LoaderFunctionArgs) {
+  const { storefront } = context;
+
+  // Read collection from URL
+  const url = new URL(request.url);
+  const collectionHandle = url.searchParams.get('collection');
+
+  // Choose the correct products query
+  const productsQuery = collectionHandle
+    ? storefront.query(SHOP_PRODUCTS_BY_COLLECTION_QUERY, {
+        variables: { handle: collectionHandle },
+      })
+    : storefront.query(SHOP_PRODUCTS_QUERY);
+
+  // Run queries in parallel
+  const [collectionsResult, productsResult] = await Promise.all([
+    storefront.query(SHOP_COLLECTIONS_QUERY),
+    productsQuery,
+  ]);
+
+  // Normalize data shapes
+  const collections = collectionsResult.collections?.nodes || [];
+
+  const products = collectionHandle
+    ? productsResult.collection?.products?.nodes || []
+    : productsResult.products?.nodes || [];
+
+  return {
+    collections,
+    products,
+    activeCollection: collectionHandle,
+  };
+}
+
+{/* 
 export async function loader({ context }: LoaderFunctionArgs) {
   const { storefront } = context;
 
@@ -52,18 +86,19 @@ export async function loader({ context }: LoaderFunctionArgs) {
     collections: collections.nodes,
   };
 }
+*/}
 
 export default function ShopPage() {
-  const { products, collections } = useLoaderData<typeof loader>();
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const { openCart } = useCart();
+  const { products, collections, activeCollection } = useLoaderData<typeof loader>();
+  //const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  const filteredProducts = selectedCategory === 'all'
-    ? products
-    : products.filter(p => 
-        p.productType.toLowerCase() === selectedCategory.toLowerCase() ||
-        p.tags.some(t => t.toLowerCase() === selectedCategory.toLowerCase())
-      );
+  // const filteredProducts = selectedCategory === 'all'
+  //   ? products
+  //   : products.filter(p => 
+  //       p.productType.toLowerCase() === selectedCategory.toLowerCase() ||
+  //       p.tags.some(t => t.toLowerCase() === selectedCategory.toLowerCase())
+  //     );
+  const filteredProducts = products;
 
   return (
     <>
@@ -81,28 +116,28 @@ export default function ShopPage() {
 
           {/* Category Selector */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <button
-              onClick={() => setSelectedCategory('all')}
+            <Link
+              to={`/shop`} 
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                selectedCategory === 'all'
+                !activeCollection === ''
                   ? 'bg-[#7cb342] text-white'
                   : 'glass border border-white/20 text-white hover:bg-white/10'
               }`}
             >
               All
-            </button>
+            </Link>
             {collections.map((collection: CollectionNode) => (
-              <button
+              <Link
                 key={collection.handle}
-                onClick={() => setSelectedCategory(collection.handle)}
+                to={`/shop?collection=${collection.handle}`}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  selectedCategory === collection.handle
+                  activeCollection === collection.handle
                     ? 'bg-[#7cb342] text-white'
                     : 'glass border border-white/20 text-white hover:bg-white/10'
                 }`}
               >
                 {collection.title}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -169,6 +204,7 @@ export default function ShopPage() {
                     </div>
 
                     <div className="space-y-3">
+                      <div className="flex gap-3">
                         <CartForm
                           route="/cart"
                           action={CartForm.ACTIONS.LinesAdd}
@@ -183,35 +219,33 @@ export default function ShopPage() {
                         >
                             {(fetcher) => (
                               <>
-                                <div className="flex gap-3">
-                                  <button
-                                    type="submit"
-                                    disabled={!product.availableForSale || fetcher.state !== 'idle'}
-                                    className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10">
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                      <ShoppingCart className="w-5 h-5" />
-                                      {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
-                                    </span>
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    onClick={openCart}
-                                    disabled={!product.availableForSale || fetcher.state !== 'idle'}
-                                    className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
-                                    >
-                                      <span className="relative z-10">Buy Now</span>
-                                  </button>
-                                </div>
-                                <br />
-                                <Link
-                                  to={`/product/${product.handle}`}
-                                  className="block w-full py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold text-center transition-all duration-300"
+                                <button
+                                  type="submit"
+                                  disabled={!product.availableForSale || fetcher.state !== 'idle'}
+                                  className="w-full py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10"
                                 >
-                                  View Details
+                                  <span className="relative z-10 flex items-center justify-center gap-2">
+                                    <ShoppingCart className="w-5 h-5" />
+                                    {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
+                                  </span>
+                                </button>
+                                <Link
+                                  to="/checkout"
+                                  // onClick={() => handleAddToCart(product)}
+                                  className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
+                                >
+                                  <span className="relative z-10">Buy Now</span>
                                 </Link>
                               </>
                             )}
                         </CartForm>
+                      </div>
+                      <Link
+                        to={`/products/${product.handle}`}
+                        className="block w-full py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold text-center transition-all duration-300"
+                      >
+                        View Details
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -229,6 +263,101 @@ export default function ShopPage() {
     </>
   );
 }
+
+export const SHOP_COLLECTIONS_QUERY = `#graphql
+  query ShopCollections {
+    collections(first: 20) {
+      nodes {
+        id
+        title
+        handle
+      }
+    }
+  }
+`;
+
+export const SHOP_PRODUCTS_QUERY = `#graphql
+  query ShopProducts {
+    products(first: 50) {
+      nodes {
+        id
+        title
+        handle
+        description
+        availableForSale
+        productType
+        tags
+        variants(first: 1) {
+          nodes {
+            id
+          }
+        }
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        compareAtPriceRange {
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        featuredImage {
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+  }
+`;
+
+
+export const SHOP_PRODUCTS_BY_COLLECTION_QUERY = `#graphql
+  query ShopProductsByCollection($handle: String!) {
+    collection(handle: $handle) {
+      products(first: 50) {
+        nodes {
+          id
+          title
+          handle
+          description
+          featuredImage {
+            url
+            altText
+            width
+            height
+          }
+          availableForSale
+          productType
+          tags
+          variants(first: 1) {
+            nodes {
+              id
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          compareAtPriceRange {
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+
+        }
+      }
+    }
+  }
+`;
+
 
 const SHOP_PAGE_QUERY = `#graphql
   query ShopPageData($firstProducts: Int!, $firstCollections: Int!) {
@@ -266,9 +395,39 @@ const SHOP_PAGE_QUERY = `#graphql
     }
     collections(first: $firstCollections) {
       nodes {
+        id
         title
         handle
       }
     }
   }
 `;
+
+
+{/*         
+        nodes {
+          id
+          title
+          handle
+          description
+          featuredImage {
+            url
+            altText
+            width
+            height
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          compareAtPriceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+        }
+
+*/}
