@@ -16,7 +16,7 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindStyles from '~/styles/tailwind.css?url';
-// import {PageLayout} from './components/PageLayout';
+import {PageLayout} from './components/PageLayout';
 // import { PageLayout } from './newComponents/PageLayout';
 // import { LandingPage } from './componentsMockup/Root'
 import Mockup2Root from './componentsMockup2/App';
@@ -291,13 +291,6 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      {/* <PageLayout {...data}>
-        <Outlet />
-      </PageLayout> */}
-      {/* <MockupLandingPage /> */}
-      {/* <PageLayout>
-        <Outlet />
-      </PageLayout> */}
       <Mockup2Root>
         <Outlet />
       </Mockup2Root>
