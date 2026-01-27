@@ -37,17 +37,14 @@ export default function SurveyPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [survey, setSurvey] = useState<Survey | null>(null);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [selectedSurvey, setSelectedSurvey] = useState<number | undefined>();
   const [surveyData, setSurveyData] = useState(initialSurveyState);
 
   const location = useLocation();
 
   useEffect(() => {
-    console.info(location);
     if (location) {
       const surveyForPage = surveyData[location.pathname];
-      console.info(surveyForPage);
       if (surveyForPage?.surveyId) {
         setSelectedSurvey(surveyForPage?.surveyId);
       } else {
@@ -93,12 +90,7 @@ export default function SurveyPopup() {
     return () => clearTimeout(timer);
   }, [features, loadSurvey, flags, selectedSurvey]);
 
-  console.info(surveyData);
-
   const submitResponse = async (answer: string, type: string) => {
-    if (hasSubmitted) return;
-    setHasSubmitted(true);
-
     try {
       await fetch(`${API_BASE}?action=submit_response`, {
         method: 'POST',
@@ -170,7 +162,6 @@ export default function SurveyPopup() {
                 <button
                   key={idx}
                   onClick={() => handleAnswer(answer)}
-                  disabled={hasSubmitted}
                   className="w-full px-6 py-3 bg-[#7cb342] hover:bg-[#689f38] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {answer}
