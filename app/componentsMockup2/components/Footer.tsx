@@ -52,17 +52,27 @@ export default function Footer() {
             <h4 className="font-bold heading-font text-white mb-6">Customer Care</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/shipping" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <Link to="/policies/privacy" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/policies/terms" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                  Terms & Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/policies/shipping" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Shipping Information
                 </Link>
               </li>
               <li>
-                <Link to="/returns" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <Link to="/policies/returns" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Returns & Exchanges
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <Link to="/policies/contact" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Contact Support
                 </Link>
               </li>
@@ -167,16 +177,16 @@ export default function Footer() {
             </div>
           </div>
           <div className="mt-4 flex flex-wrap justify-center gap-6 text-sm text-white/50">
-            <Link to="/privacy" className="hover:text-[#ff1493] transition-colors">
+            <Link to="/policies/privacy" className="hover:text-[#ff1493] transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="hover:text-[#ff1493] transition-colors">
+            <Link to="/policies/terms" className="hover:text-[#ff1493] transition-colors">
               Terms of Service
             </Link>
-            <Link to="/shipping" className="hover:text-[#ff1493] transition-colors">
+            <Link to="/policies/shipping" className="hover:text-[#ff1493] transition-colors">
               Shipping Policy
             </Link>
-            <Link to="/returns" className="hover:text-[#ff1493] transition-colors">
+            <Link to="/policies/returns" className="hover:text-[#ff1493] transition-colors">
               Returns & Refunds
             </Link>
             <Link to="/contact" className="hover:text-[#ff1493] transition-colors">

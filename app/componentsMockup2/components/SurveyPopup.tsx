@@ -45,7 +45,7 @@ export default function SurveyPopup() {
   useEffect(() => {
     if (location) {
       const surveyForPage = surveyData[location.pathname];
-      if (surveyForPage?.surveyId) {
+      if (surveyForPage?.surveyId && !surveyForPage?.answered) {
         setSelectedSurvey(surveyForPage?.surveyId);
       } else {
         setSelectedSurvey(undefined);
