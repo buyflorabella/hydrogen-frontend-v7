@@ -7,7 +7,7 @@ import {
   Links,
   Meta,
   Scripts,
-  // ScrollRestoration,
+  ScrollRestoration,
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
@@ -174,8 +174,6 @@ export async function loader(args: Route.LoaderArgs) {
   // 2. Console log the payload
   // This will show up in your Shopify Admin -> Hydrogen -> Storefront -> Logs
   //console.log("[DxB][loader] FINAL loader payload:", JSON.stringify(loaderPayload, null, 2));
-
-
   return loaderPayload;
 }
 
@@ -242,7 +240,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       </head>
       <body>
         {children}
-        {/* <ScrollRestoration nonce={nonce} /> */}
+        <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>
     </html>
@@ -270,7 +268,6 @@ export default function App() {
     }
   }, []);
 
-
   if (!data) {
     return <Outlet />;
   }
@@ -281,13 +278,6 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-      {/* <PageLayout {...data}>
-        <Outlet />
-      </PageLayout> */}
-      {/* <MockupLandingPage /> */}
-      {/* <PageLayout>
-        <Outlet />
-      </PageLayout> */}
       <Mockup2Root>
         <Outlet />
       </Mockup2Root>
