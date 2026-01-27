@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useFeatureFlags } from '../contexts/FeatureFlagsContext';
+import { useLocation, useRouteLoaderData } from 'react-router';
 
 interface Survey {
   title: string;
@@ -8,30 +9,27 @@ interface Survey {
   answers: string[];
 }
 
-export default function SurveyPopup() {
+const surveys = {
+  
+}
+
+export default function SurveyPopup({surveyId = 1}) {
+  const { features } = useRouteLoaderData('root');
   const { flags } = useFeatureFlags();
   const [isVisible, setIsVisible] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [survey, setSurvey] = useState<Survey | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [surveyId] = useState(1);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    
+  }, [location]);
 
   const API_BASE = 'https://survey-server.boardmansgame.com/api.php';
 
-  useEffect(() => {
-    if (!flags.surveyPopup) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-      loadSurvey();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [flags.surveyPopup]);
-
-  const loadSurvey = async () => {
+  const loadSurvey = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE}?action=get_survey&id=${surveyId}`);
       const data = await response.json();
@@ -47,7 +45,20 @@ export default function SurveyPopup() {
         answers: []
       });
     }
-  };
+  }, [surveyId]);
+
+  useEffect(() => {
+    if (!features.surveysEnabled && !flags.surveyPopup) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      loadSurvey();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [features, loadSurvey, flags]);
 
   const submitResponse = async (answer: string, type: string) => {
     if (hasSubmitted) return;
@@ -83,7 +94,7 @@ export default function SurveyPopup() {
     submitResponse(answer, 'answer');
   };
 
-  if (!flags.surveyPopup || !isVisible) return null;
+  if ((!features.surveysEnabled && !flags.surveyPopup) || !isVisible) return null;
 
   return (
     <div

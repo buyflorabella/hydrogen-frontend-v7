@@ -1,107 +1,9 @@
-// import {
-//   data as remixData,
-//   Form,
-//   NavLink,
-//   Outlet,
-//   useLoaderData,
-// } from 'react-router';
-// import type {Route} from './+types/account';
-// import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
-
-// export function shouldRevalidate() {
-//   return true;
-// }
-
-// export async function loader({context}: Route.LoaderArgs) {
-//   const {customerAccount} = context;
-//   const {data, errors} = await customerAccount.query(
-//     CUSTOMER_DETAILS_QUERY,
-//     {
-//       variables: {
-//         language: customerAccount.i18n.language,
-//       },
-//     },
-//   );
-
-//   if (errors?.length || !data?.customer) {
-//     throw new Error('Customer not found');
-//   }
-
-//   return remixData(
-//     {customer: data.customer},
-//     {
-//       headers: {
-//         'Cache-Control': 'no-cache, no-store, must-revalidate',
-//       },
-//     },
-//   );
-// }
-
-// export default function AccountLayout() {
-//   const {customer} = useLoaderData<typeof loader>();
-
-//   const heading = customer
-//     ? customer.firstName
-//       ? `Welcome, ${customer.firstName}`
-//       : `Welcome to your account.`
-//     : 'Account Details';
-
-//   return (
-//     <div className="account">
-//       <h1>{heading}</h1>
-//       <br />
-//       <AccountMenu />
-//       <br />
-//       <br />
-//       <Outlet context={{customer}} />
-//     </div>
-//   );
-// }
-
-// function AccountMenu() {
-//   function isActiveStyle({
-//     isActive,
-//     isPending,
-//   }: {
-//     isActive: boolean;
-//     isPending: boolean;
-//   }) {
-//     return {
-//       fontWeight: isActive ? 'bold' : undefined,
-//       color: isPending ? 'grey' : 'black',
-//     };
-//   }
-
-//   return (
-//     <nav role="navigation">
-//       <NavLink to="/account/orders" style={isActiveStyle}>
-//         Orders &nbsp;
-//       </NavLink>
-//       &nbsp;|&nbsp;
-//       <NavLink to="/account/profile" style={isActiveStyle}>
-//         &nbsp; Profile &nbsp;
-//       </NavLink>
-//       &nbsp;|&nbsp;
-//       <NavLink to="/account/addresses" style={isActiveStyle}>
-//         &nbsp; Addresses &nbsp;
-//       </NavLink>
-//       &nbsp;|&nbsp;
-//       <Logout />
-//     </nav>
-//   );
-// }
-
-// function Logout() {
-//   return (
-//     <Form className="account-logout" method="POST" action="/account/logout">
-//       &nbsp;<button type="submit">Sign out</button>
-//     </Form>
-//   );
-// }
-
 import { Package, MapPin, Settings, LogOut, Heart } from 'lucide-react';
 import { Link, useLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar'
+import { useCart } from '~/componentsMockup2/contexts/CartContext';
+import { CartForm } from '@shopify/hydrogen';
+import { useState } from 'react';
 
 
 const CUSTOMER_DETAILS_QUERY = `#graphql
@@ -134,7 +36,13 @@ const CUSTOMER_DETAILS_QUERY = `#graphql
           }
           lineItems(first: 1) {
             nodes {
+              image {
+                url
+              }
+              name
               title
+              variantId
+              quantity
             }
           }
         }
@@ -160,38 +68,92 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   return { customer: data.customer };
 }
 
-// {
-//     "firstName": "asd",
-//     "lastName": "asd",
-//     "emailAddress": {
-//         "emailAddress": "jmsm412@gmail.com"
-//     },
-//     "orders": {
-//         "nodes": [
-//             {
-//                 "id": "gid://shopify/Order/7065973522535",
-//                 "processedAt": "2026-01-27T02:21:12Z",
-//                 "financialStatus": "PAID",
-//                 "fulfillmentStatus": "UNFULFILLED",
-//                 "lineItems": {
-//                     "nodes": [
-//                         {
-//                             "title": "2lb Bag"
-//                         }
-//                     ]
-//                 }
-//             }
-//         ]
-//     }
-// }
+const OrderDetails = ({order}) => {
+  const [showDetails, setShowDetails] = useState<boolean>(false);
+  const { openCart } = useCart();
 
+  return <div key={order.id} className="glass border border-white/10 rounded-2xl p-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div>
+          <div className="flex items-center gap-4">
+            <h3 className="text-xl font-bold text-white">Order {order.id.split('/').at(-1)}</h3>
+            <span className="px-3 py-1 bg-[#7cb342]/20 text-[#7cb342] text-sm rounded-full font-semibold">
+              {order.fulfillmentStatus}
+            </span>
+          </div>
+          <p className="text-white/50 text-sm mt-1">{order.processedAt}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-white">{order.totalPrice.currencyCode}{order.totalPrice.amount}</div>
+          <p className="text-white/50 text-sm">{order.lineItems.nodes.length} items</p>
+        </div>
+      </div>
+      <div className="flex gap-3">
+        <button
+          onClick={() => setShowDetails(!showDetails)}
+          className="px-4 py-2 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-lg font-semibold transition-colors">
+          View Order
+        </button>
+        <CartForm
+          route="/cart"
+          action={CartForm.ACTIONS.LinesAdd}
+          inputs={{
+            lines: order.lineItems.nodes.map((item) => {
+              return {
+                merchandiseId: item.variantId,
+                quantity: item.quantity
+              }
+            })
+          }}
+        >
+          {(fetcher) => (
+            <button
+              type="submit"
+              disabled={fetcher.state !== 'idle'}
+              onClick={openCart}
+              className="px-4 py-2 border border-white/20 hover:bg-white/5 text-white rounded-lg font-semibold transition-colors">
+              Reorder
+            </button>
+          )}
+        </CartForm>
+      </div>
+      {!!showDetails && <div className="flex flex-col gap-4 mt-6 pt-6 border-t border-white/10">
+        <p className="text-white/50 text-xs uppercase tracking-wider font-semibold">Items in this order</p>
+        <div className="grid gap-4">
+          {order.lineItems.nodes.map((item, index) => (
+            <div key={`${item.variantId}-${index}`} className="flex items-center gap-4">
+              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-white/5 border border-white/10">
+                {item.image ? (
+                  <img
+                    src={item.image.url}
+                    alt={item.title}
+                    className="h-full w-full object-cover object-center"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-white/5">
+                    <Package className="w-6 h-6 text-white/20" />
+                  </div>
+                )}
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#7cb342] text-[10px] font-bold text-white shadow-lg">
+                  {item.quantity}
+                </span>
+              </div>
+              <div className="flex flex-1 flex-col">
+                <h4 className="text-sm font-medium text-white">{item.title}</h4>
+                <p className="text-xs text-white/50">{item.name !== item.title ? item.name : 'Standard'}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>}
+    </div>
+}
 
 export default function AccountPage() {
   const { customer } = useLoaderData<typeof loader>();
   const { firstName } = customer;
   const orders = customer.orders.nodes;
   const addresses = customer.addresses.nodes;
-  console.info(customer);
 
   return (
     <>
@@ -232,33 +194,7 @@ export default function AccountPage() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-6">Recent Orders</h2>
               <div className="space-y-4">
-                {orders.map((order) => (
-                  <div key={order.id} className="glass border border-white/10 rounded-2xl p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center gap-4">
-                          <h3 className="text-xl font-bold text-white">Order {order.id.split('/').at(-1)}</h3>
-                          <span className="px-3 py-1 bg-[#7cb342]/20 text-[#7cb342] text-sm rounded-full font-semibold">
-                            {order.fulfillmentStatus}
-                          </span>
-                        </div>
-                        <p className="text-white/50 text-sm mt-1">{order.processedAt}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-white">{order.totalPrice.currencyCode}{order.totalPrice.amount}</div>
-                        <p className="text-white/50 text-sm">{order.lineItems.nodes.length} items</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <button className="px-4 py-2 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-lg font-semibold transition-colors">
-                        View Order
-                      </button>
-                      <button className="px-4 py-2 border border-white/20 hover:bg-white/5 text-white rounded-lg font-semibold transition-colors">
-                        Reorder
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                {orders.map((order) => <OrderDetails key={order.id} order={order} />)}
               </div>
             </div>
 

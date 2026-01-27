@@ -1,28 +1,7 @@
-import { Form, useActionData, useRouteLoaderData, useLoaderData, redirect, useNavigate } from 'react-router';
-//import { createCookieSessionStorage } from '@shopify/remix-oxygen';
-import type { ActionFunction, LoaderFunctionArgs, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import '../styles/password.css'; // Custom CSS for sparkles/fireworks
-
-// NOTE: This storage config should ideally match the one used in root.tsx
-// Many devs move this to a 'app/lib/session.server.ts' to keep it DRY.
-// const sessionSecret = process.env.SESSION_SECRET || 'super-secret';
-// const storage = createCookieSessionStorage({
-//   cookie: {
-//     name: 'password-session',
-//     secure: true,
-//     secrets: [sessionSecret],
-//     sameSite: 'lax',
-//     path: '/',
-//     httpOnly: true,
-//     maxAge: 5 * 60, // 5 minutes in seconds    
-//   },
-// });
-
-
-type Props = {
-  canEnterStore: boolean;
-};
+import { Form, useActionData, useRouteLoaderData, useLoaderData, redirect, useNavigate, Link } from 'react-router';
+import type { ActionFunction, LoaderFunctionArgs } from 'react-router';
+import { useState, useEffect, useCallback } from 'react';
+import '../styles/password.css';
 
 export function EnterStoreButton({ canEnterStore }: Props) {
   if (canEnterStore) {
@@ -40,14 +19,12 @@ export function EnterStoreButton({ canEnterStore }: Props) {
   );
 }
 
-// ---------------------- LOADER ----------------------
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const { session } = context;
   const isLoggedIn = (await session.get('passwordAllowed')) === true;
   return { isLoggedIn };
 }
 
-// ---------------------- ACTION ----------------------
 export const action: ActionFunction = async ({ request, context }) => {
   const { session, env } = context;  
   const formData = await request.formData();
@@ -55,13 +32,8 @@ export const action: ActionFunction = async ({ request, context }) => {
   const passwordAttempt = formData.get('password') as string;
   const correctPassword = env.PUBLIC_STORE_PASSWORD;
 
-  //const session = await storage.getSession(request.headers.get('Cookie'));
-  // Handle Logout
   if (_action === 'logout') {
-    console.log("---------------------- USER IS LOGGING OUT !!!!!!!!!!!!!!!!!");
     session.unset('passwordAllowed');
-
-    // 2. IMPORTANT: We must commit the session to generate the 'Set-Cookie' header
     const cookie = await session.commit();
 
     return redirect('/', {
@@ -69,15 +41,11 @@ export const action: ActionFunction = async ({ request, context }) => {
         'Set-Cookie': cookie,
       },
     });
-  } else {
-    console.log("---------- NOT logging out ------");
   }
 
 
   if (passwordAttempt === correctPassword) {
     session.set('passwordAllowed', true);
-
-    // Redirect back to home with the newly set cookie
     return redirect('/', {
       headers: {
         'Set-Cookie': await session.commit(),
@@ -85,90 +53,194 @@ export const action: ActionFunction = async ({ request, context }) => {
     });
   }
 
-  // Logout action (if triggered)
-  // if (formData.get('_action') === 'logout') {
-  //   console.log("[DxB]User is logging out!");
-
-  //   session.unset('passwordAllowed');
-  //   return redirect('/password', {
-  //     headers: { 'Set-Cookie': await storage.commitSession(session) },
-  //   });
-  // }  
-
   return { error: 'Incorrect password, try again.' };
 };
 
-// ---------------------- COMPONENT ----------------------
+const CountdownTimer = ({
+  endDate,
+  endTime,
+  period,
+  digitsFontSize = 'heading-x-large',
+  textFontSize = 'body-small',
+  endMessage = '',
+  hideOnComplete = false,
+  animationOrder = 1,
+  animationAnchor = ''
+}) => {
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [isExpired, setIsExpired] = useState(false);
+
+  const parseExpirationDate = useCallback(() => {
+    const [hoursStr, minutesStr] = endTime.split(':');
+    let hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+
+    if (period.toLowerCase() === 'am') {
+      if (hours === 12) hours = 0;
+    } else if (period.toLowerCase() === 'pm') {
+      if (hours !== 12) hours += 12;
+    }
+
+    const expiry = new Date(endDate);
+    expiry.setHours(hours, minutes, 0, 0);
+    return expiry.getTime();
+  }, [endTime, endDate, period]);
+
+  useEffect(() => {
+    const targetTime = parseExpirationDate();
+
+    const calculateTime = () => {
+      const now = new Date().getTime();
+      const difference = targetTime - now;
+
+      if (difference <= 0) {
+        setIsExpired(true);
+        return { days: '00', hours: '00', minutes: '00', seconds: '00' };
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      const format = (num) => String(num).padStart(2, '0');
+
+      return {
+        days: format(days),
+        hours: format(hours),
+        minutes: format(minutes),
+        seconds: format(seconds)
+      };
+    };
+
+    setTimeLeft(calculateTime());
+    const timer = setInterval(() => setTimeLeft(calculateTime()), 1000);
+    return () => clearInterval(timer);
+  }, [parseExpirationDate]);
+
+  if (hideOnComplete && isExpired) return null;
+  if (!timeLeft) return null;
+
+  const showAnimations = !!animationAnchor;
+  const finalAnchor = animationAnchor || `Countdown--timer`;
+
+  const renderUnit = (value, label, orderOffset) => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#ffffff',
+        border: '1px solid #e0e0e0',
+        borderRadius: '12px',
+        padding: '10px 5px',
+        flex: '1',
+        minWidth: '65px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+      }}
+      {...(showAnimations && {
+        'data-aos': 'hero',
+        'data-aos-anchor': finalAnchor,
+        'data-aos-order': animationOrder + orderOffset
+      })}
+    >
+      <strong 
+        style={{ 
+          display: 'block',
+          fontSize: `var(--font-${digitsFontSize}, 2rem)`, 
+          lineHeight: '1',
+          marginBottom: '4px',
+          color: '#1a1a1a'
+        }}
+      >
+        {value}
+      </strong>
+      <small 
+        style={{ 
+          fontSize: `var(--font-${textFontSize}, 0.75rem)`,
+          textTransform: 'uppercase',
+          color: '#757575',
+          fontWeight: '600',
+          letterSpacing: '0.5px'
+        }}
+      >
+        {label}
+      </small>
+    </div>
+  );
+
+  return (
+    <div style={{ width: '100%', margin: '20px 0' }}>
+      {!isExpired ? (
+        <time style={{ display: 'flex', gap: '8px', width: '100%' }}>
+          {renderUnit(timeLeft.days, 'Days', 1)}
+          {renderUnit(timeLeft.hours, 'Hours', 2)}
+          {renderUnit(timeLeft.minutes, 'Mins', 3)}
+          {renderUnit(timeLeft.seconds, 'Secs', 4)}
+        </time>
+      ) : (
+        !hideOnComplete && endMessage && (
+          <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{endMessage}</div>
+        )
+      )}
+    </div>
+  );
+};
+
 export default function PasswordPage() {
-  const loaderData = useRouteLoaderData<RootLoader>('root');  
+  const loaderData = useRouteLoaderData('root');  
   const { isLoggedIn } = useLoaderData<typeof loader>();  
   const actionData = useActionData<{ error?: string }>();
-  //const storePassword = loaderData?.env?.storePassword ?? 'UNKNOWN';  
-  const [fireworksEnabled, setFireworksEnabled] = useState(false); 
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);  
   const [errorVisible, setErrorVisible] = useState(false);  
   const navigate = useNavigate();
-  const storePassword = loaderData?.env?.storePassword || "unset";
 
   const canEnterStore = isLoggedIn === true;
+  
   const handleSubmit = (e: React.FormEvent) => {
     if (canEnterStore) {
       e.preventDefault();
       navigate('/');
-      return;
     }
   }
 
-  // Trigger mounting once the component is ready in the browser
   useEffect(() => {
     setMounted(true);
   }, []);  
 
   useEffect(() => {
     if (actionData?.error) {
-      setErrorVisible(true); // show
-      const timeout = setTimeout(() => {
-        setErrorVisible(false); // hide after 5s
-      }, 5000);
+      setErrorVisible(true);
+      const timeout = setTimeout(() => setErrorVisible(false), 5000);
       return () => clearTimeout(timeout);
     }
   }, [actionData?.error]);  
 
-  // Simple sparkles trigger
-  // useEffect(() => {
-  //   const interval = setInterval(() => setFireworksEnabled(prev => !prev), 500);
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  //const debugPassword = storePassword || '⚠️ Not set';
-  //const debugPassword = "storePassword" || '⚠️ Not set';
-
   return (
     <div className="password-page min-h-screen flex flex-col items-center justify-center bg-[#1a1a1a] p-6">
-      {/* Static background */}
       <div className="fireworks-background"></div>
 
-      {/* Dialog */}
       <div className="relative z-10 w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
         
-        {/* Orbiting flowers */}
-        {/* The Orbit Container */}
-        <div 
-          className={`flower-orbit transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}
-        >
+        <div className={`flower-orbit transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
           {[...Array(8)].map((_, i) => (
-            <div key={i} className={`flower flower-${i + 1}`}>
-              🌸
-            </div>
+            <div key={i} className={`flower flower-${i + 1}`}>🌸</div>
           ))}
         </div>
 
-        {/* Status */}
+        <CountdownTimer
+          endDate='01/31/2026'
+          endTime='00:00'
+          period='am'
+          digitsFontSize='heading-large'
+        />
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {isLoggedIn ? 'Access Granted' : 'Store Locked'}
           </h1>
+
 
           <div className={`mt-3 p-3 rounded-xl border ${isLoggedIn ? 'bg-green-50 border-green-100' : 'bg-yellow-50 border-yellow-100'}`}>
             <p className={`${isLoggedIn ? 'text-green-700' : 'text-yellow-700'} font-semibold text-sm`}>
@@ -177,7 +249,6 @@ export default function PasswordPage() {
           </div>
         </div>
 
-        {/* --- MAIN FORM --- */}
         <Form method="post" className="flex flex-col gap-4" onSubmit={handleSubmit}>
           {!isLoggedIn && (
             <>
@@ -212,19 +283,12 @@ export default function PasswordPage() {
           </button>
 
           {actionData?.error && errorVisible && (
-            <div
-              className={`p-3 border rounded-lg border-red-100 bg-red-50 text-red-600 text-sm text-center font-medium
-                transition-opacity duration-500
-                ${errorVisible ? 'opacity-100' : 'opacity-0'}
-              `}
-            >
+            <div className="p-3 border rounded-lg border-red-100 bg-red-50 text-red-600 text-sm text-center font-medium transition-opacity duration-500">
               {actionData.error}
             </div>
           )}
-
         </Form>
 
-        {/* --- LOGOUT SECTION --- */}
         {isLoggedIn && (
           <Form method="post" action="/password" className="mt-6 text-center">
             <input type="hidden" name="_action" value="logout" />
@@ -239,5 +303,4 @@ export default function PasswordPage() {
       </div>
     </div>
   );
-
 }
