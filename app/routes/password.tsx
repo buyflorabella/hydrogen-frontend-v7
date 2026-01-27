@@ -182,7 +182,7 @@ export default function PasswordPage() {
           {!isLoggedIn && (
             <>
               <p className="text-green-700 font-bold text-center text-sm">
-                Enter password below:
+                Enter the store password below:
               </p>
 
               <div className="relative">
