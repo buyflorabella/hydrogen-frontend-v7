@@ -83,12 +83,12 @@ export default function Footer() {
             <h4 className="font-bold heading-font text-white mb-6">Guides & Resources</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <a href="/learn" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Getting Started
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <a href="/technical-docs" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Application Guide
                 </a>
               </li>
@@ -98,12 +98,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <a href="/community" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Grower Stories
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <a href="/learn" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Blog
                 </a>
               </li>
