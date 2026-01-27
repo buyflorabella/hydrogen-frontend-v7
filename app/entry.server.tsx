@@ -28,6 +28,9 @@ export default async function handleRequest(
     ],
     styleSrc: [
       "'self'",
+    ],
+    connectSrc: [
+      "https://survey-server.boardmansgame.com"
     ]
   });
 

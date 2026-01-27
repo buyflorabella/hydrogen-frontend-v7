@@ -25,6 +25,8 @@ import { useState, useEffect } from 'react';
 //import { Navigate } from 'react-router';
 
 import { redirect } from 'react-router';
+import SurveyPopup from './componentsMockup2/components/SurveyPopup';
+import { FeatureFlagsProvider } from './componentsMockup2/contexts/FeatureFlagsContext';
 //import { createCookieSessionStorage } from '@shopify/remix-oxygen';
 
 export type RootLoader = typeof loader;
@@ -258,7 +260,10 @@ export default function App() {
 
   // Example: prevent site flash client-side
   if (data?.serverPath === '/password') {
-    return <Outlet />; // Only render password page
+    return <FeatureFlagsProvider>
+      <Outlet />
+      <SurveyPopup />
+    </FeatureFlagsProvider>;
   }
 
   console.log("[DxB][Past /password page check for url="+url);
