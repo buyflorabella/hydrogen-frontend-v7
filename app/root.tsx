@@ -7,7 +7,7 @@ import {
   Links,
   Meta,
   Scripts,
-  // ScrollRestoration,
+  ScrollRestoration,
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
@@ -16,7 +16,7 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindStyles from '~/styles/tailwind.css?url';
-import {PageLayout} from './components/PageLayout';
+// import {PageLayout} from './components/PageLayout';
 // import { PageLayout } from './newComponents/PageLayout';
 // import { LandingPage } from './componentsMockup/Root'
 import Mockup2Root from './componentsMockup2/App';
@@ -112,12 +112,7 @@ export async function loader(args: Route.LoaderArgs) {
   const passwordValue = await session.get('passwordAllowed');
   const passwordAllowed = passwordValue === true;
   const storeLocked = env.PUBLIC_STORE_LOCKED === 'true';
-  const storePassword = env.PUBLIC_STORE_PASSWORD || "012526";
   const adminBypass = env.PUBLIC_ADMIN_BYPASS_PASSWORD_ENABLED === 'true';
-  const contactPageUrl = env.PUBLIC_CONTACT_PAGE_URL || "/contact";
-  const shopPageUrl = env.PUBLIC_SHOP_PAGE_URL || "/shop";
-  const whatsAppEnabled = env.PUBLIC_WHATSAPP_ENABLED || false;
-  const siteSurveyEnabled = env.PUBLIC_SITE_SURVEY_ENABLED || false;
 
   console.log("[DxB][loader] storeLocked =", storeLocked);
   console.log("[DxB][loader] adminBypass =", adminBypass);
@@ -139,10 +134,7 @@ export async function loader(args: Route.LoaderArgs) {
   } else {
     console.log("[DxB][loader]2 storeLocked =", storeLocked);
     console.log("[DxB][loader]2 adminBypass =", adminBypass);
-    // This variable is "IF" the user has bypassed the password page by entering a password
-    console.log("[DxB][loader]2 passwordAllowed =", passwordAllowed);
-    console.log("[DxB][loader]2 contactPageUrl =", contactPageUrl);      
-    console.log("[DxB][loader]2 shopPageUrl =", shopPageUrl);      
+    console.log("[DxB][loader]2 passwordAllowed =", passwordAllowed);      
     console.log("[DxB][loader]2 pathname =", url.pathname);
     console.log("[DxB][loader] NO REDIRECT - continuing to render root");
   }
@@ -157,11 +149,9 @@ export async function loader(args: Route.LoaderArgs) {
       //storeLocked: env.PUBLIC_STORE_LOCKED === "true",
       storeLocked,
       adminBypassPasswordEnabled: adminBypass,
-      storePassword: storePassword,
-      contactPageUrl: contactPageUrl,
-      shopPageUrl: shopPageUrl,
-      whatsAppEnabled: whatsAppEnabled,
-      siteSurveyEnabled: siteSurveyEnabled,
+      storePassword: env.PUBLIC_STORE_PASSWORD || "ballz",
+      contactPageUrl: env.PUBLIC_CONTACT_PAGE_URL || "/contact",
+      shopPageUrl: env.PUBLIC_SHOP_PAGE_URL || "/shop",      
       message1: env.PUBLIC_STORE_MESSAGE1 || "",
       message2: env.PUBLIC_STORE_MESSAGE2 || "",
       message3: env.PUBLIC_STORE_MESSAGE3 || "",
@@ -184,8 +174,6 @@ export async function loader(args: Route.LoaderArgs) {
   // 2. Console log the payload
   // This will show up in your Shopify Admin -> Hydrogen -> Storefront -> Logs
   //console.log("[DxB][loader] FINAL loader payload:", JSON.stringify(loaderPayload, null, 2));
-
-
   return loaderPayload;
 }
 
@@ -252,7 +240,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       </head>
       <body>
         {children}
-        {/* <ScrollRestoration nonce={nonce} /> */}
+        <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>
     </html>
@@ -279,7 +267,6 @@ export default function App() {
       setPasswordBypass(localStorage.getItem('passwordBypass') === 'true');
     }
   }, []);
-
 
   if (!data) {
     return <Outlet />;
