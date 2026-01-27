@@ -169,6 +169,10 @@ export async function loader(args: Route.LoaderArgs) {
       country: args.context.storefront.i18n.country,
       language: args.context.storefront.i18n.language,
     },
+    features: {
+      publicTimer: env.PUBLIC_COUNTDOWN_TIMER_ENABLED,
+      surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED,
+    }
   };
 
   // 2. Console log the payload
