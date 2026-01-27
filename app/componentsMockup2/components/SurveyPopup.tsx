@@ -44,10 +44,14 @@ export default function SurveyPopup() {
   const location = useLocation();
 
   useEffect(() => {
+    console.info(location);
     if (location) {
       const surveyForPage = surveyData[location.pathname];
+      console.info(surveyForPage);
       if (surveyForPage?.surveyId) {
         setSelectedSurvey(surveyForPage?.surveyId);
+      } else {
+        setSelectedSurvey(undefined);
       }
     }
   }, [location, surveyData]);
