@@ -30,7 +30,7 @@ export default async function handleRequest(
       "'self'",
     ],
     connectSrc: [
-      "https://survey-server.boardmansgame.com"
+      "https://survey-server.boardmansgame.com" // SurveyPopup.tsx component
     ]
   });
 

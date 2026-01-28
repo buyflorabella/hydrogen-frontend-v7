@@ -32,6 +32,7 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({context}: Route.LoaderArgs) {
+  console.log("DxB - LOADER account.addresses.tsx +++++++++++++++++++++++++++++++++++++++");
   context.customerAccount.handleAuthStatus();
 
   return {};
