@@ -220,7 +220,7 @@ export default function ArticlePage() {
 
         <div className="max-w-7xl mx-auto px-6 py-12">
           <Link to="/learn" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7cb342] mb-8">
-            <ArrowLeft className="w-4 h-4" /> Back to Articles (2-DxB was here article.$blogHandle.$articleHandle.tsx)
+            <ArrowLeft className="w-4 h-4" /> Back to Articles
           </Link>
           
           <div className="bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden mb-8">
