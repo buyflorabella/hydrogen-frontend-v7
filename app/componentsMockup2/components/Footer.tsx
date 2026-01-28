@@ -161,11 +161,14 @@ export default function Footer() {
             </form>
           </div>
         </div>
-
+                    
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/50 text-sm">
               © 2026 Flora Bella Trace Minerals. All rights reserved.
+            </p>
+            <p className="text-white/50 text-sm">
+              Version: <span>DxB v7.4</span>
             </p>
             <div className="flex items-center gap-4">
               <div className="flex gap-2 items-center">

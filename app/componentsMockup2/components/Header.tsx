@@ -117,7 +117,6 @@ export default function Header() {
             </Link>
 
             <div className="flex items-center gap-6">
-              <span>DxB v7.4</span>
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
                 {isExternalUrl(shopPageUrl) ? (
                   <a
