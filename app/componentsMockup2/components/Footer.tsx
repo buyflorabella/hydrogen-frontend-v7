@@ -72,7 +72,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/policies/contact" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <Link to="/contact" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Contact Support
                 </Link>
               </li>
@@ -103,7 +103,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-[#ff1493] transition-colors">
+                <a href="/technical-docs" className="text-white/70 hover:text-[#ff1493] transition-colors">
                   Soil Testing
                 </a>
               </li>
