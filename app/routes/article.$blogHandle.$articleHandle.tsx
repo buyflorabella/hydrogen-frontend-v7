@@ -203,6 +203,23 @@ export default function ArticlePage() {
     return () => clearTimeout(timer);
   }, [article.contentHtml]);
 
+  // DxB dev test
+  // Example content you want to render
+  const fakeContent = `
+  ## NPK is the standard — and it has limits
+
+  If you've spent any time around gardening or farming, you've heard the phrase "NPK." It's the shorthand most of the world uses to talk about plant nutrition—Nitrogen (N), Phosphorus (P), and Potassium (K).
+
+  And to be clear: NPK matters. It's essential. It's also measurable, easy to manufacture, and delivers fast visible results.
+
+  Second section here.
+
+  Third section here.
+  `;
+
+  // Split content into blocks by double newlines
+  const contentBlocks = fakeContent.trim().split('\n\n');
+
   return (
     <>
       <AnnouncementBar />
@@ -291,26 +308,25 @@ export default function ArticlePage() {
 
           <div className="grid lg:grid-cols-[1fr_320px] gap-8">
             {/* Left column: Article */}
-            <article id="article-content" className="space-y-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                {article.title}
-              </h1>
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-[#7cb342] text-sm font-semibold uppercase tracking-wide">
-                  {article.blog.title}
-                </span>
-                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                  <Clock className="w-4 h-4" />
-                  <span>{calculateReadTime(article.contentHtml)} min read</span>
-                </div>
-              </div>
+              <article id="article-content" className="space-y-4">
+                {contentBlocks.map((block, idx) => {
+                  const renderedBlock = renderContentBlock(block, idx, 0);
 
-              {/* Render content HTML */}
-              <div
-                dangerouslySetInnerHTML={{ __html: article.contentHtml }}
-                className="prose prose-lg max-w-full text-gray-700"
-              />
-            </article>
+                  if (!renderedBlock) return null;
+
+                  // Optional: special handling for images/videos/quotes
+                  if (block.startsWith('[VIDEO:') || block.startsWith('[IMAGE:') || block.startsWith('> ')) {
+                    return renderedBlock;
+                  }
+
+                  // Default styling wrapper
+                  return (
+                    <div key={idx} className="bg-white border border-gray-200 shadow-md rounded-3xl p-8 md:p-12">
+                      {renderedBlock}
+                    </div>
+                  );
+                })}
+              </article>
 
             {/* Right column: TOC */}
             <aside className="sticky top-32 self-start">
