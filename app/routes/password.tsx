@@ -32,9 +32,12 @@ export const action: ActionFunction = async ({ request, context }) => {
   const passwordAttempt = formData.get('password') as string;
   const correctPassword = env.PUBLIC_STORE_PASSWORD;
 
+  // Short session duration in seconds
+  const SHORT_SESSION_MAX_AGE = 15 * 60; // 15 minutes
+
   if (_action === 'logout') {
     session.unset('passwordAllowed');
-    const cookie = await session.commit();
+    const cookie = await session.commit({ maxAge: SHORT_SESSION_MAX_AGE });
 
     return redirect('/', {
       headers: {
@@ -46,9 +49,13 @@ export const action: ActionFunction = async ({ request, context }) => {
 
   if (passwordAttempt === correctPassword) {
     session.set('passwordAllowed', true);
+    
+    // Commit with short expiration
+    const cookie = await session.commit({ maxAge: SHORT_SESSION_MAX_AGE });
+
     return redirect('/', {
       headers: {
-        'Set-Cookie': await session.commit(),
+        'Set-Cookie': cookie,
       },
     });
   }

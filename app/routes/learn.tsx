@@ -138,7 +138,7 @@ export default function LearnPage() {
     console.groupEnd();
   }, [blogs, featuredArticle, filteredArticles]);
 
-  const SHOW_GUIDES_IN_BLOG_LISTINGS = true; // 🔹 set to false in production
+  const SHOW_GUIDES_IN_BLOG_LISTINGS = false; // 🔹 set to false in production
 
   return (
     <>
