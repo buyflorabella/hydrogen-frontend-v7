@@ -9,43 +9,74 @@ interface Survey {
   answers: string[];
 }
 
-const surveys = {
-  
+interface SurveyData {
+  [key: string]: {
+    surveyId: number,
+    answered: boolean
+  }
 }
 
-export default function SurveyPopup({surveyId = 1}) {
+const initialSurveyState: SurveyData = {
+  '/password': {
+    surveyId: 1,
+    answered: false,
+  },
+  '/': {
+    surveyId: 1,
+    answered: false,
+  },
+  '/learn': {
+    surveyId: 1,
+    answered: false,
+  },
+}
+
+export default function SurveyPopup() {
   const { features } = useRouteLoaderData('root');
   const { flags } = useFeatureFlags();
   const [isVisible, setIsVisible] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [survey, setSurvey] = useState<Survey | null>(null);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [selectedSurvey, setSelectedSurvey] = useState<number | undefined>();
+  const [surveyData, setSurveyData] = useState(initialSurveyState);
 
   const location = useLocation();
 
   useEffect(() => {
-    
-  }, [location]);
+    if (location) {
+      const surveyForPage = surveyData[location.pathname];
+      if (surveyForPage?.surveyId && !surveyForPage?.answered) {
+        setSelectedSurvey(surveyForPage?.surveyId);
+      } else {
+        setSelectedSurvey(undefined);
+      }
+    }
+  }, [location, surveyData]);
 
   const API_BASE = 'https://survey-server.boardmansgame.com/api.php';
 
   const loadSurvey = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}?action=get_survey&id=${surveyId}`);
+      if (!selectedSurvey) {
+        return;
+      }
+      const response = await fetch(`${API_BASE}?action=get_survey&id=${selectedSurvey}`);
       const data = await response.json();
       setSurvey({
         title: data.title || 'Survey',
         description: data.description || '',
         answers: data.answers || []
       });
+      setIsVisible(true);
     } catch (error) {
+      console.error(error);
       setSurvey({
         title: 'Survey unavailable',
         description: 'Please try again later.',
         answers: []
       });
     }
-  }, [surveyId]);
+  }, [selectedSurvey]);
 
   useEffect(() => {
     if (!features.surveysEnabled && !flags.surveyPopup) {
@@ -53,24 +84,20 @@ export default function SurveyPopup({surveyId = 1}) {
     }
 
     const timer = setTimeout(() => {
-      setIsVisible(true);
       loadSurvey();
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [features, loadSurvey, flags]);
+  }, [features, loadSurvey, flags, selectedSurvey]);
 
   const submitResponse = async (answer: string, type: string) => {
-    if (hasSubmitted) return;
-    setHasSubmitted(true);
-
     try {
       await fetch(`${API_BASE}?action=submit_response`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'submit_response',
-          survey_id: surveyId,
+          survey_id: selectedSurvey,
           answer,
           type
         })
@@ -84,6 +111,15 @@ export default function SurveyPopup({surveyId = 1}) {
     } else {
       setIsVisible(false);
     }
+
+    const aux = {...surveyData};
+    aux[location.pathname].answered = true;
+    if (features.surveySingleAnswer) {
+      Object.keys(initialSurveyState).forEach((page) => {
+        aux[page].answered = true;
+      })
+    }
+    setSurveyData(aux);
   };
 
   const handleClose = () => {
@@ -131,7 +167,6 @@ export default function SurveyPopup({surveyId = 1}) {
                 <button
                   key={idx}
                   onClick={() => handleAnswer(answer)}
-                  disabled={hasSubmitted}
                   className="w-full px-6 py-3 bg-[#7cb342] hover:bg-[#689f38] text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {answer}
@@ -144,7 +179,7 @@ export default function SurveyPopup({surveyId = 1}) {
             </p>
 
             <div className="absolute bottom-2 left-3 text-[10px] text-gray-400">
-              ID: {surveyId}
+              ID: {selectedSurvey}
             </div>
           </div>
         ) : (

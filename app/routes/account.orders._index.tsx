@@ -34,6 +34,7 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {
+  console.log("DxB - LOADER account.orders._index.tsx +++++++++++++++++++++++++++++++++++++++");
   const {customerAccount} = context;
   const paginationVariables = getPaginationVariables(request, {
     pageBy: 20,

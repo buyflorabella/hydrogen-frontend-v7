@@ -25,6 +25,8 @@ import { useState, useEffect } from 'react';
 //import { Navigate } from 'react-router';
 
 import { redirect } from 'react-router';
+import SurveyPopup from './componentsMockup2/components/SurveyPopup';
+import { FeatureFlagsProvider } from './componentsMockup2/contexts/FeatureFlagsContext';
 //import { createCookieSessionStorage } from '@shopify/remix-oxygen';
 
 export type RootLoader = typeof loader;
@@ -170,8 +172,9 @@ export async function loader(args: Route.LoaderArgs) {
       language: args.context.storefront.i18n.language,
     },
     features: {
-      publicTimer: env.PUBLIC_COUNTDOWN_TIMER_ENABLED,
-      surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED,
+      publicTimer: env.PUBLIC_COUNTDOWN_TIMER_ENABLED === "true",
+      surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED === "true",
+      surveySingleAnswer: env.PUBLIC_SITE_SURVEY_SINGLE_ANSWER === "true",
     }
   };
 
@@ -258,7 +261,10 @@ export default function App() {
 
   // Example: prevent site flash client-side
   if (data?.serverPath === '/password') {
-    return <Outlet />; // Only render password page
+    return <FeatureFlagsProvider>
+      <Outlet />
+      <SurveyPopup />
+    </FeatureFlagsProvider>;
   }
 
   console.log("[DxB][Past /password page check for url="+url);

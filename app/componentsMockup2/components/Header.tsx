@@ -1,4 +1,4 @@
-import { Menu, Search, User, ShoppingCart, X } from 'lucide-react';
+import { Menu, Search, User, ShoppingCart, X, LockKeyhole } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import { Link, useRouteLoaderData, Await } from 'react-router';
 import { useCart } from '../contexts/CartContext';
@@ -117,7 +117,7 @@ export default function Header() {
             </Link>
 
             <div className="flex items-center gap-6">
-              <span>DxB v7.3</span>
+              <span>DxB v7.4</span>
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-white">
                 {isExternalUrl(shopPageUrl) ? (
                   <a
@@ -170,9 +170,12 @@ export default function Header() {
                   </Link>
                 )}
               </nav>
-              <Link to="/account" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
-                <User className="w-5 h-5 text-white" strokeWidth={2} />
-              </Link>              
+              <Link to={rootData.isLoggedIn ? "/account/disabled" : "/account/disabled"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
+                {rootData.isLoggedIn ?
+                  <User className="w-5 h-5 text-white" strokeWidth={2} /> : 
+                  <LockKeyhole className="w-5 h-5 text-white" strokeWidth={2} />
+                }
+              </Link>       
               <button
                 onClick={openCart}
                 className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 group relative"

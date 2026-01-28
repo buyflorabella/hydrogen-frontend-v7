@@ -12,6 +12,7 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {
+  console.log("DxB - LOADER account.orders.$id.tsx +++++++++++++++++++++++++++++++++++++++");
   const {customerAccount} = context;
   if (!params.id) {
     return redirect('/account/orders');

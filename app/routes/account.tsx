@@ -3,12 +3,13 @@ import { Link, useLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar'
 import { useCart } from '~/componentsMockup2/contexts/CartContext';
 import { CartForm } from '@shopify/hydrogen';
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import { useFetcher } from 'react-router-dom';
 
 const CUSTOMER_DETAILS_QUERY = `#graphql
   query CustomerDetails($language: LanguageCode) @inContext(language: $language) {
     customer {
+      id
       firstName
       lastName
       emailAddress {
@@ -16,6 +17,7 @@ const CUSTOMER_DETAILS_QUERY = `#graphql
       }
       addresses(first: 10) {
         nodes {
+          id
           name
           address1
           city
@@ -67,6 +69,40 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   return { customer: data.customer };
 }
+
+export function LogoutDebug() {
+  const fetcher = useFetcher();
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'done'>('idle');
+  const [loggedIn, setLoggedIn] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (fetcher.state === 'submitting') setStatus('submitting');
+    if (fetcher.state === 'idle' && fetcher.data) {
+      setStatus('done');
+      // hydrogen context is updated only after action completes
+      setLoggedIn(fetcher.data?.isLoggedIn ?? false);
+      console.log('LogoutDebug fetcher.data:', fetcher.data);
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  return (
+    <div className="mt-4 p-4 border border-red-400 rounded-lg bg-white/10">
+      <p className="text-white/70 mb-2">Logout Debug Panel</p>
+      <fetcher.Form method="post" action="/account/logout">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-semibold"
+        >
+          Force Logout
+        </button>
+      </fetcher.Form>
+      <p className="mt-2 text-sm text-white/50">
+        Status: {status} | Signed in? {loggedIn ? '✅ Yes' : '❌ No'}
+      </p>
+    </div>
+  );
+}
+
 
 const OrderDetails = ({order}) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
@@ -151,9 +187,18 @@ const OrderDetails = ({order}) => {
 
 export default function AccountPage() {
   const { customer } = useLoaderData<typeof loader>();
-  const { firstName } = customer;
+  const { firstName, id: customerId } = { firstName: customer.firstName, id: Number(customer.id.split('/').at(-1)) };
+
+
+  console.log("CUSTOMER:" , customer);
+  console.log("GID: " + customer.id);
+  console.log("CustomerId: " + customerId);
+
   const orders = customer.orders.nodes;
   const addresses = customer.addresses.nodes;
+
+  // DxB ???
+  const isSignedIn = Boolean(customer?.id);
 
   return (
     <>
@@ -162,6 +207,10 @@ export default function AccountPage() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-white mb-2">My Account</h1>
+          {/* INFO: customer id */}
+          <div className="text-xs text-white/40 mb-2">
+            [ Customer Id: {customerId} ]
+          </div>
           <p className="text-white/70">Welcome back {firstName ? `, ${firstName}` : ''}!</p>
         </div>
 
@@ -184,10 +233,24 @@ export default function AccountPage() {
                 <Settings className="w-5 h-5" />
                 Settings
               </a>
-              <Link to="/login" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+              <Link to="/account/logout" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
                 <LogOut className="w-5 h-5" />
-                Sign Out
+                Sign Out (DxB - @1)
               </Link>
+              <LogoutDebug/>
+              {/* DEBUG: auth state */}
+              <div className="mt-2 px-4 text-xs">
+                {isSignedIn ? (
+                  <span className="text-[#7cb342]">
+                    ● Signed in
+                  </span>
+                ) : (
+                  <span className="text-red-400">
+                    ● Signed out
+                  </span>
+                )}
+              </div>
+
             </nav>
           </div>
           <div className="lg:col-span-3 space-y-8">

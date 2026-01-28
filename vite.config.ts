@@ -29,5 +29,10 @@ export default defineConfig({
   },
   server: {
     allowedHosts: ['.boardmansgame.com', '.tryhydrogen.dev'],
+    hmr: {
+      host: 'dev1-frontend.textreader.boardmansgame.com', // browser-accessible hostname
+      protocol: 'wss',
+      clientPort: 443, // HMR client will connect over HTTPS/WSS port
+    },
   },
 });

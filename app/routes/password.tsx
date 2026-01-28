@@ -1,4 +1,4 @@
-import { Form, useActionData, useRouteLoaderData, useLoaderData, redirect, useNavigate, Link } from 'react-router';
+import { Form, useActionData, useRouteLoaderData, useLoaderData, redirect, useNavigate, Link, useNavigation } from 'react-router';
 import type { ActionFunction, LoaderFunctionArgs } from 'react-router';
 import { useState, useEffect, useCallback } from 'react';
 import '../styles/password.css';
@@ -53,7 +53,7 @@ export const action: ActionFunction = async ({ request, context }) => {
     });
   }
 
-  return { error: 'Incorrect password, try again.' };
+  return { error: 'Incorrect password, try again.', timestamp: Date.now() };
 };
 
 const CountdownTimer = ({
@@ -191,12 +191,14 @@ const CountdownTimer = ({
 export default function PasswordPage() {
   const loaderData = useRouteLoaderData('root');  
   const { isLoggedIn } = useLoaderData<typeof loader>();  
-  const actionData = useActionData<{ error?: string }>();
+  const actionData = useActionData<{ error?: string, timestamp?: number }>();
+  const navigation = useNavigation();
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);  
   const [errorVisible, setErrorVisible] = useState(false);  
   const navigate = useNavigate();
 
+  const isSubmitting = navigation.state === 'submitting';
   const canEnterStore = isLoggedIn === true;
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -216,7 +218,7 @@ export default function PasswordPage() {
       const timeout = setTimeout(() => setErrorVisible(false), 5000);
       return () => clearTimeout(timeout);
     }
-  }, [actionData?.error]);  
+  }, [actionData?.timestamp]);  
 
   return (
     <div className="password-page min-h-screen flex flex-col items-center justify-center bg-[#1a1a1a] p-6">
@@ -231,16 +233,16 @@ export default function PasswordPage() {
         </div>
 
         <CountdownTimer
-          endDate='01/31/2026'
+          endDate='02/01/2026'
           endTime='00:00'
           period='am'
           digitsFontSize='heading-large'
         />
+
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {isLoggedIn ? 'Access Granted' : 'Store Locked'}
           </h1>
-
 
           <div className={`mt-3 p-3 rounded-xl border ${isLoggedIn ? 'bg-green-50 border-green-100' : 'bg-yellow-50 border-yellow-100'}`}>
             <p className={`${isLoggedIn ? 'text-green-700' : 'text-yellow-700'} font-semibold text-sm`}>
@@ -262,6 +264,7 @@ export default function PasswordPage() {
                   name="password"
                   placeholder="Password"
                   autoFocus
+                  required
                   className="password-input-black p-4 w-full border-4 border-[#7cb342] rounded-xl bg-black text-white outline-none placeholder:text-gray-500 pr-16"
                 />
                 <button
@@ -277,9 +280,17 @@ export default function PasswordPage() {
 
           <button
             type="submit"
-            className="bg-[#7cb342] text-white p-4 rounded-xl font-bold hover:bg-[#6fa32d] transition-all"
+            disabled={isSubmitting}
+            style={{
+              backgroundColor: isSubmitting ? '#a5d6a7' : '#7cb342',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              opacity: isSubmitting ? 0.8 : 1,
+              transform: isSubmitting ? 'scale(0.98)' : 'scale(1)',
+              transition: 'all 0.2s ease'
+            }}
+            className="text-white p-4 rounded-xl font-bold hover:bg-[#6fa32d]"
           >
-            {isLoggedIn ? 'Enter Store' : 'Unlock Store'}
+            {isSubmitting ? 'Validating...' : isLoggedIn ? 'Enter Store' : 'Unlock Store'}
           </button>
 
           {actionData?.error && errorVisible && (
