@@ -114,6 +114,11 @@ export default function SurveyPopup() {
 
     const aux = {...surveyData};
     aux[location.pathname].answered = true;
+    if (features.surveySingleAnswer) {
+      Object.keys(initialSurveyState).forEach((page) => {
+        aux[page].answered = true;
+      })
+    }
     setSurveyData(aux);
   };
 

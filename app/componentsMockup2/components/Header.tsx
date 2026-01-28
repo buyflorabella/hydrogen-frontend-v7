@@ -1,4 +1,4 @@
-import { Menu, Search, User, ShoppingCart, X } from 'lucide-react';
+import { Menu, Search, User, ShoppingCart, X, LockKeyhole } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import { Link, useRouteLoaderData, Await } from 'react-router';
 import { useCart } from '../contexts/CartContext';
@@ -170,8 +170,11 @@ export default function Header() {
                   </Link>
                 )}
               </nav>
-              <Link to="/account" className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
-                <User className="w-5 h-5 text-white" strokeWidth={2} />
+              <Link to={rootData.isLoggedIn ? "/account" : "/login"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
+                {rootData.isLoggedIn ?
+                  <User className="w-5 h-5 text-white" strokeWidth={2} /> : 
+                  <LockKeyhole className="w-5 h-5 text-white" strokeWidth={2} />
+                }
               </Link>              
               <button
                 onClick={openCart}

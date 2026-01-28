@@ -184,9 +184,9 @@ export default function AccountPage() {
                 <Settings className="w-5 h-5" />
                 Settings
               </a>
-              <Link to="/login" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+              <Link to="/account/logout" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
                 <LogOut className="w-5 h-5" />
-                Sign Out
+                Sign Out (DxB - @)
               </Link>
             </nav>
           </div>
