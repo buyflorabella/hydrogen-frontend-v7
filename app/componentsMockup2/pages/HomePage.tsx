@@ -1,4 +1,3 @@
-import AnnouncementBar from '../components/AnnouncementBar';
 import HeroSection from '../components/HeroSection';
 import ReassuranceStrip from '../components/ReassuranceStrip';
 import FeatureProduct from '../components/FeatureProduct';
@@ -13,7 +12,6 @@ import CommunityCallout from '../components/CommunityCallout';
 export default function HomePage() {
   return (
     <>
-      <AnnouncementBar />
       <HeroSection />
       <ReassuranceStrip />
       <FeatureProduct />

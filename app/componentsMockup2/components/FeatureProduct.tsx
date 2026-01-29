@@ -1,21 +1,14 @@
-import { Star, Plus, Minus, ArrowRight, Sparkles, TreeDeciduous, Flower2, Leaf } from 'lucide-react';
-import { useState } from 'react';
+import { Star, Plus, Minus, ArrowRight, Sparkles, TreeDeciduous, Flower2, Leaf, ShoppingCart } from 'lucide-react';
+import { Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { Await, useLoaderData } from 'react-router';
+import { CartForm } from '@shopify/hydrogen';
 
 export default function FeatureProduct() {
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
-
-  const handleAddToCart = () => {
-    addItem({
-      productId: 'bio-trace',
-      name: 'Bio Trace Mix - 32oz',
-      price: 49.99,
-      quantity: quantity,
-      imageUrl: '/20260110_145321(0).jpg',
-    });
-  };
+  const { latestProduct } = useLoaderData();
+  const { openCart } = useCart();
 
   return (
     <section className="gradient-dark py-20 relative overflow-hidden">
@@ -33,64 +26,116 @@ export default function FeatureProduct() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="glass-strong rounded-2xl p-8 shadow-2xl sticky top-24 border border-white/10">
-            <div className="relative">
-              <div className="absolute -top-4 -right-4 bg-[#7cb342] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
-                Best Seller
-              </div>
-              <img
-                src="/20260110_145321(0).jpg"
-                alt="Flora Bella Bio Trace Mix"
-                className="w-full rounded-xl mb-6 hover:scale-110 hover:rotate-2 transition-all duration-500 parallax-float"
-              />
-            </div>
+            <Suspense fallback={<>Loading...</>}>
+              <Await
+                resolve={latestProduct}
+                errorElement={<>Error loading products!</>}
+              >
+                {(resolved) => {
+                  const product = resolved.products.nodes.at(0);
+                  return <>
+                    <div className="relative">
+                      <div className="absolute -top-4 -right-4 bg-[#7cb342] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
+                        Best Seller
+                      </div>
+                      <img
+                        src={product.featuredImage.url}
+                        alt={product.featuredImage.altText}
+                        className="w-full rounded-xl mb-6 hover:scale-110 hover:rotate-2 transition-all duration-500 parallax-float"
+                      />
+                    </div>
 
-            <div className="flex items-center gap-2 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-[#7cb342] text-[#7cb342]" />
-              ))}
-              <span className="text-white/70 text-sm ml-2">(487 reviews)</span>
-            </div>
+                    <div className="flex items-center gap-2 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-[#7cb342] text-[#7cb342]" />
+                      ))}
+                      <span className="text-white/70 text-sm ml-2">(487 reviews)</span>
+                    </div>
 
-            <div className="text-4xl font-bold text-white mb-6">$49.99</div>
+                    <div className="text-4xl font-bold text-white mb-6">{product.priceRange.minVariantPrice.currencyCode}{product.priceRange.minVariantPrice.amount}</div>
 
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Size</label>
-                <select className="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#7cb342] transition-colors">
-                  <option>32 oz Bag</option>
-                  <option>64 oz Bag</option>
-                  <option>1 Gallon Bag</option>
-                </select>
-              </div>
+                    <div className="space-y-4 mb-6">
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">Variants</label>
+                        <select className="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#7cb342] transition-colors">
+                          {product.variants.nodes.map((variant) => {
+                            return <option value={variant.id} key={variant.id}>
+                              {variant.title}
+                            </option>
+                          })}
+                        </select>
+                      </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Quantity</label>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="glass p-3 rounded-xl hover:bg-white/10 transition-colors"
-                  >
-                    <Minus className="w-5 h-5" />
-                  </button>
-                  <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="glass p-3 rounded-xl hover:bg-white/10 transition-colors"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">Quantity</label>
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                            className="glass p-3 rounded-xl hover:bg-white/10 transition-colors"
+                          >
+                            <Minus className="w-5 h-5" />
+                          </button>
+                          <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
+                          <button
+                            onClick={() => setQuantity(quantity + 1)}
+                            className="glass p-3 rounded-xl hover:bg-white/10 transition-colors"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
 
-            <div className="space-y-3">
-              <button onClick={handleAddToCart} className="w-full gradient-green text-white py-4 rounded-full font-bold text-lg hover:scale-105 hover:shadow-2xl hover:shadow-[#7cb342]/50 transition-all duration-300 shadow-xl shiny-border relative z-10">
-                <span className="relative z-10">Add To Cart</span>
-              </button>
-              <Link to="/checkout" className="w-full glass border border-white/20 py-4 rounded-full font-semibold hover:bg-white/5 hover:border-[#7cb342]/50 transition-all duration-300 flex items-center justify-center shiny-border relative z-10">
-                <span className="relative z-10">Buy Now</span>
-              </Link>
-            </div>
+                    <div className="space-y-3">
+                      <CartForm
+                          route="/cart"
+                          action={CartForm.ACTIONS.LinesAdd}
+                          inputs={{
+                            lines: [
+                              {
+                                merchandiseId: product.variants.nodes.at(0).id,
+                                quantity,
+                              },
+                            ],
+                          }}
+                        >
+                            {(fetcher) => (
+                              <>
+                                <div className="flex gap-3">
+                                  <button
+                                    type="submit"
+                                    disabled={!product.variants.nodes[0].availableForSale || fetcher.state !== 'idle'}
+                                    className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10">
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                      <ShoppingCart className="w-5 h-5" />
+                                      {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
+                                    </span>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    onClick={openCart}
+                                    disabled={!product.variants.nodes[0].availableForSale || fetcher.state !== 'idle'}
+                                    className="px-4 py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center shiny-border relative z-10"
+                                    >
+                                      <span className="relative z-10">Buy Now</span>
+                                  </button>
+                                </div>
+                                <br />
+                                <Link
+                                  to={`/product/${product.handle}`}
+                                  className="block w-full py-3 border border-white/20 hover:bg-white/10 text-white rounded-xl font-semibold text-center transition-all duration-300"
+                                >
+                                  View Details
+                                </Link>
+                              </>
+                            )}
+                        </CartForm>
+                    </div>
+
+                  </>
+                }}
+              </Await>
+            </Suspense>
           </div>
 
           <div className="glass-strong rounded-2xl p-10 shadow-2xl border border-white/10">

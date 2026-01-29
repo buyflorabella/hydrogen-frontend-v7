@@ -43,6 +43,17 @@ export default function HeroSection() {
             Bio trace minerals that make every drop of fertilizer work harder.
           </p>
 
+          <div className="relative block lg:hidden">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r rounded-3xl blur-2xl"></div>
+              <img
+                src="/20260105_163329.jpg"
+                alt="Flora Bella Bio Trace Mix"
+                className="relative rounded-2xl shadow-2xl border border-white/10"
+              />
+            </div>
+          </div>
+
           <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed max-w-xl">
             Flora Bella delivers commercial-grade trace minerals to home gardens. With a single 
             addition to your watering routine—or blended directly into your soil—you strengthen 
