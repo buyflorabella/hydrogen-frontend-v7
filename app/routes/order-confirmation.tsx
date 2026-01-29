@@ -1,11 +1,9 @@
 import { CheckCircle, Package, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 
 export default function OrderConfirmationPage() {
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-12">

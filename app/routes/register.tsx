@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -37,7 +36,6 @@ export default function RegisterPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
       <div className="max-w-md mx-auto px-6">
         <div className="text-center mb-8">

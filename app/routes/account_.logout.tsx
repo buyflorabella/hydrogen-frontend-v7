@@ -1,23 +1,18 @@
-import { redirect } from 'react-router';
-import { json } from '@shopify/remix-oxygen';
-import type { Route } from './+types/account_.logout';
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from 'react-router';
 
-// Instrumentation: console.log everywhere
-export async function loader() {
-  console.log('LOGOUT ROUTE LOADER 🔹 called');
-
-  // optional: show a message while redirecting
-  //return redirect('/');
-  return `<p>Logging out… Redirecting shortly.</p>`;
+export async function loader({ context }: LoaderFunctionArgs) {
+  return redirect('/login');
 }
 
-export async function action({context}: Route.ActionArgs) {
-  console.log('LOGOUT ROUTE ACTION 🔹 called');
+export async function action({context}: ActionFunctionArgs) {
+  const {session, cart} = context;
+  
+  session.unset('customerAccessToken');
+  await cart.updateBuyerIdentity({customerAccessToken: null});
 
-  if (!context.customerAccount) {
-    console.log("No customer account found");
-    return redirect('/account/login');
-  }
-
-  return context.customerAccount.logout();
+  return redirect('/login', {
+    headers: {
+      'Set-Cookie': await session.commit(),
+    },
+  });
 }

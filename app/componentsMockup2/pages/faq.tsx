@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 import PageBackground from '../components/PageBackground';
-import AnnouncementBar from '../components/AnnouncementBar';
 
 const faqs = [
   {
@@ -125,7 +124,6 @@ export default function FAQPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="relative min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20 overflow-hidden">
         <PageBackground />
 

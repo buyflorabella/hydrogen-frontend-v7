@@ -1,8 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { Clock, ArrowLeft, Share2, Bookmark, User, Calendar } from 'lucide-react';
 import { articles as staticArticles, products } from '../data/staticData';
-import PageBackground from '../components/PageBackground';
-import AnnouncementBar from '../components/AnnouncementBar';
 import { useState, useEffect } from 'react';
 import { useSavedItems } from '../contexts/SavedItemsContext';
 import { useFeatureFlags } from '../contexts/FeatureFlagsContext';
@@ -175,7 +173,6 @@ export default function ArticlePage() {
   if (!article) {
     return (
       <>
-        <AnnouncementBar />
         <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] to-[#e8e8e0] pt-32 pb-20">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h1 className="text-3xl text-gray-900 mb-4">Article not found</h1>
@@ -190,7 +187,6 @@ export default function ArticlePage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="relative min-h-screen bg-gradient-to-b from-[#f5f5f0] to-[#e8e8e0] pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 opacity-30" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(124, 179, 66, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(124, 179, 66, 0.08) 0%, transparent 50%)',
