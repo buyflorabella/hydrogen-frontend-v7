@@ -14,7 +14,6 @@ export default function HomePage() {
     <>
       <HeroSection />
       <ReassuranceStrip />
-      <FeatureProduct />
       <BenefitsGrid />
       <HowItWorks />
       <MineralComposition />
