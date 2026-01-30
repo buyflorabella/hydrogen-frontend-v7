@@ -1,39 +1,40 @@
 import { Bug, Sparkles, Users, Leaf, Droplet, Shield, Flower2 } from 'lucide-react';
+import { Folders } from 'lucide-react';
 
 export default function BenefitsGrid() {
   const benefits = [
     {
-      icon: Bug,
+      icon: Leaf,
       title: 'Compost-Friendly Trace Minerals',
       description: 'Designed to work alongside compost and living soil systems — helping unlock what your soil is already capable of.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_1_of_6_Compost_pile.jpg?v=1769724521',
     },
     {
-      icon: Sparkles,
+      icon: Folders,
       title: 'Ancient + Mineral-dense',
       description: 'Made from mineral deposits formed over thousands of years — carrying complexity you can’t replicate in a lab.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_2_of_6_FB_Zoom_in.jpg?v=1769724260',
     },
     {
-      icon: Users,
+      icon: Shield,
       title: 'Born in the USA',
       description: 'Sourced and produced domestically for transparency, consistency, and dependable supply.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_3_of_6_Hand_w_Tomato.jpg?v=1769724522',
     },
     {
-      icon: Leaf,
+      icon: Sparkles,
       title: 'Iron-ore Derived Blend',
       description: 'Derived from a unique iron ore source and refined into plant-available trace minerals for balanced soil nutrition.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_4_of_6_Flora_Bella_Bio_Trace.jpg?v=1769724522',
     },
     {
-      icon: Droplet,
+      icon: Bug,
       title: 'Biology Included',
       description: 'Designed to support beneficial microbes and nutrient cycling — the living foundation behind healthy, resilient soil.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_5_of_6_lighted_roots.jpg?v=1769724521',
     },
     {
-      icon: Shield,
+      icon: Users,
       title: 'Handled with Care + Lab Verified',
       description: 'Gently processed and packaged with care, with quality checks to support consistency and peace of mind.',
       image: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=1920',
