@@ -1,8 +1,7 @@
 import { Menu, Search, User, ShoppingCart, X, LockKeyhole } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
-import { Link, useRouteLoaderData, Await } from 'react-router';
+import { Link, useRouteLoaderData, Await, useFetcher } from 'react-router';
 import { useCart } from '../contexts/CartContext';
-import SearchDropdown from './SearchDropdown';
 import type { RootLoader } from '~/routes/root';
 import type { Cart } from '@shopify/hydrogen/storefront-api-types';
 import AnnouncementBar from './AnnouncementBar';
@@ -13,7 +12,14 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
+  const fetcher = useFetcher();
   const { openCart } = useCart();
+
+  useEffect(() => {
+    if (searchQuery.length > 2) {
+      fetcher.load(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  }, [searchQuery]);
 
   const rootData = useRouteLoaderData<RootLoader>('root');
 
@@ -208,10 +214,85 @@ export default function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products and articles..."
+                  placeholder="Search products..."
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#7cb342] transition-colors"
+                  autoFocus
                 />
-                {searchQuery && <SearchDropdown searchQuery={searchQuery} onClose={closeSearch} />}
+                {searchQuery.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 max-h-[70vh] overflow-y-auto">
+                    {fetcher.state === 'loading' ? (
+                      <div className="p-6 text-white/50 text-sm flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-[#7cb342] border-t-transparent rounded-full animate-spin"></div>
+                        Searching...
+                      </div>
+                    ) : (
+                      <div className="p-2 space-y-4">
+                        {/* Product Section */}
+                        {fetcher.data?.products?.length > 0 && (
+                          <div>
+                            <h3 className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/40">Products</h3>
+                            <ul className="space-y-1">
+                              {fetcher.data.products.map((product: any) => (
+                                <li key={product.id}>
+                                  <Link
+                                    to={`/product/${product.handle}`}
+                                    onClick={closeSearch}
+                                    className="flex items-center gap-4 p-3 hover:bg-white/5 rounded-lg transition-colors group"
+                                  >
+                                    <div className="w-12 h-12 bg-white/5 rounded overflow-hidden">
+                                      {product.featuredImage && (
+                                        <img src={product.featuredImage.url} alt={product.title} className="w-full h-full object-cover" />
+                                      )}
+                                    </div>
+                                    <div className="flex-1">
+                                      <p className="text-white text-sm font-medium group-hover:text-[#7cb342] transition-colors">{product.title}</p>
+                                      <p className="text-white/50 text-xs">${product.variants.nodes[0].price.amount}</p>
+                                    </div>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Articles Section */}
+                        {fetcher.data?.articles?.length > 0 && (
+                          <div className="border-t border-white/5 pt-4">
+                            <h3 className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/40">Articles & News</h3>
+                            <ul className="space-y-1">
+                              {fetcher.data.articles.map((article: any) => (
+                                <li key={article.id}>
+                                  <Link
+                                    to={`/article/${article.blog.handle}/${article.handle}`}
+                                    onClick={closeSearch}
+                                    className="flex items-center gap-4 p-3 hover:bg-white/5 rounded-lg transition-colors group"
+                                  >
+                                    <div className="w-12 h-12 bg-white/5 rounded overflow-hidden">
+                                      {article.image && (
+                                        <img src={article.image.url} alt={article.title} className="w-full h-full object-cover" />
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="text-white text-sm font-medium group-hover:text-[#7cb342] transition-colors line-clamp-1">{article.title}</p>
+                                      <p className="text-white/40 text-xs">Read Article</p>
+                                    </div>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Empty State */}
+                        {fetcher.data && fetcher.data.products?.length === 0 && fetcher.data.articles?.length === 0 && (
+                          <div className="p-8 text-center">
+                            <p className="text-white/40 text-sm">No results found for "{searchQuery}"</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
