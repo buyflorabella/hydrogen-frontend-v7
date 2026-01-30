@@ -3,23 +3,23 @@ import { Star, Quote, Leaf, Flower2 } from 'lucide-react';
 export default function SocialProof() {
   const reviews = [
     {
-      quote: "My tomatoes and peppers have never looked this strong. I didn't change anything except adding Flora Bella to my watering schedule.",
-      name: 'Jamie R',
-      location: 'Backyard grower',
+      quote: "I have been on farms and in gardens for 40 years. I used Flora Bella on my farm and noticed an immediate difference in the vigor of all my plants, especially the palms. I have never seen palm trees grow during the winter months. I am amazed with the quality and performance of the Flora Bella product. I would recommend this product for any farm or garden.",
+      name: 'Michael Misko',
+      location: 'Farmer grower',
       rating: 5,
       avatar: 'JR',
     },
     {
-      quote: 'The difference in my indoor plants is incredible. Deeper greens, faster growth, and zero chemicals. This is the real deal.',
-      name: 'Marcus T',
-      location: 'Indoor plants',
+      quote: 'My palms have not slowed since I applied the product. Which I have never seen before. Usually palms go dormant in the winter. Awesome product.',
+      name: 'Larue Ms',
+      location: 'Tropical plants',
       rating: 5,
       avatar: 'MT',
     },
     {
-      quote: 'As a market gardener, I need results. Flora Bella delivered bigger yields and healthier soil. My customers notice the difference.',
-      name: 'Sarah K',
-      location: 'Market gardener',
+      quote: 'You know I can\'t speak highly of it enough. Stuff made out of plants explode. We had a pretty balanced receipe but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft grows the most but it boosted the gardens we ran and that was 42 acres so it scales well with the right crew and equipment.',
+      name: 'Jacob Cataldo',
+      location: 'Cooperstate',
       rating: 5,
       avatar: 'SK',
     },
