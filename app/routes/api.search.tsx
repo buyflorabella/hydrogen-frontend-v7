@@ -6,24 +6,26 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const searchTerm = url.searchParams.get('q');
 
   if (!searchTerm) {
-    return { products: [] };
+    return { products: [], articles: [] };
   }
 
-  const { products } = await storefront.query(SEARCH_QUERY, {
-    variables: { searchTerm, first: 5 },
+  const { products, articles } = await storefront.query(SEARCH_QUERY, {
+    variables: { searchTerm, first: 4 },
   });
 
-  return { products: products.nodes };
+  return { 
+    products: products.nodes,
+    articles: articles.nodes 
+  };
 }
 
 const SEARCH_QUERY = `#graphql
-  query SearchProducts($searchTerm: String!, $first: Int) {
+  query Search($searchTerm: String!, $first: Int) {
     products(query: $searchTerm, first: $first) {
       nodes {
         id
         title
         handle
-        trackingParameters
         featuredImage {
           url
           altText
@@ -38,6 +40,21 @@ const SEARCH_QUERY = `#graphql
             }
           }
         }
+      }
+    }
+    articles(query: $searchTerm, first: $first) {
+      nodes {
+        id
+        title
+        handle
+        blog {
+          handle
+        }
+        image {
+          url
+          altText
+        }
+        publishedAt
       }
     }
   }
