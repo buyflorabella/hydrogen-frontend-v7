@@ -96,10 +96,19 @@ export function links() {
   ];
 }
 
-export async function loader(args: Route.LoaderArgs) {
+const CUSTOMER_QUERY = `#graphql
+  query getCustomerData {
+    customer {
+      id
+      firstName
+      lastName
+    }
+  }
+`;
 
+export async function loader(args: Route.LoaderArgs) {
   console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
-  const {storefront, env, session} = args.context; // session is an instance of AppSession
+  const {storefront, env, session} = args.context;
 
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
@@ -175,7 +184,7 @@ export async function loader(args: Route.LoaderArgs) {
       publicTimer: env.PUBLIC_COUNTDOWN_TIMER_ENABLED === "true",
       surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED === "true",
       surveySingleAnswer: env.PUBLIC_SITE_SURVEY_SINGLE_ANSWER === "true",
-    }
+    },
   };
 
   // 2. Console log the payload
@@ -189,19 +198,20 @@ export async function loader(args: Route.LoaderArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const {storefront} = context;
+  const {storefront, customerAccount} = context;
 
-  const [header] = await Promise.all([
+  const [header, isLoggedIn] = await Promise.all([
     storefront.query(HEADER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
-        headerMenuHandle: 'main-menu', // Adjust to your header menu handle
+        headerMenuHandle: 'main-menu',
       },
     }),
+    customerAccount.isLoggedIn(),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {header};
+  return {header, isLoggedIn};
 }
 
 /**
@@ -210,7 +220,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const {storefront, customerAccount, cart, env} = context;
+  const {storefront, cart, env} = context;
 
   // defer the footer query (below the fold)
   const footer = storefront
@@ -226,7 +236,6 @@ function loadDeferredData({context}: Route.LoaderArgs) {
     });
   return {
     cart: cart.get(),
-    isLoggedIn: customerAccount.isLoggedIn(),
     footer,
     env,
   };

@@ -2,11 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, ArrowRight, BookOpen } from 'lucide-react';
 import { articles as staticArticles, guides as staticGuides } from '../componentsMockup2/data/staticData';
-import PageBackground from '../componentsMockup2/components/PageBackground';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import type {Route} from './+types/blogs._index';
 import { getPaginationVariables } from '@shopify/hydrogen';
-import type {BlogsQuery} from 'storefrontapi.generated';
 import { useLoaderData } from 'react-router';
 
 interface Article {
@@ -83,11 +80,9 @@ export default function LearnPage() {
     ? regularArticles
     : regularArticles.filter(a => a.category === selectedCategory);
 
-  console.info(blogs);
 
   return (
     <>
-      <AnnouncementBar />
       <div className="relative min-h-screen bg-gradient-to-b from-[#f5f5f0] to-[#e8e8e0] pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 opacity-30" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(124, 179, 66, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(124, 179, 66, 0.08) 0%, transparent 50%)',

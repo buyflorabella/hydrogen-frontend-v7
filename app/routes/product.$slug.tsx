@@ -19,7 +19,6 @@ import {
 import { useCart } from '../componentsMockup2/contexts/CartContext';
 import { useWishlist } from '../componentsMockup2/contexts/WishlistContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import DiscountBox from '../componentsMockup2/components/DiscountBox';
 import { products, faqs } from '~/componentsMockup2/data/staticData';
 
@@ -168,7 +167,6 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-6">

@@ -82,7 +82,7 @@ export default function ContactPage() {
               Earn rewards by sharing Flora Bella with your community. Sign-ups are managed through our partner platform.
             </p>
             <a
-              href="https://uppromote.com"
+              href="https://af.uppromote.com/incfve-s8/register"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105"

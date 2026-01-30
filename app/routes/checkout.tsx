@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, CreditCard, Tag, X } from 'lucide-react';
 import { useCart } from '../componentsMockup2/contexts/CartContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 
 const availableCoupons = [
   { code: 'GETTEN', discount: 10, description: 'New growers save 10%' },
@@ -79,7 +78,6 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <>
-        <AnnouncementBar />
         <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h1 className="text-3xl text-white mb-4">Your cart is empty</h1>
@@ -94,7 +92,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-8">

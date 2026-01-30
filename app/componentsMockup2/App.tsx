@@ -24,11 +24,6 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
           <WishlistProvider>
             <CartProvider>
               <div className="min-h-screen bg-[#0a0015]">
-                <DiscountBanner
-                  message="Get 15% off your first order!"
-                  code="WELCOME15"
-                  percentage={15}
-                />
                 <Header />
                 <main>
                   {children}

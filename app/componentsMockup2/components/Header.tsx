@@ -5,6 +5,7 @@ import { useCart } from '../contexts/CartContext';
 import SearchDropdown from './SearchDropdown';
 import type { RootLoader } from '~/routes/root';
 import type { Cart } from '@shopify/hydrogen/storefront-api-types';
+import AnnouncementBar from './AnnouncementBar';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -78,6 +79,7 @@ export default function Header() {
 
   return (
     <>
+      <AnnouncementBar />
       <header
         className={`fixed top-8 left-0 right-0 z-40 transition-all duration-300 ${
           scrolled ? 'top-0 glass-strong shadow-xl' : ''
@@ -169,7 +171,7 @@ export default function Header() {
                   </Link>
                 )}
               </nav>
-              <Link to={rootData.isLoggedIn ? "/account/disabled" : "/account/disabled"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
+              <Link to={rootData.isLoggedIn ? "/my-account" : "/login"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
                 {rootData.isLoggedIn ?
                   <User className="w-5 h-5 text-white" strokeWidth={2} /> : 
                   <LockKeyhole className="w-5 h-5 text-white" strokeWidth={2} />
@@ -208,7 +210,6 @@ export default function Header() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products and articles..."
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#7cb342] transition-colors"
-                  autoFocus
                 />
                 {searchQuery && <SearchDropdown searchQuery={searchQuery} onClose={closeSearch} />}
               </div>

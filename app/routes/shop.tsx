@@ -1,7 +1,6 @@
 import { useLoaderData, Link, type LoaderFunctionArgs } from 'react-router';
 import { CartForm } from '@shopify/hydrogen';
 import { Star, ShoppingCart } from 'lucide-react';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import { useCart } from '~/componentsMockup2/contexts/CartContext';
 
 interface ShopifyImage {
@@ -103,7 +102,6 @@ export default function ShopPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">

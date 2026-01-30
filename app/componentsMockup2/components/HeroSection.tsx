@@ -30,7 +30,9 @@ export default function HeroSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-16 items-center">
         <div className="text-left">
           <div className="inline-block bg-[#7cb342]/10 border border-[#7cb342]/30 px-4 py-2 rounded-full mb-6">
-            <span className="text-[#7cb342] font-semibold text-sm tracking-wide">PREMIUM BIO TRACE MINERALS</span>
+            <Link to="/shop" className="gradient-green text-white px-8 py-4 rounded-full font-bold text-base hover:scale-110 hover:shadow-2xl hover:shadow-[#7cb342]/50 transition-all duration-300 shadow-xl flex items-center gap-2 group shiny-border relative z-10">
+              <span className="relative z-10 flex items-center gap-2">SHOP PREMIUM BIO TRACE MINERALS</span>
+            </Link>
           </div>
 
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold heading-font text-gray-900 mb-6 leading-[0.95]">
@@ -41,10 +43,22 @@ export default function HeroSection() {
             Bio trace minerals that make every drop of fertilizer work harder.
           </p>
 
+          <div className="relative block lg:hidden">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r rounded-3xl blur-2xl"></div>
+              <img
+                src="/20260105_163329.jpg"
+                alt="Flora Bella Bio Trace Mix"
+                className="relative rounded-2xl shadow-2xl border border-white/10"
+              />
+            </div>
+          </div>
+
           <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed max-w-xl">
-            Flora Bella brings commercial grade trace minerals to home gardens. With one simple
-            addition to your watering routine, you unlock richer soil, stronger plants, and more
-            color in every bed, pot, and bed of veggies.
+            Flora Bella delivers commercial-grade trace minerals to home gardens. With a single 
+            addition to your watering routine—or blended directly into your soil—you strengthen 
+            soil health, support resilient plants, and bring deeper color and vitality to 
+            every bed, pot, and vegetable garden.
           </p>
 
           <div className="bg-[#7cb342]/5 border border-[#7cb342]/20 rounded-2xl p-6 mb-10 max-w-xl">
@@ -60,7 +74,7 @@ export default function HeroSection() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </span>
             </Link>
-            <Link to="/product/bio-trace-mix#reviews" className="bg-white border border-gray-200 px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-50 hover:scale-105 hover:border-[#7cb342]/50 transition-all duration-300 text-gray-900 shiny-border relative z-10">
+            <Link to="/community" className="bg-white border border-gray-200 px-8 py-4 rounded-full font-semibold text-base hover:bg-gray-50 hover:scale-105 hover:border-[#7cb342]/50 transition-all duration-300 text-gray-900 shiny-border relative z-10">
               <span className="relative z-10">See Real Grower Results</span>
             </Link>
           </div>

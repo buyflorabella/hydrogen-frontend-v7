@@ -95,7 +95,6 @@
 //   }
 // ` as const;
 
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import { useParams } from 'react-router';
 
 const policies = {
@@ -241,7 +240,6 @@ export default function PolicyPage() {
   if (!policy) {
     return (
       <>
-        <AnnouncementBar />
         <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h1 className="text-3xl text-white mb-4">Policy not found</h1>
@@ -256,7 +254,6 @@ export default function PolicyPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20">
         <div className="max-w-4xl mx-auto px-6">
         <div className="mb-12">

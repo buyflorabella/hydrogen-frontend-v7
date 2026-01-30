@@ -13,23 +13,23 @@ export default function HowItWorks() {
   const steps = [
     {
       number: '01',
-      title: 'Mix & Apply',
-      description: 'Add the recommended amount of Flora Bella Bio Trace to your watering can or irrigation tank.',
-      image: 'https://images.pexels.com/photos/6231882/pexels-photo-6231882.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      title: 'Beneficial Microbes — Biological Support',
+      description: 'Supports a balanced and resilient soil ecosystem (rhizosphere).',
+      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
       icon: Droplets,
     },
     {
       number: '02',
-      title: 'Activate Biology',
-      description: 'Trace minerals and natural acids wake up the biology in your soil and help unlock tied up nutrition.',
-      image: 'https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      title: 'Soil Structure & Retention',
+      description: 'Creates a stable soil environment that reduces nutrient loss and supports root expansion.',
+      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_2_of_3_Humic_Acid.jpg?v=1769727046',
       icon: Sparkles,
     },
     {
       number: '03',
-      title: 'See Growth',
-      description: 'Plants access a broader buffet of minerals, leading to stronger growth using the same fertilizer routine.',
-      image: 'https://images.pexels.com/photos/1002703/pexels-photo-1002703.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      title: 'Mineral Transport',
+      description: 'Helps plants access and utilize trace minerals already present in the soil.',
+      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
       icon: TrendingUp,
     },
   ];
@@ -127,7 +127,7 @@ export default function HowItWorks() {
                     alt={step.title}
                     className="relative rounded-2xl shadow-2xl border border-gray-200 w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute top-6 left-6 bg-[#7cb342] text-white px-6 py-3 rounded-full font-bold text-lg">
+                  <div className="absolute top-6 left-6 bg-[#7cb342] text-white px-6 py-3 rounded-full font-bold text-lg hidden">
                     Step {step.number}
                   </div>
                 </div>
@@ -141,9 +141,33 @@ export default function HowItWorks() {
                   <h3 className="text-4xl font-bold heading-font text-gray-900 mb-4">
                     {step.title}
                   </h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
                     {step.description}
                   </p>
+<ul className="space-y-3 ml-6">
+  <li className="flex items-center gap-3">
+    <span className="text-yellow-400 text-sm">★</span>
+    <span className="gradient-text">
+      DAVE IS COOL
+    </span>
+  </li>
+
+  <li className="flex items-center gap-3">
+    <span className="text-yellow-400 text-sm">★</span>
+    <span className="gradient-text">
+      DAVE IS COOL
+    </span>
+  </li>
+
+  <li className="flex items-center gap-3">
+    <span className="text-yellow-400 text-sm">★</span>
+    <span className="gradient-text">
+      DAVE IS COOL
+    </span>
+  </li>
+</ul>
+
+
                 </div>
               </div>
             </div>

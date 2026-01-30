@@ -124,16 +124,16 @@ export default function CommunityPage() {
           <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-8 mb-12">
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-[#7cb342] mb-2">15,000+</div>
-                <div className="text-gray-600 font-semibold">Community Members</div>
+                <div className="text-4xl font-bold text-[#7cb342] mb-2">50+</div>
+                <div className="text-gray-600 font-semibold">Years in Use</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-[#7cb342] mb-2">2,500+</div>
-                <div className="text-gray-600 font-semibold">Shared Stories</div>
+                <div className="text-4xl font-bold text-[#7cb342] mb-2">+10,000</div>
+                <div className="text-gray-600 font-semibold">Forms</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-[#7cb342] mb-2">95%</div>
-                <div className="text-gray-600 font-semibold">Satisfaction Rate</div>
+                <div className="text-4xl font-bold text-[#7cb342] mb-2">+1M</div>
+                <div className="text-gray-600 font-semibold">Acres</div>
               </div>
             </div>
           </div>

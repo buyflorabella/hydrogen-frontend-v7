@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Mail, CheckCircle } from 'lucide-react';
 import PageBackground from '../componentsMockup2/components/PageBackground';
-import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -30,7 +29,6 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <AnnouncementBar />
       <div className="relative min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20 overflow-hidden">
         <PageBackground />
 

@@ -30,8 +30,28 @@ export default async function handleRequest(
       "'self'",
     ],
     connectSrc: [
-      "https://survey-server.boardmansgame.com" // SurveyPopup.tsx component
-    ]
+      "https://survey-server.boardmansgame.com", // SurveyPopup.tsx component
+      "wss://dev1-frontend.textreader.boardmansgame.com"
+    ],
+   frameSrc: [
+      "'self'",
+      'https://www.youtube.com/embed/',
+      'https://www.youtube-nocookie.com/',
+      'https://*.youtube.com',
+      'https://*.youtube-nocookie.com',
+    ],
+    childSrc: [
+      "'self'",
+      'https://www.youtube.com/embed/',
+      'https://www.youtube-nocookie.com/',
+      'https://*.youtube.com',
+      'https://*.youtube-nocookie.com',
+    ],
+    mediaSrc: [
+      "'self'", 
+      'https://cdn.shopify.com/',
+      'https://*.googleapis.com'
+    ],
   });
 
   const body = await renderToReadableStream(
