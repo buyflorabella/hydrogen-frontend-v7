@@ -5,6 +5,8 @@ import { Link, useRouteLoaderData, type LoaderFunctionArgs } from 'react-router-
 const Account = () => {
   const { userData } = useRouteLoaderData('root');
 
+  console.info(userData);
+
   return <>
     <div className="grid pt-8 gap-8 px-8 mx-8">
       <div className="mb-2 mt-8">
@@ -28,10 +30,10 @@ const Account = () => {
             <Heart className="w-5 h-5" />
             Wishlist
           </a> */}
-          <a href="#settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+          <Link to="settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
             <Settings className="w-5 h-5" />
             Settings
-          </a>
+          </Link>
           <Form method="POST" action="/my-account/logout">
             <button 
               type="submit" 

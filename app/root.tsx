@@ -156,6 +156,8 @@ export async function loader(args: Route.LoaderArgs) {
     console.log("[DxB][loader] NO REDIRECT - continuing to render root");
   }
 
+  console.info(userData?.data?.customer)
+
   // 1. Prepare the return object
   const loaderPayload = {
     ...deferredData,
