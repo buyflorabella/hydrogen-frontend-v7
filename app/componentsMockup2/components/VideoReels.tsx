@@ -8,7 +8,7 @@ export default function VideoReels() {
 
   const reels = [
     {
-      title: 'Main Video #1',
+      title: 'Introducing ...',
       platform: 'Shopify',
       thumbnail: 'https://images.pexels.com/photos/1459495/pexels-photo-1459495.jpeg?auto=compress&cs=tinysrgb&w=400',
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
@@ -16,19 +16,19 @@ export default function VideoReels() {
     {
       title: 'Compost Tea Mix',
       platform: 'Shopify',
-      thumbnail: 'https://images.pexels.com/photos/1388944/pexels-photo-1388944.jpeg?auto=compress&cs=tinysrgb&w=400',
+      thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_5_of_6_lighted_roots.jpg?v=1769724521',
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/20c8f9fd3db046d4b1f83fbf8a7b34ad.mp4',
     },
     {
-      title: 'Video #3',
+      title: 'How Flora Bella Works',
       platform: 'Google Sample',
-      thumbnail: 'https://images.pexels.com/photos/2132250/pexels-photo-2132250.jpeg?auto=compress&cs=tinysrgb&w=400',
+      thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/a638f13cde5e4749a87a2de8cbd4ec9b.mp4',
     },
     {
-      title: 'Video #4',
+      title: 'Humic Acid',
       platform: 'Google Sample',
-      thumbnail: 'https://images.pexels.com/photos/2132250/pexels-photo-2132250.jpeg?auto=compress&cs=tinysrgb&w=400',
+      thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_2_of_3_Humic_Acid.jpg?v=1769727046',
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/e4630da0d71844b8b76e80b60c634a80.mp4',
     },
   ];
