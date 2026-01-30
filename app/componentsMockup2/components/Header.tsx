@@ -1,8 +1,7 @@
 import { Menu, Search, User, ShoppingCart, X, LockKeyhole } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
-import { Link, useRouteLoaderData, Await } from 'react-router';
+import { Link, useRouteLoaderData, Await, useFetcher } from 'react-router';
 import { useCart } from '../contexts/CartContext';
-import SearchDropdown from './SearchDropdown';
 import type { RootLoader } from '~/routes/root';
 import type { Cart } from '@shopify/hydrogen/storefront-api-types';
 import AnnouncementBar from './AnnouncementBar';
@@ -13,7 +12,14 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
+  const fetcher = useFetcher();
   const { openCart } = useCart();
+
+  useEffect(() => {
+    if (searchQuery.length > 2) {
+      fetcher.load(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  }, [searchQuery]);
 
   const rootData = useRouteLoaderData<RootLoader>('root');
 
@@ -208,10 +214,47 @@ export default function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products and articles..."
+                  placeholder="Search products..."
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#7cb342] transition-colors"
+                  autoFocus
                 />
-                {searchQuery && <SearchDropdown searchQuery={searchQuery} onClose={closeSearch} />}
+                
+                {/* Results Dropdown */}
+                {searchQuery.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50">
+                    {fetcher.state === 'loading' ? (
+                      <div className="p-4 text-white/50 text-sm">Searching...</div>
+                    ) : fetcher.data?.products?.length > 0 ? (
+                      <ul className="divide-y divide-white/5">
+                        {fetcher.data.products.map((product: any) => (
+                          <li key={product.id}>
+                            <Link
+                              to={`/product/${product.handle}`}
+                              onClick={closeSearch}
+                              className="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors"
+                            >
+                              {product.featuredImage && (
+                                <img 
+                                  src={product.featuredImage.url} 
+                                  alt={product.title} 
+                                  className="w-12 h-12 object-cover rounded"
+                                />
+                              )}
+                              <div>
+                                <p className="text-white font-medium">{product.title}</p>
+                                <p className="text-[#7cb342] text-sm">
+                                  ${product.variants.nodes[0].price.amount}
+                                </p>
+                              </div>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : searchQuery.length > 2 ? (
+                      <div className="p-4 text-white/50 text-sm">No products found.</div>
+                    ) : null}
+                  </div>
+                )}
               </div>
             </div>
           </div>
