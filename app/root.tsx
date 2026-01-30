@@ -108,13 +108,19 @@ const CUSTOMER_QUERY = `#graphql
 
 export async function loader(args: Route.LoaderArgs) {
   console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
-  const {storefront, env, session} = args.context;
+  const {storefront, env, session, customerAccount} = args.context;
 
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
 
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
+
+  const isLoggedIn = await customerAccount.isLoggedIn();
+
+  const userData = isLoggedIn 
+    ? await customerAccount.query(CUSTOMER_QUERY).catch(() => null)
+    : Promise.resolve(null);
 
   //const session = await storage.getSession(args.request.headers.get('Cookie'));
   console.log("[DxB][loader] Session object:", session.data);
@@ -185,6 +191,7 @@ export async function loader(args: Route.LoaderArgs) {
       surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED === "true",
       surveySingleAnswer: env.PUBLIC_SITE_SURVEY_SINGLE_ANSWER === "true",
     },
+    userData: userData?.data?.customer
   };
 
   // 2. Console log the payload
