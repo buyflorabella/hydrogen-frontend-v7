@@ -63,52 +63,6 @@ export default function HowItWorks() {
             A precise blend of over 70 trace minerals working in harmony with your soil
           </p>
 
-          <div className="relative max-w-5xl mx-auto mb-20">
-            <div className="relative w-full aspect-[2/1]">
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 500">
-                <defs>
-                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7cb342" stopOpacity="0.6" />
-                    <stop offset="50%" stopColor="#8b6f47" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="#7cb342" stopOpacity="0.6" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M 100,250 Q 300,150 500,250 T 900,250"
-                  stroke="url(#lineGradient)"
-                  strokeWidth="3"
-                  fill="none"
-                  strokeDasharray="10,10"
-                  className="animate-pulse"
-                />
-              </svg>
-
-              {minerals.map((mineral, index) => (
-                <div
-                  key={index}
-                  className="absolute floating"
-                  style={{
-                    left: mineral.left,
-                    top: mineral.top,
-                    animationDelay: mineral.delay,
-                  }}
-                >
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-white text-xl shadow-2xl bg-[#7cb342] border-2 border-white/30">
-                    {mineral.name}
-                  </div>
-                </div>
-              ))}
-
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="relative w-32 h-32">
-                  <div className="absolute inset-0 bg-[#7cb342]/20 rounded-full blur-xl animate-pulse"></div>
-                  <div className="relative w-32 h-32 rounded-full border-4 border-[#7cb342]/30 flex items-center justify-center bg-white shadow-xl">
-                    <CircleDot className="w-12 h-12 text-[#7cb342]" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="space-y-32">
