@@ -59,12 +59,12 @@ export default function CommunityCallout() {
 
         <div className="mt-12 grid grid-cols-2 md:grid-cols-6 gap-4">
           {[
-            'https://images.pexels.com/photos/1459495/pexels-photo-1459495.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/1388944/pexels-photo-1388944.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/2132250/pexels-photo-2132250.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/4751285/pexels-photo-4751285.jpeg?auto=compress&cs=tinysrgb&w=300',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_1_of_6.jpg?v=1769731706',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_2_of_6.jpg?v=1769731708',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_3_of_6.jpg?v=1769731701',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_4_of_6.jpg?v=1769731701',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_5_of_6.jpg?v=1769731705',
+            'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_6_of_6.jpg?v=1769731707',
           ].map((img, index) => (
             <div
               key={index}

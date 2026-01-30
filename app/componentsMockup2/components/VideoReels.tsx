@@ -1,5 +1,6 @@
 import { Play, Instagram, ArrowRight } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import {Video} from '@shopify/hydrogen-react';
 
 export default function VideoReels() {
   const [selectedVideo, setSelectedVideo] = useState(0);

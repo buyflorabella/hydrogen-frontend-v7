@@ -6,6 +6,12 @@ export default function ReassuranceStrip() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-6">
           <div className="glass rounded-2xl p-6 flex items-center gap-4 hover:scale-105 transition-transform">
+            <div className="p-3 bg-[#d4ff00]/10 rounded-xl">
+              <Truck className="w-8 h-8 text-[#d4ff00]" />
+            </div>
+            <p className="text-white/90 font-medium">Developed with care</p>
+          </div>
+          <div className="glass rounded-2xl p-6 flex items-center gap-4 hover:scale-105 transition-transform">
             <div className="p-3 bg-[#ff0080]/10 rounded-xl">
               <Shield className="w-8 h-8 text-[#ff0080]" />
             </div>
