@@ -1,48 +1,129 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Phone, Clock, MapPin, Send, Users, Package, ExternalLink } from 'lucide-react';
 import PageBackground from '../components/PageBackground';
 import AnnouncementBar from '../components/AnnouncementBar';
+import { useRouteLoaderData } from 'react-router';
+
+declare global {
+  interface Window {
+    omnisend: any;
+  }
+}
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    inquiryType: 'general',
+  // Read from root loader (runtime-safe)
+  const { env } = useRouteLoaderData('root');
+
+  type ContactForm = {
+    name: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+    inquiry_type: string;
+    orderNumber: string;
+  };
+
+  const [formData, setFormData] = useState<ContactForm>({
+    name: 'John Doe',
+    email: 'webmaster@allthingsgood.com',
+    phone: '555-0199',
+    subject: 'Integration Question',
+    message: 'Testing the backend sync.',
+    inquiry_type: 'general',
     orderNumber: '',
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+
+
+  //const [submitting, setSubmitting] = useState(false);
+  //const [submitted, setSubmitted] = useState(false);
+
+  // Replaces submitting/submitted booleans with a single status object
+  const [statusBackend, setStatusBackend] = useState<{
+    type: 'success' | 'error' | 'loading' | null;
+    message: string;
+  } | null>(null);  
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
+    setStatusBackend({ type: 'loading', message: 'Syncing...' });
 
+    const mailUrl = new URL(
+      env.mailApiRoute,
+      env.mailApiBase
+    ).toString();
+
+    console.log("---------->>>>>>>> SENDING A REQUEST FOR MAILER: " + mailUrl);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch(mailUrl, 
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      console.log('Contact form submission:', formData);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Submission failed');
 
-      setSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: '',
-        inquiryType: 'general',
-        orderNumber: '',
-      });
+      // Omnisend Identify
+      if (window.omnisend) {
+        window.omnisend.push(["identifyContact", {
+          email: formData.email,
+          firstName: formData.name,
+          phone: formData.phone,
+          tags: ["source:contact-page", `inquiry:${formData.inquiry_type}`]
+        }]);
+      }
 
-      setTimeout(() => setSubmitted(false), 5000);
-    } catch (error) {
-      console.error('Error submitting contact form:', error);
-    } finally {
-      setSubmitting(false);
+      setStatusBackend({ type: 'success', message: data.success || 'Message sent!' });
+    } catch (error: any) {
+      setStatusBackend({ type: 'error', message: error.message });
     }
   };
+
+  // const handleSubmit_v1 = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setSubmitting(true);
+
+  //   try {
+  //     await new Promise(resolve => setTimeout(resolve, 1000));
+
+  //     console.log('Contact form submission:', formData);
+
+  //     setSubmitted(true);
+  //     setFormData({
+  //       name: '',
+  //       email: '',
+  //       phone: '',
+  //       subject: '',
+  //       message: '',
+  //       inquiry_type: 'general',
+  //       orderNumber: '',
+  //     });
+
+  //     setTimeout(() => setSubmitted(false), 5000);
+  //   } catch (error) {
+  //     console.error('Error submitting contact form:', error);
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
+
+  const handleReset = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: '',
+      inquiry_type: 'general',
+      orderNumber: '',
+    });
+    setStatusBackend(null);
+  };  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
@@ -107,12 +188,14 @@ export default function ContactPage() {
               href="#bulk-inquiry"
               onClick={(e) => {
                 e.preventDefault();
-                const form = document.getElementById('contact-form');
-                const inquiryType = document.getElementById('inquiryType') as HTMLSelectElement;
-                if (inquiryType) {
-                  inquiryType.value = 'wholesale';
-                }
-                form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setFormData(prev => ({ ...prev, inquiry_type: 'wholesale' })); // Update the state!
+                document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                // const form = document.getElementById('contact-form');
+                // const inquiryType = document.getElementById('inquiry_type') as HTMLSelectElement;
+                // if (inquiryType) {
+                //   inquiryType.value = 'wholesale';
+                // }
+                //form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
             >
@@ -161,7 +244,7 @@ export default function ContactPage() {
                   <input
                     type="text"
                     name="name"
-                    value={formData.name}
+                    value="DxB"
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 glass border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#7cb342] transition-colors bg-transparent"
@@ -197,23 +280,23 @@ export default function ContactPage() {
                 <div>
                   <label className="block text-white mb-2 font-semibold">Inquiry Type *</label>
                   <select
-                    id="inquiryType"
-                    name="inquiryType"
-                    value={formData.inquiryType}
+                    id="inquiry_type"
+                    name="inquiry_type"
+                    value={formData.inquiry_type}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 glass border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#7cb342] transition-colors bg-transparent"
                   >
                     <option value="general" className="bg-[#1a1a2e]">General Inquiry</option>
-                    <option value="order" className="bg-[#1a1a2e]">Order Support</option>
-                    <option value="product" className="bg-[#1a1a2e]">Product Question</option>
+                    <option value="order_support" className="bg-[#1a1a2e]">Order Support</option>
+                    <option value="product_question" className="bg-[#1a1a2e]">Product Question</option>
                     <option value="wholesale" className="bg-[#1a1a2e]">Wholesale / Bulk Inquiry</option>
                     <option value="ambassador" className="bg-[#1a1a2e]">Brand Ambassador Program</option>
                   </select>
                 </div>
               </div>
 
-              {formData.inquiryType === 'order' && (
+              {formData.inquiry_type === 'order_support' && (
                 <div>
                   <label className="block text-white mb-2 font-semibold">Order Number</label>
                   <input
@@ -239,6 +322,7 @@ export default function ContactPage() {
                   placeholder="How can we help?"
                 />
               </div>
+              <div classname="text-white">Mailer: {env.mailApiBase}</div>
 
               <div>
                 <label className="block text-white mb-2 font-semibold">Message *</label>
@@ -255,10 +339,11 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                disabled={submitting}
+                // Disable if the backend is currently processing
+                disabled={statusBackend?.type === 'loading'}
                 className="w-full py-4 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {submitting ? (
+                >
+                {statusBackend?.type === 'loading' ? (
                   'Sending...'
                 ) : (
                   <>
@@ -268,11 +353,23 @@ export default function ContactPage() {
                 )}
               </button>
 
-              {submitted && (
-                <div className="p-4 bg-[#7cb342]/20 border border-[#7cb342] rounded-xl text-[#7cb342] text-center">
-                  Thank you! We've received your message and will respond within 24 hours.
-                </div>
-              )}
+              <div className="status-feedback mt-6">
+                {statusBackend?.type === 'loading' && (
+                  <div className="p-4 bg-blue-500/20 border border-blue-500 rounded-xl text-blue-200 text-center">
+                    Sending message ...
+                  </div>
+                )}
+                {statusBackend?.type === 'success' && (
+                  <div className="p-4 bg-[#7cb342]/20 border border-[#7cb342] rounded-xl text-[#7cb342] text-center">
+                    {statusBackend.message}
+                  </div>
+                )}
+                {statusBackend?.type === 'error' && (
+                  <div className="p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-200 text-center">
+                    {statusBackend.message}
+                  </div>
+                )}
+              </div>
             </form>
           </div>
 

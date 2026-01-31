@@ -2,21 +2,78 @@ import { useState } from 'react';
 import { Mail, Phone, Clock, MapPin, Send, Users, Package, ExternalLink } from 'lucide-react';
 import PageBackground from '../componentsMockup2/components/PageBackground';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
+import { useRouteLoaderData } from 'react-router';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    inquiryType: 'general',
+  // Read from root loader (runtime-safe)
+  const { env } = useRouteLoaderData('root');
+
+  type ContactForm = {
+    name: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+    inquiry_type: string;
+    orderNumber: string;
+  };
+
+  const [formData, setFormData] = useState<ContactForm>({
+    name: 'John Doe',
+    email: 'webmaster@allthingsgood.com',
+    phone: '555-0199',
+    subject: 'Integration Question',
+    message: 'Testing the backend sync.',
+    inquiry_type: 'general',
     orderNumber: '',
   });
+
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    //setStatusBackend({ type: 'loading', message: 'Syncing...' });
+    setSubmitting(true);
+
+    const mailUrl = new URL(
+      env.mailApiRoute,
+      env.mailApiBase
+    ).toString();
+
+    console.log("---------->>>>>>>> SENDING A REQUEST FOR MAILER: " + mailUrl);
+    try {
+      const response = await fetch(mailUrl, 
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      setSubmitted(true);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Submission failed');
+
+      // Omnisend Identify
+      if (window.omnisend) {
+        window.omnisend.push(["identifyContact", {
+          email: formData.email,
+          firstName: formData.name,
+          phone: formData.phone,
+          tags: ["source:contact-page", `inquiry:${formData.inquiry_type}`]
+        }]);
+      }
+
+      setStatusBackend({ type: 'success', message: data.success || 'Message sent!' });
+    } catch (error: any) {
+      setStatusBackend({ type: 'error', message: error.message });
+    }
+  };
+
+
+  const handleSubmit_v1_real = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
@@ -32,7 +89,7 @@ export default function ContactPage() {
         phone: '',
         subject: '',
         message: '',
-        inquiryType: 'general',
+        inquity_type: 'general',
         orderNumber: '',
       });
 
@@ -108,9 +165,9 @@ export default function ContactPage() {
               onClick={(e) => {
                 e.preventDefault();
                 const form = document.getElementById('contact-form');
-                const inquiryType = document.getElementById('inquiryType') as HTMLSelectElement;
-                if (inquiryType) {
-                  inquiryType.value = 'wholesale';
+                const inquiry_type = document.getElementById('inquiry_type') as HTMLSelectElement;
+                if (inquiry_type) {
+                  inquiry_type.value = 'wholesale';
                 }
                 form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
@@ -197,9 +254,9 @@ export default function ContactPage() {
                 <div>
                   <label className="block text-white mb-2 font-semibold">Inquiry Type *</label>
                   <select
-                    id="inquiryType"
-                    name="inquiryType"
-                    value={formData.inquiryType}
+                    id="inquiry_type"
+                    name="inquiry_type"
+                    value={formData.inquiry_type}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 glass border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#7cb342] transition-colors bg-transparent"
@@ -213,7 +270,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {formData.inquiryType === 'order' && (
+              {formData.inquiry_type === 'order' && (
                 <div>
                   <label className="block text-white mb-2 font-semibold">Order Number</label>
                   <input
@@ -227,6 +284,7 @@ export default function ContactPage() {
                 </div>
               )}
 
+              <span className="text-white">Mailer: {env.mailApiBase}{env.mailApiRoute}</span>
               <div>
                 <label className="block text-white mb-2 font-semibold">Subject *</label>
                 <input

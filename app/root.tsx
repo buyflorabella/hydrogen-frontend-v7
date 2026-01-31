@@ -175,7 +175,11 @@ export async function loader(args: Route.LoaderArgs) {
       message2: env.PUBLIC_STORE_MESSAGE2 || "",
       message3: env.PUBLIC_STORE_MESSAGE3 || "",
       publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
-      omnisendBrandId: env.PUBLIC_OMNISEND_BRAND_ID
+      omnisendBrandId: env.PUBLIC_OMNISEND_BRAND_ID,
+      surveyApiBase: env.PUBLIC_SURVEY_API_BASE,
+      surveyApiRoute: env.PUBLIC_SURVEY_API_ROUTE,
+      mailApiBase: env.PUBLIC_MAIL_API_BASE,
+      mailApiRoute: env.PUBLIC_MAIL_API_ROUTE,
     },    
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({

@@ -34,6 +34,8 @@ export default async function handleRequest(
       "blob:",
       "https://images.pexels.com",
       "https://*.omnisend.com",
+      "https://*.omnisendlink.com",       
+      'https://forms.soundestlink.com', // ✅ Add this for image rendering
     ],
     styleSrc: [
       "'self'",
@@ -50,7 +52,10 @@ export default async function handleRequest(
       'https://omnisnippet1.com',
       'https://omnisnippet.com',
       "https://survey-server.boardmansgame.com",
-      "wss://dev1-frontend.textreader.boardmansgame.com"
+      "https://dev1-frontend.textreader.boardmansgame.com",
+      "https://dev2-frontend.textreader.boardmansgame.com",
+      "wss://dev1-frontend.textreader.boardmansgame.com",
+      "wss://dev2-frontend.textreader.boardmansgame.com",
     ],
     frameSrc: [
       "'self'",
