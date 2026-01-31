@@ -18,24 +18,34 @@ export default function ContactPage() {
     orderNumber: string;
   };
 
+  // const [formData, setFormData] = useState<ContactForm>({
+  //   name: 'John Doe',
+  //   email: 'webmaster@allthingsgood.com',
+  //   phone: '555-0199',
+  //   subject: 'Integration Question',
+  //   message: 'Testing the backend sync.',
+  //   inquiry_type: 'general',
+  //   orderNumber: '',
+  // });
   const [formData, setFormData] = useState<ContactForm>({
-    name: 'John Doe',
-    email: 'webmaster@allthingsgood.com',
-    phone: '555-0199',
-    subject: 'Integration Question',
-    message: 'Testing the backend sync.',
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
     inquiry_type: 'general',
     orderNumber: '',
   });
 
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
+  const [statusBackend, setStatusBackend] = useState<{
+    type: 'success' | 'error' | 'loading' | null;
+    message: string;
+  } | null>(null);  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //setStatusBackend({ type: 'loading', message: 'Syncing...' });
-    setSubmitting(true);
+    setStatusBackend({ type: 'loading', message: 'Syncing...' });
+    //setSubmitting(true);
 
     const mailUrl = new URL(
       env.mailApiRoute,
@@ -52,7 +62,7 @@ export default function ContactPage() {
         }
       );
 
-      setSubmitted(true);
+      //setSubmitted(true);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Submission failed');
 
@@ -72,6 +82,10 @@ export default function ContactPage() {
     }
   };
 
+
+/*
+Waits 1-second, updates the page pretending it is "submitting something".
+Waits 5-seconds, clears the notification and the form
 
   const handleSubmit_v1_real = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +114,7 @@ export default function ContactPage() {
       setSubmitting(false);
     }
   };
-
+*/
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -313,10 +327,11 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                disabled={submitting}
+                // Disable if the backend is currently processing
+                disabled={statusBackend?.type === 'loading'}
                 className="w-full py-4 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {submitting ? (
+                >
+                {statusBackend?.type === 'loading' ? (
                   'Sending...'
                 ) : (
                   <>
@@ -326,11 +341,24 @@ export default function ContactPage() {
                 )}
               </button>
 
-              {submitted && (
-                <div className="p-4 bg-[#7cb342]/20 border border-[#7cb342] rounded-xl text-[#7cb342] text-center">
-                  Thank you! We've received your message and will respond within 24 hours.
-                </div>
-              )}
+              <div className="status-feedback mt-6">
+                {statusBackend?.type === 'loading' && (
+                  <div className="p-4 bg-blue-500/20 border border-blue-500 rounded-xl text-blue-200 text-center">
+                    Sending message ...
+                  </div>
+                )}
+                {statusBackend?.type === 'success' && (
+                  <div className="p-4 bg-[#7cb342]/20 border border-[#7cb342] rounded-xl text-[#7cb342] text-center">
+                    {statusBackend.message}
+                  </div>
+                )}
+                {statusBackend?.type === 'error' && (
+                  <div className="p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-200 text-center">
+                    {statusBackend.message}
+                  </div>
+                )}
+              </div>
+
             </form>
           </div>
 
