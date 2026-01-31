@@ -28,9 +28,9 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['.boardmansgame.com', '.tryhydrogen.dev'],
+    allowedHosts: ['.boardmansgame.com', '.tryhydrogen.dev', '.buyflorabella.com'],
     hmr: {
-      host: 'dev1-frontend.textreader.boardmansgame.com', // browser-accessible hostname
+      host: 'dev1-frontend.buyflorabella.com', // browser-accessible hostname
       protocol: 'wss',
       clientPort: 443, // HMR client will connect over HTTPS/WSS port
     },

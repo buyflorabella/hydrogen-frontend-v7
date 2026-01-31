@@ -15,6 +15,14 @@ export default async function handleRequest(
   context: HydrogenRouterContextProvider,
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
+    scriptSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://omnisnippet1.com',   // ✅ REQUIRED
+      'https://omnisnippet.com',
+      'https://*.omnisnippet.com'
+    ],
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
@@ -24,21 +32,31 @@ export default async function handleRequest(
       "https://cdn.shopify.com",
       "data:",
       "blob:",
-      "https://images.pexels.com"
+      "https://images.pexels.com",
+      "https://*.omnisend.com",
     ],
     styleSrc: [
       "'self'",
+      "'unsafe-inline'",                // Omnisend often injects inline styles
+      "https://*.omnisnippet.com",      // Add this      
     ],
     connectSrc: [
-      "https://survey-server.boardmansgame.com", // SurveyPopup.tsx component
+      "'self'",
+      'https://api.omnisend.com',
+      'https://*.omnisend.com',
+      'https://forms.soundestlink.com', // ✅ Add this for form rendering
+      'https://wt.soundestlink.com',    // ✅ Add this for legacy tracking
+      'https://wt.omnisendlink.com',
+      'https://omnisnippet1.com',
+      'https://omnisnippet.com',
+      "https://survey-server.boardmansgame.com",
       "wss://dev1-frontend.textreader.boardmansgame.com"
     ],
-   frameSrc: [
+    frameSrc: [
       "'self'",
-      'https://www.youtube.com/embed/',
-      'https://www.youtube-nocookie.com/',
+      'https://forms.omnisend.com',     // REQUIRED: This is the iframe source
       'https://*.youtube.com',
-      'https://*.youtube-nocookie.com',
+      // ... rest of your youtube entries ...
     ],
     childSrc: [
       "'self'",
@@ -52,6 +70,12 @@ export default async function handleRequest(
       'https://cdn.shopify.com/',
       'https://*.googleapis.com'
     ],
+    fontSrc: [
+      "'self'",
+      'https://fonts.googleapis.com', // example if using Google Fonts
+      'https://fonts.gstatic.com',
+      // add any other font hosts here
+    ],    
   });
 
   const body = await renderToReadableStream(
