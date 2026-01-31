@@ -298,7 +298,6 @@ Waits 5-seconds, clears the notification and the form
                 </div>
               )}
 
-              <span className="text-white">Mailer: {env.mailApiBase}{env.mailApiRoute}</span>
               <div>
                 <label className="block text-white mb-2 font-semibold">Subject *</label>
                 <input
