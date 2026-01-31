@@ -1,21 +1,12 @@
-import { Droplets, Sparkles, TrendingUp, Leaf, CircleDot } from 'lucide-react';
+import { Droplets, Sparkles, TrendingUp, Leaf } from 'lucide-react';
 
 export default function HowItWorks() {
-  const minerals = [
-    { name: 'Mg', delay: '0s', left: '15%', top: '30%' },
-    { name: 'Zn', delay: '0.5s', left: '29%', top: '50%' },
-    { name: 'Cu', delay: '1s', left: '43%', top: '30%' },
-    { name: 'Fe', delay: '1.5s', left: '57%', top: '50%' },
-    { name: 'Mn', delay: '2s', left: '71%', top: '30%' },
-    { name: 'B', delay: '2.5s', left: '85%', top: '50%' },
-  ];
-
   const steps = [
     {
       number: '01',
       title: 'Beneficial Microbes — Biological Support',
       description: 'Supports a balanced and resilient soil ecosystem (rhizosphere).',
-      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
+      video: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
       icon: Droplets,
     },
     {
@@ -62,7 +53,6 @@ export default function HowItWorks() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-16">
             A precise blend of over 70 trace minerals working in harmony with your soil
           </p>
-
         </div>
 
         <div className="space-y-32">
@@ -76,11 +66,26 @@ export default function HowItWorks() {
               <div className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
                 <div className="relative group">
                   <div className="absolute -inset-4 bg-gradient-to-r from-[#7cb342]/20 to-[#8b6f47]/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all"></div>
-                  <img
-                    src={step.image}
-                    alt={step.title}
-                    className="relative rounded-2xl shadow-2xl border border-gray-200 w-full aspect-[4/3] object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
+                  
+                  <div className="relative rounded-2xl shadow-2xl border border-gray-200 w-full aspect-[4/3] overflow-hidden group-hover:scale-110 transition-transform duration-700 bg-gray-100">
+                    {step.video ? (
+                      <video
+                        src={step.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={step.image}
+                        alt={step.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+
                   <div className="absolute top-6 left-6 bg-[#7cb342] text-white px-6 py-3 rounded-full font-bold text-lg hidden">
                     Step {step.number}
                   </div>
@@ -98,30 +103,20 @@ export default function HowItWorks() {
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
                     {step.description}
                   </p>
-<ul className="space-y-3 ml-6">
-  <li className="flex items-center gap-3">
-    <span className="text-yellow-400 text-sm">★</span>
-    <span className="gradient-text">
-      DAVE IS COOL
-    </span>
-  </li>
-
-  <li className="flex items-center gap-3">
-    <span className="text-yellow-400 text-sm">★</span>
-    <span className="gradient-text">
-      DAVE IS COOL
-    </span>
-  </li>
-
-  <li className="flex items-center gap-3">
-    <span className="text-yellow-400 text-sm">★</span>
-    <span className="gradient-text">
-      DAVE IS COOL
-    </span>
-  </li>
-</ul>
-
-
+                  <ul className="space-y-3 ml-6">
+                    <li className="flex items-center gap-3">
+                      <span className="text-yellow-400 text-sm">★</span>
+                      <span className="gradient-text">DAVE IS COOL</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="text-yellow-400 text-sm">★</span>
+                      <span className="gradient-text">DAVE IS COOL</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="text-yellow-400 text-sm">★</span>
+                      <span className="gradient-text">DAVE IS COOL</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
