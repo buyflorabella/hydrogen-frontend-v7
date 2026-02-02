@@ -11,10 +11,30 @@ import type {
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
 import LandingPage from '../componentsMockup2/pages/HomePage'
+import {getSeoMeta} from '@shopify/hydrogen';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+
+//export const meta: Route.MetaFunction = () => { return [{title: 'Hydrogen | Home'}]; };
+
+export const meta: Route.MetaFunction = ({data}) => {
+  const seo = data?.seo;
+
+  const title = seo?.title
+    ? `${seo.title} | Premium Trace Minerals`
+    : 'Buy Flora Bella';
+
+  return [
+    {title},
+    {
+      name: 'description',
+      content:
+        seo?.description ??
+        'Premium mineral soil supplement for healthier, more vibrant gardens.',
+    },
+  ];
 };
+
+
 
 export async function loader(args: Route.LoaderArgs) {
   const {env} = args.context;
@@ -24,7 +44,12 @@ export async function loader(args: Route.LoaderArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return {...deferredData, ...criticalData, env};
+  return {...deferredData, ...criticalData, env,
+    seo: {
+      title: 'Buy Flora Bella',
+      description: 'Florabella premium mineral soil supplement for healthier, more vibrant gardens.',
+    },
+  };
 }
 
 /**
