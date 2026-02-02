@@ -1,4 +1,4 @@
-import { Bug, Sparkles, Users, Leaf, Droplet, Shield, Flower2 } from 'lucide-react';
+import { Bug, Sparkles, Users, Leaf, Droplet, Flag, Shield, FileStack, Flower2 } from 'lucide-react';
 import { Folders } from 'lucide-react';
 
 export default function BenefitsGrid() {
@@ -10,15 +10,15 @@ export default function BenefitsGrid() {
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_1_of_6_Compost_pile.jpg?v=1769724521',
     },
     {
-      icon: Folders,
+      icon: FileStack,
       title: 'Ancient + Mineral-dense',
       description: 'Made from mineral deposits formed over thousands of years — carrying complexity you can’t replicate in a lab.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_2_of_6_FB_Zoom_in.jpg?v=1769724260',
     },
     {
-      icon: Shield,
+      icon: Flag,
       title: 'Born in the USA',
-      description: 'Composted for over 6 months to "wake up" the microbes and natural forming biology after thousands of years of sleep.',
+      description: 'Sourced and crafted in the United States, Flora Bella is composted for 6-8 months to reawaken naturally occurring microbes and biology that have rested for thousands of years - brining ancient mineral vitality back into living soil.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_3_of_6_Hand_w_Tomato.jpg?v=1769724522',
     },
     {
@@ -90,7 +90,11 @@ export default function BenefitsGrid() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 inline-flex items-center justify-center w-12 h-12 bg-[#7cb342] rounded-xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
-                  <benefit.icon className="w-6 h-6 text-white" />
+                  {typeof benefit.icon === 'string' ? (
+                    <img src={benefit.icon} alt={benefit.title} className="w-6 h-6" />
+                  ) : (
+                    <benefit.icon className="w-6 h-6 text-white" />
+                  )}
                 </div>
               </div>
               <div className="p-6">
