@@ -3,19 +3,41 @@ import { Settings, X, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useFeatureFlags } from '../contexts/FeatureFlagsContext';
 
 export default function TestingWidget() {
-  const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const { flags, updateFlag, resetFlags } = useFeatureFlags();
 
+  // DxB persist visibility across page loads with localStorate
+  //const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === "undefined") return false; // SSR safety
+    return localStorage.getItem("testingWidgetVisible") === "true";
+  });
+
+  // const [isVisible, setIsVisible] = useState(
+  //   () => localStorage.getItem("testingWidgetVisible") === "true"
+  // );
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Ctrl + i (or Cmd + i for Mac compatibility)
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'i') {
-        event.preventDefault();
-        setIsVisible(!isVisible);
-      }
-    };
+    const isVisible = localStorage.getItem("testingWidgetVisible");
+
+    console.log("Get visibility: " + isVisible);
+    setIsVisible(isVisible === "true");
+  }, []);
+
+  useEffect(() => {
+    console.log("Set visibility: " + isVisible);
+
+    localStorage.setItem("testingWidgetVisible", String(isVisible));
+  }, [isVisible]);
+
+  useEffect(() => {
+   const handleKeyDown = (event: KeyboardEvent) => {
+    // Check for Ctrl + Shift + D (or Cmd + Shift + D for Mac)
+    if (event.ctrlKey && event.key.toLowerCase() === 'i') {
+      event.preventDefault();
+      setIsVisible(!isVisible);
+    }
+  };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -31,7 +53,7 @@ export default function TestingWidget() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-[#7cb342] to-[#558b2f] hover:from-[#8bc34a] hover:to-[#689f38] text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+        className="z-50 w-14 h-14 bg-gradient-to-br from-[#7cb342] to-[#558b2f] hover:from-[#8bc34a] hover:to-[#689f38] text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
         title="Open Testing Widget"
       >
         <Settings className="w-6 h-6 animate-spin-slow" />
@@ -40,7 +62,7 @@ export default function TestingWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-80 bg-gradient-to-br from-[#1a1a2e] to-[#0a0015] border-2 border-[#7cb342]/50 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="z-50 w-80 bg-gradient-to-br from-[#1a1a2e] to-[#0a0015] border-2 border-[#7cb342]/50 rounded-2xl shadow-2xl overflow-hidden">
       <div className="bg-gradient-to-r from-[#7cb342] to-[#558b2f] p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Settings className="w-5 h-5 text-white" />
