@@ -128,7 +128,7 @@ export default function CommunityPage() {
                 <div className="text-gray-600 font-semibold">Years in Use</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-[#7cb342] mb-2">+10,000</div>
+                <div className="text-4xl font-bold text-[#7cb342] mb-2">+10,001</div>
                 <div className="text-gray-600 font-semibold">Farms</div>
               </div>
               <div>
@@ -141,7 +141,7 @@ export default function CommunityPage() {
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Community Gallery</h2>
             <p className="text-gray-600 text-lg">
-              Real stories, real results from our amazing community members
+              Real stories. <b>Real results.</b>  From our amazing community members
             </p>
           </div>
 

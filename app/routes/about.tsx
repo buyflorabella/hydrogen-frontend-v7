@@ -37,11 +37,11 @@ export default function AboutPage() {
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
               <b>At</b> <i>Flora Bella</i>, we believe that everyone deserves access to our pure, bioavailable minerals.  <b>Minerals</b> that support <b><i>optimal soil vitality</i></b>. Our mission is to bridge the gap between the <i>the Plant's</i> nutritional <b>needs</b> and the <i><b>mineral-depleted soils</b></i> of today's backyard agricultural systems.
             </p>
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            <p className="text-gray-700 text-lg leading-relaxed mb-6 hidden">
               <b>Flora Bella</b> has been used on farms across the country for decades. After forming deep within the earth over hundreds of thousands of years, we believe it is well past time these powerful minerals helped you grow a thriving backyard garden.
             </p>
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              Sourced from the <i>finest</i> quality minerals created by <i><b>ancient Plant and Animal Deposits</b></i>, deposited <b><i>deep inside our Earth</i></b> <i>hundreds of thousands of years ago</i>, we ensure that <b><i>each bag of Flora Bella</i></b> delivers the <i>full spectrum</i> of trace minerals your plants need to <i>thrive</i>!
+              Sourced from <i><b>ancient Plant and Animal Deposits</b></i>, deposited <b><i>deep inside our Earth</i></b> <i>hundreds of thousands of years ago</i>, <b><i>each bag of Flora Bella</i></b> contains the <i>finest</i> quality minerals, and delivers a <i>full spectrum</i> of trace minerals your plants need to <i>thrive</i>!
             </p>
             <p className="text-gray-700 text-lg leading-relaxed">
               <b>Through</b> <i>rigorous</i> testing, <i>transparent</i> sourcing, and a <i>commitment to knowledge</i> and <i>education</i>, we empower individuals to take <i>understand</i> <b>how</b> to <b><i>supplement, control, and maintain</i></b> the soil's mineral content <i>right</i> where it <i>matters most</i> for the plant.
