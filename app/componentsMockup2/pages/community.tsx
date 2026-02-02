@@ -117,7 +117,7 @@ export default function CommunityPage() {
               Growing Together
             </h1>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of health enthusiasts who are transforming their lives with Flora Bella. Share your journey, inspire others, and celebrate wellness together.
+              Join thousands of health enthusiasts who are transforming their gardens with Flora Bella. Share your journey, inspire others, and celebrate wellness together.
             </p>
           </div>
 
@@ -180,7 +180,7 @@ export default function CommunityPage() {
           <div className="mt-16 bg-gradient-to-r from-[#7cb342] to-[#8bc34a] rounded-3xl p-12 text-center text-white shadow-2xl">
             <h2 className="text-4xl font-bold mb-4">Share Your Journey</h2>
             <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Inspire others by sharing your wellness transformation with Flora Bella. Tag us on social media or submit your story directly.
+              Inspire others by sharing your soil's transformation with Flora Bella. Tag us on social media or submit your story directly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="px-8 py-4 bg-white text-[#7cb342] rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
