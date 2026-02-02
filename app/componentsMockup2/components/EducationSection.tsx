@@ -9,7 +9,7 @@ export default function EducationSection() {
       title: 'More Than NPK: Why Soil Systems Matter for the Future of Food',
       description: 'Traditional fertilizers focus on NPK. Flora Bella focuses on the soil system that makes NPK work better—trace minerals, humic + fulvic acids, and biology from the ground up.',
       readTime: '7 min read',
-      slug: 'more-than-npk-soil-systems',
+      slug: 'soil-education/more-than-npk-why-soil-systems-matter-for-the-future-of-food',
     },
     {
       icon: Bug,
@@ -17,7 +17,7 @@ export default function EducationSection() {
       title: 'Soil as a Resource Strategy: Building Resilience in a Resource-Constrained World',
       description: 'In a world of volatile inputs and strained resources, soil health is a resilience strategy. Learn how soil systems improve efficiency, stability, and long-term performance.',
       readTime: '8 min read',
-      slug: 'soil-as-a-resource-strategy',
+      slug: 'sustainability/soil-as-a-resource-strategy',
     },
     {
       icon: BookOpen,
@@ -25,7 +25,7 @@ export default function EducationSection() {
       title: 'What Is the Soil Food Web (and Why It Changes Everything)?',
       description: 'The Soil Food Web is the living system beneath your plants. Learn how soil biology influences nutrient availability, root health, and long-term resilience.',
       readTime: '9 min read',
-      slug: 'what-is-the-soil-food-web',
+      slug: 'soil-education/what-is-the-soil-food-web',
     },
   ];
 
@@ -45,7 +45,7 @@ export default function EducationSection() {
           {guides.map((guide, index) => (
             <Link
               key={index}
-              to={`/learn/${guide.slug}`}
+              to={`/article/${guide.slug}`}
               className="glass-strong rounded-3xl overflow-hidden hover:scale-105 transition-all duration-300 group"
             >
               <div className="relative h-48 overflow-hidden">
