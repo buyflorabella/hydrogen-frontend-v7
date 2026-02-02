@@ -1,24 +1,26 @@
 import { Star, Quote, Leaf, Flower2 } from 'lucide-react';
 
+//name: 'Jacob Cataldo',
+//name: 'Michael Misko',
 export default function SocialProof() {
   const reviews = [
     {
       quote: "I have been on farms and in gardens for 40 years. I used Flora Bella on my farm and noticed an immediate difference in the vigor of all my plants, especially the palms.... I am amazed with the quality and performance of the Flora Bella product.",
-      name: 'Michael Misko',
+      name: 'Michael M.',
       location: 'Larue Ms',
       rating: 5,
       avatar: 'JR',
     },
     {
-      quote: 'My palms have not slowed since I applied the product. Which I have never seen before. Usually palms go dormant in the winter. Awesome product.... I would recommend this product for any farm or garden.',
-      name: 'Michael Misko',
+      quote: 'What surprised me most was how quickly I noticed new growth.  The plants responded faster than i expected.. with visible vitality early on!',
+      name: 'Shannon L.',
       location: 'Larue Ms',
       rating: 5,
       avatar: 'MT',
     },
     {
       quote: 'I can\'t speak highly of it enough. Stuff made our plants explode! We had a pretty balanced receipe, but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft growers the most but it boosted the gardens we ran, and that was 42 acres....',
-      name: 'Jacob Cataldo',
+      name: 'Jacob C.',
       location: 'Cooperstate',
       rating: 5,
       avatar: 'SK',
