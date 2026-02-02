@@ -7,7 +7,8 @@ export default function HowItWorks() {
       title: 'Beneficial Microbes — Biological Support',
       description: 'Supports a balanced and resilient soil ecosystem (rhizosphere).',
       highlights: ['Humic and Fulvic acids', 'Ancient Organic Biology', 'Probiotics for soil'],
-      video: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
+      //video: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
+      image: "https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_2_of_6_FB_Zoom_in.jpg?v=1769724260",
       icon: Droplets,
     },
     {

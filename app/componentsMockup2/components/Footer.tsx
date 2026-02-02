@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Youtube, Twitter, CreditCard, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { Instagram, Facebook, Youtube, Twitter, Linkedin, CreditCard, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useRouteLoaderData } from 'react-router';
@@ -102,21 +102,21 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://instagram.com/buyflorabella/"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61586134112080"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@BuyFloraBella"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Youtube"
               >
@@ -125,9 +125,9 @@ export default function Footer() {
               <a
                 href="#"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
-                aria-label="Twitter"
+                aria-label="X"
               >
-                <Twitter className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" />
               </a>
             </div>
           </div>

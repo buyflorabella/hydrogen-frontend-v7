@@ -255,6 +255,7 @@ export default function LearnPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-gray-500">{calculateReadTime(guide.content)} min read</span>
                       </div>
+                      <div className="hidden">
                       {guide.tags?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {guide.tags.map((tag) => (
@@ -267,6 +268,7 @@ export default function LearnPage() {
                           ))}
                         </div>
                       )}
+                      </div>
                     </Link>
                   ));
                 })()}
