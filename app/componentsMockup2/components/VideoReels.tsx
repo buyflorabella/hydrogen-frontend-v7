@@ -8,7 +8,7 @@ export default function VideoReels() {
 
   const reels = [
     {
-      title: 'Introducing ...',
+      title: 'Flora Bella Trace Minerals',
       platform: 'Shopify',
       thumbnail: 'https://images.pexels.com/photos/1459495/pexels-photo-1459495.jpeg?auto=compress&cs=tinysrgb&w=400',
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',

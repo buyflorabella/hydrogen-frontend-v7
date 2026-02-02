@@ -59,7 +59,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 const calculateReadTime = (content: string) => {
-  const wordsPerMinute = 1;
+  const wordsPerMinute = 200;
   const words = content ? content.split(/\s+/).length : 0;
   return Math.ceil(words / wordsPerMinute) || 1;
 };

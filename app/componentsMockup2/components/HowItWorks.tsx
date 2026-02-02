@@ -6,6 +6,7 @@ export default function HowItWorks() {
       number: '01',
       title: 'Beneficial Microbes — Biological Support',
       description: 'Supports a balanced and resilient soil ecosystem (rhizosphere).',
+      highlights: ['Humic and Fulvic acids', 'Ancient Organic Biology', 'Probiotics for soil'],
       video: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
       icon: Droplets,
     },
@@ -13,6 +14,7 @@ export default function HowItWorks() {
       number: '02',
       title: 'Soil Structure & Retention',
       description: 'Creates a stable soil environment that reduces nutrient loss and supports root expansion.',
+      highlights: ['Mini-Microbe Soil engineers', 'Root scaffolds', 'Micro tunnels'],
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_2_of_3_Humic_Acid.jpg?v=1769727046',
       icon: Sparkles,
     },
@@ -20,6 +22,7 @@ export default function HowItWorks() {
       number: '03',
       title: 'Mineral Transport',
       description: 'Helps plants access and utilize trace minerals already present in the soil.',
+      highlights: ['Chelated minerals', 'Bound To Organic Molecules', 'Increases Plants Mineral Absorbtion rate'],
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
       icon: TrendingUp,
     },
@@ -104,18 +107,12 @@ export default function HowItWorks() {
                     {step.description}
                   </p>
                   <ul className="space-y-3 ml-6">
-                    <li className="flex items-center gap-3">
-                      <span className="text-yellow-400 text-sm">★</span>
-                      <span className="gradient-text">DAVE IS COOL</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-yellow-400 text-sm">★</span>
-                      <span className="gradient-text">DAVE IS COOL</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-yellow-400 text-sm">★</span>
-                      <span className="gradient-text">DAVE IS COOL</span>
-                    </li>
+                    {step.highlights.map((highlight, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                          <span className="text-yellow-400 text-sm">★</span>
+                          <span className="text-gray-900 font-semibold">{highlight}</span>
+                        </li>
+                    ))}
                   </ul>
                 </div>
               </div>

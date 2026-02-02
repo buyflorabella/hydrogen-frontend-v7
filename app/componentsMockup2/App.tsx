@@ -1,4 +1,5 @@
 import { type FC, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { FeatureFlagsProvider } from './contexts/FeatureFlagsContext';
 import { SavedItemsProvider } from './contexts/SavedItemsContext';
@@ -12,11 +13,16 @@ import WhatsAppWidget from './components/WhatsAppWidget';
 import TestingWidget from './components/TestingWidget';
 import AbandonedCartPopup from './components/AbandonedCartPopup';
 import DiscountBanner from './components/DiscountBanner';
+import SoloShopButton from '../componentsMockup2/components/SoloShopButton';
 
 import { useRouteLoaderData } from 'react-router';
 export type RootLoader = typeof loader;
 
 const App: FC<{ children: ReactNode }> = ({children}) => {
+  const location = useLocation();
+
+  // Don't show on certain pages
+  const showSoloShopButton = ['/', '/learn', '/contact', '/returns'].includes(location.pathname);
 
   return (
       <FeatureFlagsProvider>
@@ -35,6 +41,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
                     <Route path="/technical-docs" element={<TechnicalDocsPage />} />
                   </Routes> */}
                 </main>
+                {showSoloShopButton && <SoloShopButton />}
                 <Footer />
                 <CartDrawer />
                 <SurveyPopup />
