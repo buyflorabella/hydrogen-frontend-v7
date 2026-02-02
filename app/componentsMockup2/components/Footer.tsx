@@ -106,28 +106,28 @@ export default function Footer() {
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Instagram"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-5 h-5 text-white" />
               </a>
               <a
                 href="https://www.facebook.com/profile.php?id=61586134112080"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook className="w-5 h-5 text-white" />
               </a>
               <a
                 href="https://www.youtube.com/@BuyFloraBella"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Youtube"
               >
-                <Youtube className="w-5 h-5" />
+                <Youtube className="w-5 h-5 text-white" />
               </a>
               <a
                 href="#"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="X"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-5 h-5 text-white" />
               </a>
             </div>
           </div>

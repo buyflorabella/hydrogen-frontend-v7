@@ -24,7 +24,7 @@ export default function BenefitsGrid() {
     {
       icon: Sparkles,
       title: 'Iron-ore Derived Blend',
-      description: 'Encapsulated in an iron core, preserving the natural biology in the bucket of tuna clay.',
+      description: 'Encapsulated in an iron core, preserving the natural biology in the Bucatunna clay.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_4_of_6_Flora_Bella_Bio_Trace.jpg?v=1769724522',
     },
     {
