@@ -29,20 +29,20 @@ export default function VideoReels() {
       type: 'mp4',      
       videoSrc: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
     },
-    {
-      title: 'How To Mix Flora Bella',
-      platform: 'Shopify',
-      thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_how_to_mix_thumbnail.png?v=1770014714',
-      type: 'mp4',      
-      videoSrc: 'https://cdn.shopify.com/videos/c/o/v/a638f13cde5e4749a87a2de8cbd4ec9b.mp4',
-    },
-    {
-      title: 'Compost Tea Mix',
-      platform: 'Shopify',
-      thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_compost_tea_thumbnail.png?v=1770014310',
-      type: 'mp4',      
-      videoSrc: 'https://cdn.shopify.com/videos/c/o/v/20c8f9fd3db046d4b1f83fbf8a7b34ad.mp4',
-    },
+    // {
+    //   title: 'How To Mix Flora Bella',
+    //   platform: 'Shopify',
+    //   thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_how_to_mix_thumbnail.png?v=1770014714',
+    //   type: 'mp4',      
+    //   videoSrc: 'https://cdn.shopify.com/videos/c/o/v/a638f13cde5e4749a87a2de8cbd4ec9b.mp4',
+    // },
+    // {
+    //   title: 'Compost Tea Mix',
+    //   platform: 'Shopify',
+    //   thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_compost_tea_thumbnail.png?v=1770014310',
+    //   type: 'mp4',      
+    //   videoSrc: 'https://cdn.shopify.com/videos/c/o/v/20c8f9fd3db046d4b1f83fbf8a7b34ad.mp4',
+    // },
     ];
 
   useEffect(() => {

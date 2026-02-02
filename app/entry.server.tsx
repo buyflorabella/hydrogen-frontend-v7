@@ -35,7 +35,8 @@ export default async function handleRequest(
       "https://images.pexels.com",
       "https://*.omnisend.com",
       "https://*.omnisendlink.com",       
-      'https://forms.soundestlink.com', // ✅ Add this for image rendering
+      'https://forms.soundestlink.com',
+      "https://i.vtimg.com",
     ],
     styleSrc: [
       "'self'",
@@ -56,6 +57,7 @@ export default async function handleRequest(
       "https://dev2-frontend.textreader.boardmansgame.com",
       "wss://dev1-frontend.textreader.boardmansgame.com",
       "wss://dev2-frontend.textreader.boardmansgame.com",
+      "wss://dev1-frontend.buyflorabella.com"
     ],
     frameSrc: [
       "'self'",
@@ -79,6 +81,7 @@ export default async function handleRequest(
       "'self'",
       'https://fonts.googleapis.com', // example if using Google Fonts
       'https://fonts.gstatic.com',
+      'https://use.typekit.net',       
       // add any other font hosts here
     ],    
   });
