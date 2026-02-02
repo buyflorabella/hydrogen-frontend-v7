@@ -12,13 +12,7 @@ export default function FloatingWidgetColumn() {
       <div className="pointer-events-auto flex flex-col items-end gap-4">
 
         {/* WhatsApp gets priority */}
-        {/*flags.whatsappWidget && <WhatsAppWidget />*/}
-
-        {/* Hide testing widget if WhatsApp is enabled */}
-        {/* !flags.whatsappWidget && <TestingWidget />*/}
-          <WhatsAppWidget />
-          <TestingWidget />
-
+        {flags.whatsappWidget && <WhatsAppWidget />}
       </div>
     </div>
   );

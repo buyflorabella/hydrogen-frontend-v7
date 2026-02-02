@@ -33,6 +33,12 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
   
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Example: administrative override (can come from env, query, or global variable)
+  const adminOverride: Partial<FeatureFlags> = {
+    whatsappWidget: true, // force it on
+    // other flags can also be overridden here
+  };  
+
   useEffect(() => {
     const saved: string | null = localStorage.getItem('featureFlags');
     if (saved) {
