@@ -12,93 +12,93 @@ interface GalleryImage {
 
 export default function CommunityPage() {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-
-  const galleryImages: GalleryImage[] = [
+ const galleryImages: GalleryImage[] = [
     {
       id: 1,
-      url: 'https://images.pexels.com/photos/1458671/pexels-photo-1458671.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_1.jpg?v=1770056143',
       caption: 'Morning wellness routine with Flora Bella',
       author: 'Sarah M.',
       likes: 142
     },
     {
       id: 2,
-      url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_2.jpg?v=1770056141',
       caption: 'Starting my day right with trace minerals',
       author: 'John D.',
       likes: 98
     },
     {
       id: 3,
-      url: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_3.jpg?v=1770056140',
       caption: 'Fitness and minerals go hand in hand',
       author: 'Emily R.',
       likes: 215
     },
     {
       id: 4,
-      url: 'https://images.pexels.com/photos/3771115/pexels-photo-3771115.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_4.jpg?v=1770056135',
       caption: 'Hydration and mineral balance',
       author: 'Mike T.',
       likes: 167
     },
     {
       id: 5,
-      url: 'https://images.pexels.com/photos/3771116/pexels-photo-3771116.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_5.jpg?v=1770056134',
       caption: 'Nature and wellness combined',
       author: 'Lisa K.',
       likes: 189
     },
     {
       id: 6,
-      url: 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_6.jpg?v=1770056143',
       caption: 'My essential daily supplements',
       author: 'David W.',
       likes: 134
     },
     {
       id: 7,
-      url: 'https://images.pexels.com/photos/1478691/pexels-photo-1478691.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_7.jpg?v=1770056135',
       caption: 'Yoga and mineral nutrition',
       author: 'Anna S.',
       likes: 201
     },
     {
       id: 8,
-      url: 'https://images.pexels.com/photos/3768582/pexels-photo-3768582.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_8.jpg?v=1770056134',
       caption: 'Healthy habits for a better life',
       author: 'Chris B.',
       likes: 156
     },
     {
       id: 9,
-      url: 'https://images.pexels.com/photos/1179229/pexels-photo-1179229.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_9.jpg?v=1770056135',
       caption: 'Post-workout recovery essentials',
       author: 'Rachel P.',
       likes: 178
     },
     {
       id: 10,
-      url: 'https://images.pexels.com/photos/3771111/pexels-photo-3771111.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_10.jpg?v=1770056134',
       caption: 'Mindful living with Flora Bella',
       author: 'Tom H.',
       likes: 143
     },
     {
       id: 11,
-      url: 'https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_11.jpg?v=1770056142',
       caption: 'Natural wellness journey',
       author: 'Grace L.',
       likes: 192
     },
     {
       id: 12,
-      url: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_12.jpg?v=1770056143',
       caption: 'Daily dose of minerals',
       author: 'Mark F.',
       likes: 121
     }
   ];
+
 
   return (
     <>
