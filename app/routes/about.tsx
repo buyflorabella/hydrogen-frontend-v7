@@ -86,7 +86,7 @@ export default function AboutPage() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">Community First</h3>
             <p className="text-gray-600">
-              Supporting a vibrant community of health-conscious individuals on their wellness journey.
+              Join a vibrant community of growers, and individuals on the journey to transform their garden soil.
             </p>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function AboutPage() {
         <div className="bg-white border border-gray-200 shadow-xl rounded-3xl p-12 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">Join Our Wellness Community</h2>
           <p className="text-xl text-gray-700 max-w-2xl mx-auto mb-8">
-            Experience the difference that pure, bioavailable minerals can make in your life. Join thousands of satisfied customers who have transformed their health with Flora Bella.
+            Experience the <i>transformation</i> that pure, bioavailable minerals can make. Join thousands of satisfied customers who have transformed their soil's quality, and their lives, with Flora Bella.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

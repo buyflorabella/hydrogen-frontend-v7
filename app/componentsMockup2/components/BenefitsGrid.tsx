@@ -18,13 +18,13 @@ export default function BenefitsGrid() {
     {
       icon: Shield,
       title: 'Born in the USA',
-      description: 'Sourced and produced domestically for transparency, consistency, and dependable supply.',
+      description: 'Composted for over 6 months to "wake up" the microbes and natural forming biology after thousands of years of sleep.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_3_of_6_Hand_w_Tomato.jpg?v=1769724522',
     },
     {
       icon: Sparkles,
       title: 'Iron-ore Derived Blend',
-      description: 'Derived from a unique iron ore source and refined into plant-available trace minerals for balanced soil nutrition.',
+      description: 'Encapsulated in an iron core, preserving the natural biology in the bucket of tuna clay.',
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_4_of_6_Flora_Bella_Bio_Trace.jpg?v=1769724522',
     },
     {

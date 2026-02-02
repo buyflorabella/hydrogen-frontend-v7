@@ -3,21 +3,21 @@ import { Star, Quote, Leaf, Flower2 } from 'lucide-react';
 export default function SocialProof() {
   const reviews = [
     {
-      quote: "I have been on farms and in gardens for 40 years. I used Flora Bella on my farm and noticed an immediate difference in the vigor of all my plants, especially the palms. I have never seen palm trees grow during the winter months. I am amazed with the quality and performance of the Flora Bella product. I would recommend this product for any farm or garden.",
+      quote: "I have been on farms and in gardens for 40 years. I used Flora Bella on my farm and noticed an immediate difference in the vigor of all my plants, especially the palms.... I am amazed with the quality and performance of the Flora Bella product.",
       name: 'Michael Misko',
-      location: 'Farmer grower',
+      location: 'Larue Ms',
       rating: 5,
       avatar: 'JR',
     },
     {
-      quote: 'My palms have not slowed since I applied the product. Which I have never seen before. Usually palms go dormant in the winter. Awesome product.',
-      name: 'Larue Ms',
-      location: 'Tropical plants',
+      quote: 'My palms have not slowed since I applied the product. Which I have never seen before. Usually palms go dormant in the winter. Awesome product.... I would recommend this product for any farm or garden.',
+      name: 'Michael Misko',
+      location: 'Larue Ms',
       rating: 5,
       avatar: 'MT',
     },
     {
-      quote: 'You know I can\'t speak highly of it enough. Stuff made out of plants explode. We had a pretty balanced receipe but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft grows the most but it boosted the gardens we ran and that was 42 acres so it scales well with the right crew and equipment.',
+      quote: 'I can\'t speak highly of it enough. Stuff made our plants explode! We had a pretty balanced receipe, but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft growers the most but it boosted the gardens we ran, and that was 42 acres....',
       name: 'Jacob Cataldo',
       location: 'Cooperstate',
       rating: 5,
@@ -87,7 +87,7 @@ export default function SocialProof() {
           ))}
         </div>
 
-        <div className="text-center mt-16">
+        <div className="text-center mt-16 hidden">
           <button className="inline-flex items-center gap-3 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-[#d4ff00]/50 rounded-full font-semibold text-white transition-all duration-300 group hover:scale-105 hover:shadow-xl hover:shadow-[#d4ff00]/20">
             <span>Read all 487 verified reviews</span>
             <span className="text-[#d4ff00] group-hover:translate-x-2 transition-transform">→</span>
