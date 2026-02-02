@@ -240,7 +240,7 @@ export default function PasswordPage() {
         </div>
 
         <CountdownTimer
-          endDate='02/05/2026'
+          endDate='02/07/2026'
           endTime='00:00'
           period='am'
           digitsFontSize='heading-large'

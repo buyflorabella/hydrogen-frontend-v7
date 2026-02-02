@@ -7,6 +7,7 @@ export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const whatsappNumber = '1234567890';
   const defaultMessage = 'Hi! I have a question about Flora Bella Trace Minerals.';
+  const whatsappGroupLink = "https://chat.whatsapp.com/LmOnLEKmPTj1O9zCqZEbud";
 
   if (!flags.whatsappWidget) {
     return null;
@@ -14,7 +15,8 @@ export default function WhatsAppWidget() {
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent(defaultMessage);
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    //window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    window.open(`${whatsappGroupLink}`, '_blank');
   };
 
   return (
