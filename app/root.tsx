@@ -106,6 +106,17 @@ const CUSTOMER_QUERY = `#graphql
   }
 `;
 
+export const meta: Route.MetaFunction = () => [
+  {title: 'Buy Flora Bella'},
+  {
+    name: 'description',
+    content:
+      'Ancient mineral soil supplements designed to restore depleted soil and help gardens thrive.',
+  },
+];
+
+
+
 export async function loader(args: Route.LoaderArgs) {
   //console.log("[DxB][ root.tsx::loader() ][entry ] ----------------------------------->>>");
   const {storefront, env, session, customerAccount} = args.context;

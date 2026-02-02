@@ -36,4 +36,4 @@ FRONTEND_DIR="."
 FRONTEND_HOST="0.0.0.0"
 #FRONTEND_PORT="20100" # dev.textreader.boardmansgame.com
 #FRONTEND_PORT="20107" # dxb.textreader.boardmansgame.com
-FRONTEND_PORT="16001" # jmsm412.textreader.boardmansgame.com
+FRONTEND_PORT="15001" # jmsm412.textreader.boardmansgame.com

@@ -20,7 +20,7 @@ export default function AboutPage() {
             Our Story
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            Founded on the belief that optimal health begins with proper mineral nutrition, Flora Bella is committed to providing the highest quality trace minerals to support your wellness journey.
+            <i>Founded on the belief</i> that optimal health begins with proper mineral nutrition, <b>Flora Bella</b> is committed to providing the <i>highest quality trace minerals</i> to support your soil's <i>Daily</i> nutritional uptake!
           </p>
         </div>
 
@@ -35,13 +35,16 @@ export default function AboutPage() {
           <div>
             <h2 className="text-4xl font-bold text-gray-900 mb-6 heading-font">Our Mission</h2>
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              At Flora Bella, we believe that everyone deserves access to pure, bioavailable minerals that support optimal health and vitality. Our mission is to bridge the gap between modern nutritional needs and the mineral-depleted foods of today's agricultural system.
+              <b>At</b> <i>Flora Bella</i>, we believe that everyone deserves access to our pure, bioavailable minerals.  <b>Minerals</b> that support <b><i>optimal soil vitality</i></b>. Our mission is to bridge the gap between the <i>the Plant's</i> nutritional <b>needs</b> and the <i><b>mineral-depleted soils</b></i> of today's backyard agricultural systems.
             </p>
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              We are dedicated to sourcing the finest quality minerals from pristine ancient sea beds and volcanic deposits, ensuring that each product delivers the full spectrum of trace minerals your body needs to thrive.
+              <b>Flora Bella</b> has been used on farms across the country for decades. After forming deep within the earth over hundreds of thousands of years, we believe it is well past time these powerful minerals helped you grow a thriving backyard garden.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+              Sourced from the <i>finest</i> quality minerals created by <i><b>ancient Plant and Animal Deposits</b></i>, deposited <b><i>deep inside our Earth</i></b> <i>hundreds of thousands of years ago</i>, we ensure that <b><i>each bag of Flora Bella</i></b> delivers the <i>full spectrum</i> of trace minerals your plants need to <i>thrive</i>!
             </p>
             <p className="text-gray-700 text-lg leading-relaxed">
-              Through rigorous testing, transparent sourcing, and a commitment to education, we empower individuals to take control of their mineral nutrition and experience the transformative benefits of proper supplementation.
+              <b>Through</b> <i>rigorous</i> testing, <i>transparent</i> sourcing, and a <i>commitment to knowledge</i> and <i>education</i>, we empower individuals to take <i>understand</i> <b>how</b> to <b><i>supplement, control, and maintain</i></b> the soil's mineral content <i>right</i> where it <i>matters most</i> for the plant.
             </p>
           </div>
         </div>
