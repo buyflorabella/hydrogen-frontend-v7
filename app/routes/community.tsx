@@ -117,7 +117,7 @@ export default function CommunityPage() {
               Growing Together
             </h1>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of health enthusiasts who are transforming their lives with Flora Bella. Share your journey, inspire others, and celebrate wellness together.
+              Join thousands of organic gardeners and farmers who are transforming their results with Flora Bella. Share your journey, inspire others, and celebrate together.
             </p>
           </div>
 
