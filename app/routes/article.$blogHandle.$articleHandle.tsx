@@ -111,8 +111,7 @@ export default function ArticlePage() {
 
   return (
     <>
-      <AnnouncementBar />
-      <div className="bg-gray-50">
+      <div className="bg-gray-50 pt-52">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <Link to="/learn" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7cb342] mt-8 mb-4">
             <ArrowLeft className="w-4 h-4" /> Back to Articles

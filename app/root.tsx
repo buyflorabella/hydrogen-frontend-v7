@@ -247,6 +247,9 @@ export async function loader(args: Route.LoaderArgs) {
       // ADD WIDGET FLAGS HERE
       ...(getEnvBoolean(env.PUBLIC_FEATURE_WHATSAPP) !== undefined && {
         whatsappWidget: getEnvBoolean(env.PUBLIC_FEATURE_WHATSAPP)
+      }),
+      ...(getEnvBoolean(env.PUBLIC_FEATURE_BOOKMARK) !== undefined && {
+        bookmarkIcon: getEnvBoolean(env.PUBLIC_FEATURE_BOOKMARK)
       }),      
     },
     userData: userData?.data?.customer,
