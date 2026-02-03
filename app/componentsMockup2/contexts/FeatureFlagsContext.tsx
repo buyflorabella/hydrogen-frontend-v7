@@ -28,32 +28,59 @@ const defaultFlags: FeatureFlags = {
 
 const FeatureFlagsContext = createContext<FeatureFlagsContextType | undefined>(undefined);
 
-export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
-  const [flags, setFlags] = useState<FeatureFlags>(defaultFlags);
+export function FeatureFlagsProvider({
+    children, 
+    envOverrides 
+  }: { 
+    children: ReactNode,
+    envOverrides?: Partial<FeatureFlags>; // overrides from .env
+  }) {
   
   const [isHydrated, setIsHydrated] = useState(false);
 
+  const baseFlags = {
+    ...defaultFlags,
+    ...envOverrides, // Env overrides win over defaults
+  };
+
+  const [flags, setFlags] = useState<FeatureFlags>(baseFlags);
+
   // Example: administrative override (can come from env, query, or global variable)
-  const adminOverride: Partial<FeatureFlags> = {
-    whatsappWidget: true, // force it on
-    // other flags can also be overridden here
-  };  
+  // const adminOverride: Partial<FeatureFlags> = {
+  //   whatsappWidget: true, // force it on
+  //   // other flags can also be overridden here
+  // };  
 
   useEffect(() => {
     const saved: string | null = localStorage.getItem('featureFlags');
     if (saved) {
       try {
-        setFlags(JSON.parse(saved) as FeatureFlags);
+        // PRIORITY ORDER (highest to lowest):
+        // 1. localStorage (admin/user manually set)
+        // 2. envOverrides (from .env)
+        // 3. defaultFlags (hardcoded)
+        setFlags({
+          ...defaultFlags,      // Start with defaults
+          ...envOverrides,      // Apply env overrides
+          ...savedFlags,        // Apply localStorage (WINS)
+        });
+        console.log("[FeatureFlags] Loaded from localStorage (highest priority):", savedFlags);
+
+        //const savedFlags = JSON.parse(saved) as FeatureFlags;
+        //setFlags(JSON.parse(saved) as FeatureFlags);
       } catch (e) {
         console.error("Failed to parse FeatureFlags from localStorage:", e);
+        setFlags(baseFlags);
       }
     }
     setIsHydrated(true);
-  }, []);
+  }, [envOverrides]);
 
+  // save to localstorage whenever flags change
   useEffect(() => {
     if (isHydrated) {
       localStorage.setItem('featureFlags', JSON.stringify(flags));
+      console.log("[FeatureFlags] Saved to localStorage:", flags);
     }
   }, [flags, isHydrated]);
 
@@ -65,11 +92,20 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
   };
 
   const resetFlags = () => {
-    setFlags(defaultFlags);
+    // Reset to env overrides if available, otherwise defaults
+    const resetTo = {
+      ...defaultFlags,
+      ...envOverrides,
+    };
+    setFlags(resetTo);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('featureFlags');
     }
+    console.log("[FeatureFlags] Reset to env overrides + defaults:", resetTo);
   };
+
+  console.log("[FeatureFlags] Active flags:", flags);
+  console.log("[FeatureFlags] Env overrides:", envOverrides);
 
   return (
     <FeatureFlagsContext.Provider value={{ flags, updateFlag, resetFlags }}>

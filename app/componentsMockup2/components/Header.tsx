@@ -2,6 +2,7 @@ import { Menu, Search, User, ShoppingCart, X, LockKeyhole } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import { Link, useRouteLoaderData, Await, useFetcher } from 'react-router';
 import { useCart } from '../contexts/CartContext';
+import { useEnv } from '../contexts/EnvContext';
 import type { RootLoader } from '~/routes/root';
 import type { Cart } from '@shopify/hydrogen/storefront-api-types';
 import AnnouncementBar from './AnnouncementBar';
@@ -11,6 +12,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { announcementBarEnabled, announcementBarCoupon } = useEnv();
   
   const fetcher = useFetcher();
   const { openCart } = useCart();
@@ -85,7 +87,7 @@ export default function Header() {
 
   return (
     <>
-      <AnnouncementBar />
+      {announcementBarEnabled && <AnnouncementBar />}
       <header
         className={`fixed top-8 left-0 right-0 z-40 transition-all duration-300 ${
           scrolled ? 'top-0 glass-strong shadow-xl' : ''

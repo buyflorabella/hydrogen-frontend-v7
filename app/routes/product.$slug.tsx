@@ -18,9 +18,11 @@ import {
 
 import { useCart } from '../componentsMockup2/contexts/CartContext';
 import { useWishlist } from '../componentsMockup2/contexts/WishlistContext';
+import { useToast } from '../componentsMockup2/contexts/ToastContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
 import DiscountBox from '../componentsMockup2/components/DiscountBox';
 import { products, faqs } from '~/componentsMockup2/data/staticData';
+//import { Toast } from '../componentsMockup2/components/Toast.tsx';
 
 const PRODUCT_QUERY = `#graphql
   query Product($handle: String!) {
@@ -136,7 +138,8 @@ export default function ProductDetailPage() {
   const [purchaseType, setPurchaseType] = useState('one-time');
   const [subscriptionFrequency, setSubscriptionFrequency] = useState();
   const [activeTab, setActiveTab] = useState<'overview' | 'ingredients' | 'how-to' | 'technical' | 'faq'>('overview');
-  
+  //const [toastMessage, setToastMessage] = useState<string | null>(null);  // ← ADD THIS
+
   const { openCart } = useCart();
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
 
@@ -324,44 +327,90 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-                <CartForm
-                  route="/cart"
-                  action={CartForm.ACTIONS.LinesAdd}
-                  inputs={{
-                    lines: [
-                      {
-                        merchandiseId: product.variants.nodes[0]?.id,
-                        quantity,
-                      },
-                    ],
-                  }}
-                >
-                  {(fetcher) => (
-                    <div className="flex gap-4 mb-8">
+              <CartForm
+                route="/cart"
+                action={CartForm.ACTIONS.LinesAdd}
+                inputs={{
+                  lines: [
+                    {
+                      merchandiseId: product.variants.nodes[0]?.id,
+                      quantity,
+                    },
+                  ],
+                }}
+              >
+                {(fetcher) => (
+                  <div className="flex gap-4 mb-8">
+                    <button
+                      type="submit"
+                      disabled={!variant.availableForSale || fetcher.state !== 'idle'}
+                      onClick={openCart}
+                      className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10"
+                    >
+                      <ShoppingCart className="w-6 h-6" />
+                      {variant.availableForSale ? 'Add to Cart' : 'Out of Stock'}
+                    </button>
+                    
+                    {flags.wishlistIcon && (
                       <button
-                        type="submit"
-                        disabled={!variant.availableForSale || fetcher.state !== 'idle'}
-                        onClick={openCart}
-                        className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10">
-                        <ShoppingCart className="w-6 h-6" />
-                        {variant.availableForSale ? 'Add to Cart' : 'Out of Stock'}
+                        onClick={() => {
+                          const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                          const shortcut = isMac ? '⌘+D' : 'Ctrl+D';
+                          
+                          if (window.sidebar?.addPanel) {
+                            window.sidebar.addPanel(product.title, window.location.href, '');
+                          } else if ((window.external as any)?.AddFavorite) {
+                            (window.external as any).AddFavorite(window.location.href, product.title);
+                          } else {
+                            const alreadyInWishlist = isInWishlist(product.id);
+
+                            handleToggleWishlist();
+
+                            const message = alreadyInWishlist
+                              ? 'Removed from wishlist'
+                              : `Added to wishlist! Tip: Press ${shortcut} to bookmark in your browser`;
+
+                            toast.success(message);
+                          }
+                        }}
+                        className={`px-6 py-4 glass border rounded-xl transition-all ${
+                          isInWishlist(product.id)
+                            ? 'border-[#7cb342] bg-[#7cb342]/10'
+                            : 'border-white/20 hover:bg-white/10'
+                        }`}
+                        title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist (or press Ctrl+D to bookmark)'}
+                      >
+                        <Heart
+                          className={`w-6 h-6 ${
+                            isInWishlist(product.id)
+                              ? 'fill-[#7cb342] text-[#7cb342]'
+                              : 'text-white'
+                          }`}
+                        />
                       </button>
-                      {flags.wishlistIcon && (
-                          <button
-                            onClick={handleToggleWishlist}
-                            className={`px-6 py-4 glass border rounded-xl transition-all ${
-                              isInWishlist(product.id) ? 'border-[#7cb342] bg-[#7cb342]/10' : 'border-white/20 hover:bg-white/10'
-                            }`}
-                          >
-                            <Heart className={`w-6 h-6 ${isInWishlist(product.id) ? 'fill-[#7cb342] text-[#7cb342]' : 'text-white'}`} />
-                          </button>
-                        )}
-                        <button className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all">
-                          <Share2 className="w-6 h-6" />
-                        </button>
-                    </div>
-                  )}
-                </CartForm>
+                    )}
+                    
+                    <button 
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: product.title,  // ← Fixed: item.name → product.title
+                            text: product.description,  // ← Fixed: item.description → product.description
+                            url: window.location.href,
+                          });
+                        } else {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast.success('Link copied to clipboard!');
+                        }
+                      }}
+                      className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all"
+                      title="Share this product"
+                    >
+                      <Share2 className="w-6 h-6" />
+                    </button>
+                  </div>
+                )}
+              </CartForm>
 
               <div className="grid grid-cols-3 gap-4 mb-8">
                 <div className="glass border border-white/10 rounded-xl p-4 text-center">
@@ -578,7 +627,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-          <div className="mb-16">
+          <div className="mb-16 hidden">
             <DiscountBox
               percentage={15}
               minPurchase={50}
@@ -593,7 +642,7 @@ export default function ProductDetailPage() {
             <div className="grid md:grid-cols-3 gap-8">
               {related.map((relatedProduct) => (
                 <Link
-                  key={relatedProduct.id}
+                  key={relatedProduct.handle}
                   to={`/product/${relatedProduct.handle}`}
                   className="glass border border-white/10 rounded-2xl overflow-hidden hover:border-[#7cb342]/50 transition-all duration-300 hover:scale-105 group"
                 >

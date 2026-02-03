@@ -11,6 +11,8 @@ export interface EnvValues {
   whatsappGroupName?: string;
   whatsappLinkCallout?: string;
   whatsappLinkDescription?: string;
+  announcementBarEnabled?: boolean;
+  announcementBarCoupon?: string;
 }
 
 const defaultEnv: EnvValues = {
@@ -23,6 +25,8 @@ const defaultEnv: EnvValues = {
   whatsappGroupName: undefined,
   whatsappLinkCallout: undefined,
   whatsappLinkDescription: undefined,
+  announcementBarEnabled: false,
+  announcementBarCoupon: "",
 };
 
 const EnvContext = createContext<EnvValues>(defaultEnv);

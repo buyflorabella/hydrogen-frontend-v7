@@ -13,6 +13,7 @@ export default function FloatingWidgetColumn() {
 
         {/* WhatsApp gets priority */}
         {flags.whatsappWidget && <WhatsAppWidget />}
+        <TestingWidget />
       </div>
     </div>
   );
