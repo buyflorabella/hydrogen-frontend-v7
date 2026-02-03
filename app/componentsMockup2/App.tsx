@@ -39,6 +39,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
   
 
   return (
+    <EnvProvider env={data?.env}>     
       <FeatureFlagsProvider>
         <SavedItemsProvider>
           <WishlistProvider>
@@ -66,6 +67,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
           </WishlistProvider>
         </SavedItemsProvider>
       </FeatureFlagsProvider>
+    </EnvProvider>
   );
 }
 

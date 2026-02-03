@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { useFeatureFlags } from '../contexts/FeatureFlagsContext';
+import { useEnv } from '../contexts/EnvContext';
 
 export default function WhatsAppWidget() {
   const { flags } = useFeatureFlags();
   const [isOpen, setIsOpen] = useState(false);
   const whatsappNumber = '1234567890';
   const defaultMessage = 'Hi! I have a question about Flora Bella Trace Minerals.';
-  const whatsappGroupLink = "https://chat.whatsapp.com/LmOnLEKmPTj1O9zCqZEbud";
+  const { whatsappGroupUrl, whatsappGroupName, whatsappLinkDescription } = useEnv();
 
   if (!flags.whatsappWidget) {
     return null;
@@ -16,7 +17,7 @@ export default function WhatsAppWidget() {
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent(defaultMessage);
     //window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-    window.open(`${whatsappGroupLink}`, '_blank');
+    window.open(`${whatsappGroupUrl}`, '_blank');
   };
 
   return (
@@ -44,10 +45,10 @@ export default function WhatsAppWidget() {
 
             <div className="bg-[#f5f5f0] rounded-xl p-4 mb-4 border border-gray-200">
               <p className="text-sm text-gray-700 mb-2">
-                <strong>Welcome to Flora Bella!</strong>
+                <strong>Welcome to {whatsappGroupName || "Flora Bella!"}</strong>
               </p>
               <p className="text-xs text-gray-600">
-                Have questions about our trace minerals? Our support team is here to help you with:
+                {whatsappLinkDescription || "Have questions about our trace minerals? Our support team is here to help you with:"}
               </p>
               <ul className="text-xs text-gray-600 mt-2 space-y-1">
                 <li>• Product information</li>

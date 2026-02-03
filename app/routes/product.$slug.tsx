@@ -260,42 +260,48 @@ export default function ProductDetailPage() {
                     )}
                   </div>
                 </button>
-                <button
-                  onClick={() => setPurchaseType('subscription')}
-                  className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
-                    purchaseType === 'subscription'
-                      ? 'border-[#7cb342] bg-[#7cb342]/10'
-                      : 'border-white/20 hover:border-white/40'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-semibold">Subscribe & Save</span>
-                        <span className="bg-[#7cb342] text-white text-xs px-2 py-0.5 rounded-full">
-                          {(product as any).subscription_discount}% OFF
-                        </span>
-                      </div>
-                      <div className="text-white/70">${finalPrice.toFixed(2)} per delivery</div>
-                    </div>
-                    {purchaseType === 'subscription' && (
-                      <Check className="w-6 h-6 text-[#7cb342]" />
-                    )}
-                  </div>
-                </button>
-                {purchaseType === 'subscription' && (
-                  <div className="mt-3">
-                    <label className="block text-white/70 text-sm mb-2">Delivery Frequency:</label>
-                    <select
-                      value={subscriptionFrequency}
-                      onChange={(e) => setSubscriptionFrequency(e.target.value)}
-                      className="w-full p-3 glass border border-white/20 rounded-xl text-white bg-transparent"
+
+                {/* SUBSCRIPTON ABILITY TOGGLE */}
+                {false && (
+                  <>
+                    <button
+                      onClick={() => setPurchaseType('subscription')}
+                      className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                        purchaseType === 'subscription'
+                          ? 'border-[#7cb342] bg-[#7cb342]/10'
+                          : 'border-white/20 hover:border-white/40'
+                      }`}
                     >
-                      <option value="30" className="bg-[#1a1a2e]">Every 30 days</option>
-                      <option value="60" className="bg-[#1a1a2e]">Every 60 days</option>
-                      <option value="90" className="bg-[#1a1a2e]">Every 90 days</option>
-                    </select>
-                  </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white font-semibold">Subscribe & Save</span>
+                            <span className="bg-[#7cb342] text-white text-xs px-2 py-0.5 rounded-full">
+                              {(product as any).subscription_discount}% OFF
+                            </span>
+                          </div>
+                          <div className="text-white/70">${finalPrice.toFixed(2)} per delivery</div>
+                        </div>
+                        {purchaseType === 'subscription' && (
+                          <Check className="w-6 h-6 text-[#7cb342]" />
+                        )}
+                      </div>
+                    </button>
+                    {purchaseType === 'subscription' && (
+                      <div className="mt-3">
+                        <label className="block text-white/70 text-sm mb-2">Delivery Frequency:</label>
+                        <select
+                          value={subscriptionFrequency}
+                          onChange={(e) => setSubscriptionFrequency(e.target.value)}
+                          className="w-full p-3 glass border border-white/20 rounded-xl text-white bg-transparent"
+                        >
+                          <option value="30" className="bg-[#1a1a2e]">Every 30 days</option>
+                          <option value="60" className="bg-[#1a1a2e]">Every 60 days</option>
+                          <option value="90" className="bg-[#1a1a2e]">Every 90 days</option>
+                        </select>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
