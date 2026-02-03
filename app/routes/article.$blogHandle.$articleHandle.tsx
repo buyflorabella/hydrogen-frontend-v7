@@ -119,11 +119,11 @@ export default function ArticlePage() {
           </Link>
           
           <div className="bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden mb-8">
-            <div className="w-full h-[400px] md:h-[500px]">
-              {article.image && (
-                <img src={article.image.url} className="w-full h-full object-cover" alt={article.title} />
-              )}            
-            </div>
+            {article.image && (
+              <div className="w-full h-[400px] md:h-[500px]">
+                  <img src={article.image.url} className="w-full h-full object-cover" alt={article.title} />
+              </div>
+            )}            
             <div className="p-8 md:p-12">
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-[#7cb342] text-sm font-semibold uppercase tracking-wide">
