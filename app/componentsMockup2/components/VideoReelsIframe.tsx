@@ -74,7 +74,7 @@ export default function VideoReels() {
                   const selected = reels[selectedVideo];
 
                   if (!selected || !selected.type) {
-                    console.warn('Video metadata missing or invalid:', selected);
+                    //console.warn('Video metadata missing or invalid:', selected);
 
                     return (
                       <div className="flex items-center justify-center w-full h-full bg-gray-100 text-gray-600">
@@ -84,7 +84,7 @@ export default function VideoReels() {
                   }
 
                   if (selected.type === 'mp4') {
-                    console.log('Rendering MP4:', selected.videoSrc);
+                    //console.log('Rendering MP4:', selected.videoSrc);
 
                     return (
                       <>
@@ -108,7 +108,7 @@ export default function VideoReels() {
                   }
 
                   if (selected.type === 'youtube') {
-                    console.log('Rendering iframe:', selected.videoSrc);
+                    //console.log('Rendering iframe:', selected.videoSrc);
 
                     return (
                       <iframe
@@ -122,7 +122,7 @@ export default function VideoReels() {
                     );
                   }
 
-                  console.error('Unknown video type:', selected.type);
+                  //console.error('Unknown video type:', selected.type);
 
                   return (
                     <div className="flex items-center justify-center w-full h-full bg-red-50 text-red-600">
