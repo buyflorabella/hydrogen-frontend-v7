@@ -65,6 +65,11 @@ const PRODUCT_QUERY = `#graphql
           title
         }
       }
+      # Also try direct access
+      productOverviewMultiline: metafield(namespace: "custom", key: "product_overview_multiline") {
+        value
+        type
+      }      
     }
   }
 `;
@@ -457,9 +462,16 @@ export default function ProductDetailPage() {
             {activeTab === 'overview' && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">{isBundle ? 'Bundle' : 'Product'} Overview</h2>
-                <p className="text-white/70 text-lg leading-relaxed mb-8">
-                  {product.description}
-                </p>
+                {/* Display metafield if it exists, otherwise fall back to description */}
+                {product.productOverviewMultiline?.value ? (
+                  <div className="text-white/70 text-lg leading-relaxed mb-8 whitespace-pre-line">
+                    {product.productOverviewMultiline.value}
+                  </div>
+                ) : (
+                  <p className="text-white/70 text-lg leading-relaxed mb-8">
+                    {product.description}
+                  </p>
+                )}
                 {(item as any).benefits && (item as any).benefits.length > 0 && (
                   <div>
                     <h3 className="text-2xl font-bold text-white mb-4">Key Benefits</h3>

@@ -16,84 +16,84 @@ export default function CommunityPage() {
     {
       id: 1,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_1.jpg?v=1770056143',
-      caption: 'Morning wellness routine with Flora Bella',
+      caption: 'Raised Bed Growth in Progress',
       author: 'Sarah M.',
       likes: 142
     },
     {
       id: 2,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_2.jpg?v=1770056141',
-      caption: 'Starting my day right with trace minerals',
+      caption: 'Flowering Vines During the Growing Season',
       author: 'John D.',
       likes: 98
     },
     {
       id: 3,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_3.jpg?v=1770056140',
-      caption: 'Fitness and minerals go hand in hand',
+      caption: 'New Root Growth Emerging',
       author: 'Emily R.',
       likes: 215
     },
     {
       id: 4,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_4.jpg?v=1770056135',
-      caption: 'Hydration and mineral balance',
+      caption: 'Vegetable Raised Beds in Active Growth',
       author: 'Mike T.',
       likes: 167
     },
     {
       id: 5,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_5.jpg?v=1770056134',
-      caption: 'Nature and wellness combined',
+      caption: 'Dense Leaf Development in Garden Beds',
       author: 'Lisa K.',
       likes: 189
     },
     {
       id: 6,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_6.jpg?v=1770056143',
-      caption: 'My essential daily supplements',
+      caption: 'Heavy Tomato Production',
       author: 'David W.',
       likes: 134
     },
     {
       id: 7,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_7.jpg?v=1770056135',
-      caption: 'Yoga and mineral nutrition',
+      caption: 'Trellis Support Established Early',
       author: 'Anna S.',
       likes: 201
     },
     {
       id: 8,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_8.jpg?v=1770056134',
-      caption: 'Healthy habits for a better life',
+      caption: 'Tomato Plants in Vigorous Growth Phase',
       author: 'Chris B.',
       likes: 156
     },
     {
       id: 9,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_9.jpg?v=1770056135',
-      caption: 'Post-workout recovery essentials',
+      caption: 'Soil Layers in an Established Garden Plot',
       author: 'Rachel P.',
       likes: 178
     },
     {
       id: 10,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_10.jpg?v=1770056134',
-      caption: 'Mindful living with Flora Bella',
+      caption: 'Early Sprout Emergence',
       author: 'Tom H.',
       likes: 143
     },
     {
       id: 11,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_11.jpg?v=1770056142',
-      caption: 'Natural wellness journey',
+      caption: 'Strong Root Development in Cacti',
       author: 'Grace L.',
       likes: 192
     },
     {
       id: 12,
       url: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Community_-_Square_Image_12.jpg?v=1770056143',
-      caption: 'Daily dose of minerals',
+      caption: 'Winter Root Activity Observed',
       author: 'Mark F.',
       likes: 121
     }
@@ -128,7 +128,7 @@ export default function CommunityPage() {
                 <div className="text-gray-600 font-semibold">Years in Use</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-[#7cb342] mb-2">+10,001</div>
+                <div className="text-4xl font-bold text-[#7cb342] mb-2">+10,000</div>
                 <div className="text-gray-600 font-semibold">Farms</div>
               </div>
               <div>
