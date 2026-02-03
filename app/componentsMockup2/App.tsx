@@ -1,5 +1,6 @@
 import { type FC, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { CartProvider } from './contexts/CartContext';
 import { FeatureFlagsProvider } from './contexts/FeatureFlagsContext';
 import { SavedItemsProvider } from './contexts/SavedItemsContext';
@@ -24,6 +25,18 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
 
   // Don't show on certain pages
   const showSoloShopButton = ['/', '/learn', '/contact', '/returns'].includes(location.pathname);
+
+  // DxB - debugging login/logout
+  const data = useRouteLoaderData<RootLoader>('root');
+  
+  // CLIENT-SIDE AUTH DEBUG
+  useEffect(() => {
+    console.log('[CLIENT AUTH DEBUG]', {
+      userData: data?.userData,
+      isLoggedIn: !!data?.userData,
+    });
+  }, [data?.userData]);
+  
 
   return (
       <FeatureFlagsProvider>

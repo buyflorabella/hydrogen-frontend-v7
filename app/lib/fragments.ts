@@ -119,13 +119,6 @@ export const CART_QUERY_FRAGMENT = `#graphql
     totalQuantity
     buyerIdentity {
       countryCode
-      customer {
-        id
-        email
-        firstName
-        lastName
-        displayName
-      }
       email
       phone
     }

@@ -12,7 +12,7 @@ export default function Footer() {
   };
 
   const BRAND_ID = rootData?.env?.omnisendBrandId;  
-  console.log("BRAND_ID:" + BRAND_ID);
+  //console.log("BRAND_ID:" + BRAND_ID);
 
   // Form State
   const [email, setEmail] = useState('');

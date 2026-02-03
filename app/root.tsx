@@ -127,11 +127,21 @@ export async function loader(args: Route.LoaderArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
+  // DxB This is the right way to check if customer is logged in.
+  // Does not refetch another GraphQL
   const isLoggedIn = await customerAccount.isLoggedIn();
 
   const userData = isLoggedIn 
     ? await customerAccount.query(CUSTOMER_QUERY).catch(() => null)
     : Promise.resolve(null);
+
+  // ADD THIS DEBUG OUTPUT
+  console.log('[AUTH DEBUG]', {
+    isLoggedIn,
+    userId: userData?.data?.customer?.id || 'NOT_LOGGED_IN',
+    userName: userData?.data?.customer?.firstName || 'GUEST',
+    timestamp: new Date().toISOString(),
+  });
 
   //const session = await storage.getSession(args.request.headers.get('Cookie'));
   //console.log("[DxB][loader] Session object:", session.data);
@@ -209,7 +219,9 @@ export async function loader(args: Route.LoaderArgs) {
       surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED === "true",
       surveySingleAnswer: env.PUBLIC_SITE_SURVEY_SINGLE_ANSWER === "true",
     },
-    userData: userData?.data?.customer
+    userData: userData?.data?.customer,
+    // DxB - pass this flag down
+    isLoggedIn: isLoggedIn
   };
 
   // 2. Console log the payload
