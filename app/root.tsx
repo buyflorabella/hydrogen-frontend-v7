@@ -226,7 +226,13 @@ export async function loader(args: Route.LoaderArgs) {
       }),      
       ...(getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION) !== undefined && {
         whatsappLinkDescription: getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION)
-      }),         
+      }),
+      ...(getEnvBoolean(env.PUBLIC_ANNOUNCEMENT_BAR_ENABLED) !== undefined && {
+        announcementBarEnabled: getEnvBoolean(env.PUBLIC_ANNOUNCEMENT_BAR_ENABLED)
+      }),
+      ...(getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_COUPON) !== undefined && {
+        announcementBarCoupon: getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_COUPON)
+      }),            
     },    
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
