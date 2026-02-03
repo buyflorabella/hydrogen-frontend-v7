@@ -1,7 +1,12 @@
 import { Mail, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEnv } from '../contexts/EnvContext';
 
 export default function CommunityCallout() {
+  const { whatsappGroupUrl, whatsappLinkCallout } = useEnv();
+
+  console.log(`whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
+
   return (
     <section className="gradient-offwhite py-20" id="community">
       <div className="max-w-5xl mx-auto px-6">
@@ -44,16 +49,27 @@ export default function CommunityCallout() {
             </div>
             <h3 className="text-2xl font-bold heading-font text-gray-900 mb-4">Growers group</h3>
             <p className="text-gray-600 mb-6">
-              Connect with experienced growers, share your results, and get personalized advice for your
-              unique growing conditions.
+              {whatsappLinkCallout || "Connect with experienced growers, share your results, and get personalized advice for your unique growing conditions."}
             </p>
-            <Link
-              to="/community"
-              className="w-full bg-gray-100 border-2 border-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2 text-gray-900"
-            >
-              Request invite
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            {whatsappGroupUrl ? (
+              <a
+                href={whatsappGroupUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gray-100 border-2 border-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2 text-gray-900"
+              >
+                Join WhatsApp group
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            ) : (
+              <Link
+                to="/community"
+                className="w-full bg-gray-100 border-2 border-gray-300 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2 text-gray-900"
+              >
+                Request invite
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            )}
           </div>
         </div>
 

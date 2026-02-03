@@ -2,30 +2,27 @@ import { createContext, useContext, type ReactNode } from "react";
 
 // The clean types used by your components
 export interface EnvValues {
-  storeLocked: boolean;
+  contactPageUrl: string;
+  shopPageUrl: string;
   message1: string;
   message2: string;
   message3: string;
-}
-
-// DxB - remove this, replace by using EnvValues instead
-// The raw types coming from Shopify / root.tsx loader
-export interface Env {
-  PUBLIC_STORE_LOCKED: string;
-  PUBLIC_STORE_MESSAGE1: string;
-  PUBLIC_STORE_MESSAGE2: string;
-  PUBLIC_STORE_MESSAGE3: string;
-  PUBLIC_STORE_DOMAIN: string;
-  PUBLIC_STOREFRONT_ID: string;
-  PUBLIC_CHECKOUT_DOMAIN: string;
-  PUBLIC_STOREFRONT_API_TOKEN: string;
+  whatsappGroupUrl?: string;
+  whatsappGroupName?: string;
+  whatsappLinkCallout?: string;
+  whatsappLinkDescription?: string;
 }
 
 const defaultEnv: EnvValues = {
-  storeLocked: false,
+  contactPageUrl: "/contact",
+  shopPageUrl: "/shop",
   message1: "",
   message2: "",
   message3: "",
+  whatsappGroupUrl: undefined,
+  whatsappGroupName: undefined,
+  whatsappLinkCallout: undefined,
+  whatsappLinkDescription: undefined,
 };
 
 const EnvContext = createContext<EnvValues>(defaultEnv);
@@ -35,22 +32,13 @@ export const EnvProvider = ({
   env,
 }: {
   children: ReactNode;
-  env: Env; // Accept raw strings from the loader
+  env: EnvValues; // ← Changed from Env to EnvValues (already transformed by root.tsx)
 }) => {
+  // No transformation needed - data is already clean from root.tsx!
+  console.log("EnvProvider values:", env);
   
-  // FIX: Transform the raw string "true"/"false" into a real boolean
-  // and map the raw keys to your clean EnvValues interface.
-  const mappedValues: EnvValues = {
-    storeLocked: env?.PUBLIC_STORE_LOCKED,
-    message1: env?.PUBLIC_STORE_MESSAGE1 ?? "",
-    message2: env?.PUBLIC_STORE_MESSAGE2 ?? "",
-    message3: env?.PUBLIC_STORE_MESSAGE3 ?? "",
-  };
-
-  console.log("EnvProvider mapped values:", mappedValues);
-
   return (
-    <EnvContext.Provider value={mappedValues}>
+    <EnvContext.Provider value={env}>
       {children}
     </EnvContext.Provider>
   );

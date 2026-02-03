@@ -135,6 +135,17 @@ export async function loader(args: Route.LoaderArgs) {
     ? await customerAccount.query(CUSTOMER_QUERY).catch(() => null)
     : Promise.resolve(null);
 
+  // Helper function to handle "only override if set"
+  const getEnvBoolean = (value: string | undefined): boolean | undefined => {
+    if (value === undefined || value === '') return undefined; // Not set - don't override
+    return value === 'true'; // Set - convert to boolean
+  };
+  
+  const getEnvString = (value: string | undefined): string | undefined => {
+    if (value === undefined || value === '') return undefined; // Not set - don't override
+    return value; // Set - use value
+  };    
+
   // ADD THIS DEBUG OUTPUT
   console.log('[AUTH DEBUG]', {
     isLoggedIn,
@@ -201,6 +212,18 @@ export async function loader(args: Route.LoaderArgs) {
       surveyApiRoute: env.PUBLIC_SURVEY_API_ROUTE,
       mailApiBase: env.PUBLIC_MAIL_API_BASE,
       mailApiRoute: env.PUBLIC_MAIL_API_ROUTE,
+      ...(getEnvString(env.PUBLIC_WHATSAPP_GROUP_URL) !== undefined && {
+        whatsappGroupUrl: getEnvString(env.PUBLIC_WHATSAPP_GROUP_URL)
+      }),
+      ...(getEnvString(env.PUBLIC_WHATSAPP_GROUP_NAME) !== undefined && {
+        whatsappGroupName: getEnvString(env.PUBLIC_WHATSAPP_GROUP_NAME)
+      }),      
+      ...(getEnvString(env.PUBLIC_WHATSAPP_LINK_CALLOUT) !== undefined && {
+        whatsappLinkCallout: getEnvString(env.PUBLIC_WHATSAPP_LINK_CALLOUT)
+      }),      
+      ...(getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION) !== undefined && {
+        whatsappLinkDescription: getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION)
+      }),            
     },    
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
