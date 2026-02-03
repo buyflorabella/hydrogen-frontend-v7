@@ -6,6 +6,8 @@ import { FeatureFlagsProvider } from './contexts/FeatureFlagsContext';
 import { SavedItemsProvider } from './contexts/SavedItemsContext';
 import { WishlistProvider } from './contexts/WishlistContext';
 import { EnvProvider, type EnvValues } from "./contexts/EnvContext";
+import { AsideProvider } from "./contexts/AsideContext";
+import { ToastProvider } from "./contexts/ToastContext";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
@@ -41,31 +43,35 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
   return (
     <EnvProvider env={data?.env}>     
       <FeatureFlagsProvider envOverrides={data?.features}>
-        <SavedItemsProvider>
-          <WishlistProvider>
-            <CartProvider>
-              <div className="min-h-screen bg-[#0a0015]">
-                <Header />
-                <main>
-                  {children}
-                  {/* <Routes>
-                    <Route path="/privacy" element={<PolicyPage />} />
-                    <Route path="/terms" element={<PolicyPage />} />
-                    <Route path="/shipping" element={<PolicyPage />} />
-                    <Route path="/returns" element={<PolicyPage />} />
-                    <Route path="/technical-docs" element={<TechnicalDocsPage />} />
-                  </Routes> */}
-                </main>
-                {showSoloShopButton && <SoloShopButton />}
-                <Footer />
-                <CartDrawer />
-                <SurveyPopup />
-                <FloatingWidgetColumn />
-                <AbandonedCartPopup />
-              </div>
-            </CartProvider>
-          </WishlistProvider>
-        </SavedItemsProvider>
+        <AsideProvider>
+          <ToastProvider>
+            <SavedItemsProvider>
+              <WishlistProvider>
+                  <CartProvider>
+                    <div className="min-h-screen bg-[#0a0015]">
+                      <Header />
+                      <main>
+                        {children}
+                        {/* <Routes>
+                          <Route path="/privacy" element={<PolicyPage />} />
+                          <Route path="/terms" element={<PolicyPage />} />
+                          <Route path="/shipping" element={<PolicyPage />} />
+                          <Route path="/returns" element={<PolicyPage />} />
+                          <Route path="/technical-docs" element={<TechnicalDocsPage />} />
+                        </Routes> */}
+                      </main>
+                      {showSoloShopButton && <SoloShopButton />}
+                      <Footer />
+                      <CartDrawer />
+                      <SurveyPopup />
+                      <FloatingWidgetColumn />
+                      <AbandonedCartPopup />
+                    </div>
+                  </CartProvider>
+              </WishlistProvider>
+            </SavedItemsProvider>
+          </ToastProvider>
+        </AsideProvider>
       </FeatureFlagsProvider>
     </EnvProvider>
   );

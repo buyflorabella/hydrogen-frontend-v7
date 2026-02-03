@@ -4,6 +4,7 @@ import { Clock, ArrowLeft, Share2, Bookmark, User, Calendar } from 'lucide-react
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar';
 import { useSavedItems } from '../componentsMockup2/contexts/SavedItemsContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
+import Toast from '../componentsMockup2/components/Toast';
 
 interface ShopifyImage {
   url: string;
@@ -63,6 +64,7 @@ export default function ArticlePage() {
   const { isSaved, toggleSave } = useSavedItems();
   const { flags } = useFeatureFlags();
   const [activeId, setActiveId] = useState('');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!article.contentHtml) return;
@@ -111,6 +113,14 @@ export default function ArticlePage() {
 
   return (
     <>
+      {/* Toast */}
+      {toastMessage && (
+        <Toast 
+          message={toastMessage} 
+          onClose={() => setToastMessage(null)}
+          type="success"
+        />
+      )}
       <div className="bg-gray-50 pt-52">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <Link to="/learn" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7cb342] mt-8 mb-4">
@@ -152,22 +162,61 @@ export default function ArticlePage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <button className="p-2 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 transition-colors">
-                    <Share2 className="w-5 h-5 text-gray-700" />
+                  <button className="p-2 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 transition-colors"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: article.title,
+                          text: article.excerpt,
+                          url: window.location.href,
+                        });
+                      } else {
+                        // Fallback: Copy link to clipboard
+                        navigator.clipboard.writeText(window.location.href);
+                        alert('Link copied to clipboard!');
+                      }
+                    }}
+                  >
+                  <Share2 className="w-5 h-5 text-gray-700" />
+                    
                   </button>
                   {flags.bookmarkIcon && (
                     <button
-                      onClick={() => article && toggleSave({
-                        id: article.id,
-                        type: 'article',
-                        title: article.title,
-                        url: `/learn/${article.handle}`,
-                        image: article?.image?.url,
-                      })}
+                      onClick={() => {
+                        // Try browser bookmark first
+                        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                        const shortcut = isMac ? '⌘+D' : 'Ctrl+D';
+                        
+                        if (window.sidebar?.addPanel) {
+                          // Firefox (legacy)
+                          window.sidebar.addPanel(article.title, window.location.href, '');
+                        } else if ((window.external as any)?.AddFavorite) {
+                          // IE (legacy)
+                          (window.external as any).AddFavorite(window.location.href, article.title);
+                        } else {
+                          // Modern browsers: Save to app instead + show browser shortcut
+                          article && toggleSave({
+                            id: article.id,
+                            type: 'article',
+                            title: article.title,
+                            url: `/learn/${article.handle}`,
+                            image: article?.image?.url,
+                          });
+                          
+                          // Optional: Show both actions
+                          const message = isSaved(article?.id || '') 
+                            ? 'Removed from saved articles' 
+                            : `Saved! Tip: Press ${shortcut} to bookmark in your browser`;
+                          
+                          // You can replace alert with a toast notification if you have one
+                          //alert(message);
+                          setToastMessage(message);
+                        }
+                      }}
                       className={`p-2 border border-gray-200 rounded-lg transition-all ${
                         isSaved(article?.id || '') ? 'bg-[#7cb342] text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
-                      title={isSaved(article?.id || '') ? 'Remove from saved' : 'Save article'}
+                      title={isSaved(article?.id || '') ? 'Remove from saved articles' : 'Save article (or press Ctrl+D to bookmark)'}
                     >
                       <Bookmark className={`w-5 h-5 ${isSaved(article?.id || '') ? 'fill-current' : ''}`} />
                     </button>

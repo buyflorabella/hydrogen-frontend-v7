@@ -250,6 +250,9 @@ export async function loader(args: Route.LoaderArgs) {
       }),
       ...(getEnvBoolean(env.PUBLIC_FEATURE_BOOKMARK) !== undefined && {
         bookmarkIcon: getEnvBoolean(env.PUBLIC_FEATURE_BOOKMARK)
+      }),
+      ...(getEnvBoolean(env.PUBLIC_FEATURE_WISHLIST) !== undefined && {
+        wishlistIcon: getEnvBoolean(env.PUBLIC_FEATURE_WISHLIST)
       }),      
     },
     userData: userData?.data?.customer,

@@ -305,14 +305,38 @@ export default function ProductDetailPage() {
                   {(item as any).in_stock ? 'Add to Cart' : 'Out of Stock'}
                 </span>
               </button>
+              
               {flags.wishlistIcon && (
                 <button
-                  onClick={handleToggleWishlist}
+                  onClick={() => {
+                    // Try browser bookmark first
+                    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                    const shortcut = isMac ? '⌘+D' : 'Ctrl+D';
+                    
+                    if (window.sidebar?.addPanel) {
+                      // Firefox (legacy)
+                      window.sidebar.addPanel(item.name, window.location.href, '');
+                    } else if ((window.external as any)?.AddFavorite) {
+                      // IE (legacy)
+                      (window.external as any).AddFavorite(window.location.href, item.name);
+                    } else {
+                      // Modern browsers: Save to app wishlist instead + show browser shortcut
+                      handleToggleWishlist();
+                      
+                      // Show toast message
+                      const message = isInWishlist(item.id) 
+                        ? 'Removed from wishlist' 
+                        : `Added to wishlist! Tip: Press ${shortcut} to bookmark in your browser`;
+                      
+                      setToastMessage(message);
+                    }
+                  }}
                   className={`px-6 py-4 glass border rounded-xl transition-all ${
                     isInWishlist(item.id)
                       ? 'border-[#7cb342] bg-[#7cb342]/10'
                       : 'border-white/20 hover:bg-white/10'
                   }`}
+                  title={isInWishlist(item.id) ? 'Remove from wishlist' : 'Add to wishlist (or press Ctrl+D to bookmark)'}
                 >
                   <Heart
                     className={`w-6 h-6 ${
@@ -323,11 +347,27 @@ export default function ProductDetailPage() {
                   />
                 </button>
               )}
-              <button className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all">
+              
+              <button 
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: item.name,
+                      text: item.description,
+                      url: window.location.href,
+                    });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    setToastMessage('Link copied to clipboard!');
+                  }
+                }}
+                className="px-6 py-4 glass border border-white/20 rounded-xl text-white hover:bg-white/10 transition-all"
+                title="Share this product"
+              >
                 <Share2 className="w-6 h-6" />
               </button>
             </div>
-
+            
             <div className="grid grid-cols-3 gap-4 mb-8">
               <div className="glass border border-white/10 rounded-xl p-4 text-center">
                 <Truck className="w-6 h-6 text-[#7cb342] mx-auto mb-2" />
