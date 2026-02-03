@@ -2,11 +2,23 @@ import { Mail, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useEnv } from '../contexts/EnvContext';
 import { useFeatureFlags  } from '../contexts/FeatureFlagsContext';
+import { useRouteLoaderData } from 'react-router';
 
 
 export default function CommunityCallout() {
   const { whatsappGroupUrl, whatsappLinkCallout } = useEnv();
   const { flags } = useFeatureFlags();  
+
+  // Read from root loader (runtime-safe)
+  const rootData = useRouteLoaderData('root') as {
+    env?: {
+      omnisendBrandId?: string;
+    };
+  };
+
+  const BRAND_ID = rootData?.env?.omnisendBrandId;  
+  //console.log("BRAND_ID:" + BRAND_ID);
+  
 
   console.log(`whatsappWidget: ${flags.whatsappWidget}, whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
 
@@ -25,6 +37,7 @@ export default function CommunityCallout() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
+          {/* original 
           <div className="bg-white rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg border border-gray-200">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7cb342]/20 rounded-xl mb-6">
               <Mail className="w-8 h-8 text-[#7cb342]" />
@@ -45,6 +58,20 @@ export default function CommunityCallout() {
               </button>
             </div>
           </div>
+          */}
+
+<div className="bg-white rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg border border-gray-200">
+  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7cb342]/20 rounded-xl mb-6">
+    <Mail className="w-8 h-8 text-[#7cb342]" />
+  </div>
+  <h3 className="text-2xl font-bold heading-font text-gray-900 mb-4">Join the email list</h3>
+  <p className="text-gray-600 mb-6">
+    Enter your email to receive practical soil tips and early access to new batches.
+  </p>
+  
+  {/* Omnisend embedded form */}
+  <div id="omnisend-embedded-v2-69825e4afd9aa41796edfb9e"></div>
+</div>
 
           <div className="bg-white rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg border border-gray-200">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7cb342]/20 rounded-xl mb-6">
