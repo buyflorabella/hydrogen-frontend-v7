@@ -1,3 +1,5 @@
+import GuaranteedAnalysis from './GuaranteedAnalysis';
+
 export default function MineralComposition() {
   const minerals = [
     { symbol: 'Mg', name: 'Magnesium', number: 12, benefit: 'Supports deep green foliage and strong energy production in leaves.' },
@@ -77,6 +79,8 @@ export default function MineralComposition() {
             </div>
           ))}
         </div>
+
+        <GuaranteedAnalysis />        
 
         <div className="text-center">
           <p className="text-gray-500 text-lg mb-6 font-medium">
