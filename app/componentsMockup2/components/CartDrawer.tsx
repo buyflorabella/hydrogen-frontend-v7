@@ -54,6 +54,17 @@ function CartContent({ cart, closeCart }: { cart: Cart | null; closeCart: () => 
   const lines = cart?.lines?.nodes ?? [];
   const totalQuantity = cart?.totalQuantity ?? 0;
 
+  // DxB Helper function to point to subdomain
+  const getCheckoutUrl = (checkoutUrl: string) => {
+    if (!checkoutUrl) return '';
+    
+    // Replace buyflorabella.com with checkout.buyflorabella.com
+    return checkoutUrl.replace(
+      'buyflorabella.com',
+      'checkout.buyflorabella.com'
+    );
+  };  
+
   if (lines.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8">
@@ -137,7 +148,7 @@ function CartContent({ cart, closeCart }: { cart: Cart | null; closeCart: () => 
         </p>
         
         <a
-          href={cart.checkoutUrl}
+          href={getCheckoutUrl(cart.checkoutUrl)}
           className="block w-full py-4 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-center"
         >
           Proceed to Checkout
