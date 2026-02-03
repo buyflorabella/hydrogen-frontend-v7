@@ -27,14 +27,14 @@ export default function VideoReels() {
       platform: 'YouTube',
       thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_flora_bella_and_water_thumbnail.png?v=1770015063',
       type: 'youtube',      
-      videoSrc: 'https://youtube.com/embed/ZjHmtGw0ZqA?autoplay=1',
+      videoSrc: 'https://www.youtube.com/embed/ZjHmtGw0ZqA?autoplay=1',
     },
     {
       title: 'Flora Bella Trace Minerals',
       platform: 'YouTube',
       thumbnail: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/video_flora_bella_waterfall_scene.png?v=1770057707',
       type: 'youtube',      
-      videoSrc: 'https://youtube.com/shorts/MdAHWVib7Kk?autoplay=1',
+      videoSrc: 'https://www.youtube.com/embed/MdAHWVib7Kk?autoplay=1',
     },
     // {
     //   title: 'How To Mix Flora Bella',
