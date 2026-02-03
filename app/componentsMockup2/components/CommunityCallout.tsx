@@ -1,11 +1,14 @@
 import { Mail, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useEnv } from '../contexts/EnvContext';
+import { useFeatureFlags  } from '../contexts/FeatureFlagsContext';
+
 
 export default function CommunityCallout() {
   const { whatsappGroupUrl, whatsappLinkCallout } = useEnv();
+  const { flags } = useFeatureFlags();  
 
-  console.log(`whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
+  console.log(`whatsappWidget: ${flags.whatsappWidget}, whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
 
   return (
     <section className="gradient-offwhite py-20" id="community">
@@ -49,9 +52,9 @@ export default function CommunityCallout() {
             </div>
             <h3 className="text-2xl font-bold heading-font text-gray-900 mb-4">Growers group</h3>
             <p className="text-gray-600 mb-6">
-              {whatsappLinkCallout || "Connect with experienced growers, share your results, and get personalized advice for your unique growing conditions."}
+              {(flags.whatsappWidget && whatsappLinkCallout) || "Connect with experienced growers, share your results, and get personalized advice for your unique growing conditions."}
             </p>
-            {whatsappGroupUrl ? (
+            {(flags.whatsappWidget && whatsappGroupUrl) ? (
               <a
                 href={whatsappGroupUrl}
                 target="_blank"

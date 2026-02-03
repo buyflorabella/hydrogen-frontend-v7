@@ -212,6 +212,9 @@ export async function loader(args: Route.LoaderArgs) {
       surveyApiRoute: env.PUBLIC_SURVEY_API_ROUTE,
       mailApiBase: env.PUBLIC_MAIL_API_BASE,
       mailApiRoute: env.PUBLIC_MAIL_API_ROUTE,
+      ...(getEnvBoolean(env.PUBLIC_WHATSAPP_LINKS_ENABLED) !== undefined && {
+        whatsappLinksEnabled: getEnvString(env.PUBLIC_WHATSAPP_LINKS_ENABLED)
+      }),                  
       ...(getEnvString(env.PUBLIC_WHATSAPP_GROUP_URL) !== undefined && {
         whatsappGroupUrl: getEnvString(env.PUBLIC_WHATSAPP_GROUP_URL)
       }),
@@ -223,7 +226,7 @@ export async function loader(args: Route.LoaderArgs) {
       }),      
       ...(getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION) !== undefined && {
         whatsappLinkDescription: getEnvString(env.PUBLIC_WHATSAPP_LINK_DESCRIPTION)
-      }),            
+      }),         
     },    
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
@@ -241,6 +244,10 @@ export async function loader(args: Route.LoaderArgs) {
       publicTimer: env.PUBLIC_COUNTDOWN_TIMER_ENABLED === "true",
       surveysEnabled: env.PUBLIC_SITE_SURVEY_ENABLED === "true",
       surveySingleAnswer: env.PUBLIC_SITE_SURVEY_SINGLE_ANSWER === "true",
+      // ADD WIDGET FLAGS HERE
+      ...(getEnvBoolean(env.PUBLIC_FEATURE_WHATSAPP) !== undefined && {
+        whatsappWidget: getEnvBoolean(env.PUBLIC_FEATURE_WHATSAPP)
+      }),      
     },
     userData: userData?.data?.customer,
     // DxB - pass this flag down

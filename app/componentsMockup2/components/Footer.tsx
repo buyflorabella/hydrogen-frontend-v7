@@ -123,7 +123,7 @@ export default function Footer() {
                 <Youtube className="w-5 h-5 text-white" />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/randall-everett-33ab233a4/"
                 className="p-2 glass rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="X"
               >

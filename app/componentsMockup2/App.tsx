@@ -40,7 +40,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
 
   return (
     <EnvProvider env={data?.env}>     
-      <FeatureFlagsProvider>
+      <FeatureFlagsProvider envOverrides={data?.features}>
         <SavedItemsProvider>
           <WishlistProvider>
             <CartProvider>
