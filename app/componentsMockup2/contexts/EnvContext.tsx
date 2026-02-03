@@ -8,6 +8,7 @@ export interface EnvValues {
   message3: string;
 }
 
+// DxB - remove this, replace by using EnvValues instead
 // The raw types coming from Shopify / root.tsx loader
 export interface Env {
   PUBLIC_STORE_LOCKED: string;
