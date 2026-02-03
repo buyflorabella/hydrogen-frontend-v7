@@ -37,7 +37,7 @@ const Account = () => {
           <Form method="POST" action="/my-account/logout">
             <button 
               type="submit" 
-              className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors"
+              className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors cursor-pointer"
             >
               <LogOut className="w-5 h-5" />
               Sign Out
