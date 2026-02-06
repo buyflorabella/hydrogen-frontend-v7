@@ -54,12 +54,17 @@ show_header() {
     echo ""
 }
 
+# Function to extract number prefix from filename (e.g., "00_ping" -> "00")
+get_file_number() {
+    local basename="$1"
+    echo "$basename" | grep -oE '^[0-9]+' || echo ""
+}
+
 # Function to list available queries
 list_queries() {
     echo -e "${BLUE}Available Queries:${NC}"
     echo -e "${BLUE}─────────────────────────────────────────────────────────────────────${NC}"
 
-    local i=1
     for file in "$QUERIES_DIR"/*.json; do
         if [[ -f "$file" ]]; then
             local name=$(jq -r '.name' "$file")
@@ -67,6 +72,7 @@ list_queries() {
             local api=$(jq -r '.api' "$file")
             local basename=$(basename "$file" .json)
             local graphql_file="$QUERIES_DIR/${basename}.graphql"
+            local file_num=$(get_file_number "$basename")
 
             # Check if .graphql file exists
             local file_status=""
@@ -86,10 +92,10 @@ list_queries() {
                 api_badge="${YELLOW}[$api]${NC}"
             fi
 
-            echo -e "${GREEN}[$i]${NC} $api_badge ${YELLOW}$name${NC} $file_status"
-            echo -e "    ${GRAY}$desc${NC}"
+            # Use file number prefix as the selection number
+            printf "${GREEN}[%2s]${NC} $api_badge ${YELLOW}$name${NC} $file_status\n" "$file_num"
+            echo -e "     ${GRAY}$desc${NC}"
             echo ""
-            ((i++))
         fi
     done
 
@@ -505,15 +511,25 @@ check_config() {
     echo ""
 }
 
-# Function to get query files as array
-get_query_files() {
-    local files=()
+# Function to find query file by number prefix
+# Usage: find_query_by_number "10" -> returns full path to 10_*.json
+find_query_by_number() {
+    local num="$1"
+    # Pad single digit to match both "1" and "01" style prefixes
+    local padded=$(printf "%02d" "$num" 2>/dev/null || echo "$num")
+
     for file in "$QUERIES_DIR"/*.json; do
         if [[ -f "$file" ]]; then
-            files+=("$file")
+            local basename=$(basename "$file" .json)
+            local file_num=$(get_file_number "$basename")
+            # Match either the raw input or padded version
+            if [[ "$file_num" == "$num" || "$file_num" == "$padded" ]]; then
+                echo "$file"
+                return 0
+            fi
         fi
     done
-    echo "${files[@]}"
+    return 1
 }
 
 # Main menu loop
@@ -522,7 +538,7 @@ main() {
         show_header
         list_queries
 
-        echo -n -e "${CYAN}Select a query [1-99, v, c, q]: ${NC}"
+        echo -n -e "${CYAN}Select a query [0-99, v, c, q]: ${NC}"
         read -r choice
 
         case "$choice" in
@@ -540,31 +556,29 @@ main() {
             v|V)
                 echo -n -e "${CYAN}Enter query number to view: ${NC}"
                 read -r view_num
-                local files=($(get_query_files))
-                local index=$((view_num - 1))
-                if [[ $index -ge 0 && $index -lt ${#files[@]} ]]; then
+                local query_file=$(find_query_by_number "$view_num")
+                if [[ -n "$query_file" ]]; then
                     show_header
-                    view_query "${files[$index]}"
+                    view_query "$query_file"
                     echo -e "\nPress Enter to continue..."
                     read -r
                 else
-                    echo -e "${RED}Invalid selection${NC}"
+                    echo -e "${RED}No query found with number: $view_num${NC}"
                     sleep 1
                 fi
                 ;;
             [0-9]*)
-                # Get the query file by index
-                local files=($(get_query_files))
-                local index=$((choice - 1))
+                # Find query file by its number prefix
+                local query_file=$(find_query_by_number "$choice")
 
-                if [[ $index -ge 0 && $index -lt ${#files[@]} ]]; then
+                if [[ -n "$query_file" ]]; then
                     show_header
-                    execute_query "${files[$index]}"
+                    execute_query "$query_file"
                     echo ""
                     echo -e "\nPress Enter to continue..."
                     read -r
                 else
-                    echo -e "${RED}Invalid selection${NC}"
+                    echo -e "${RED}No query found with number: $choice${NC}"
                     sleep 1
                 fi
                 ;;
@@ -578,9 +592,17 @@ main() {
 
 # Run with argument or interactive
 if [[ -n "$1" ]]; then
-    # Direct execution with file argument
+    # Direct execution with file argument or number
     target=""
-    if [[ -f "$1" ]]; then
+
+    # First, check if it's just a number (e.g., "./run.sh 10")
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        target=$(find_query_by_number "$1")
+        if [[ -z "$target" ]]; then
+            echo -e "${RED}Error: No query found with number: $1${NC}"
+            exit 1
+        fi
+    elif [[ -f "$1" ]]; then
         target="$1"
     elif [[ -f "$QUERIES_DIR/$1" ]]; then
         target="$QUERIES_DIR/$1"

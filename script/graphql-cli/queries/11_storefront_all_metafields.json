@@ -3,6 +3,7 @@
   "description": "Fetch all accessible metafields for a product via Storefront API",
   "api": "storefront",
   "variables": {
-    "handle": "trace-minerals-soil-supplement"
+    "handle": "5lb-bag"
   }
 }
+

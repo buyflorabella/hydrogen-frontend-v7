@@ -24,9 +24,11 @@ import DiscountBox from '../componentsMockup2/components/DiscountBox';
 import { products, faqs } from '~/componentsMockup2/data/staticData';
 //import { Toast } from '../componentsMockup2/components/Toast.tsx';
 
+// Updated to match working CLI pattern (query 17)
+// Uses productByHandle() and queries all three metafield variants
 const PRODUCT_QUERY = `#graphql
   query Product($handle: String!) {
-    product(handle: $handle) {
+    productByHandle(handle: $handle) {
       id
       title
       handle
@@ -65,11 +67,18 @@ const PRODUCT_QUERY = `#graphql
           title
         }
       }
-      # Also try direct access
-      productOverviewMultiline: metafield(namespace: "custom", key: "product_overview_multiline") {
+      overviewPlain: metafield(namespace: "custom", key: "product_overview") {
         value
         type
-      }      
+      }
+      overviewMultiline: metafield(namespace: "custom", key: "product_overview_multiline") {
+        value
+        type
+      }
+      overviewRichtext: metafield(namespace: "custom", key: "product_overview_richtext") {
+        value
+        type
+      }
     }
   }
 `;
@@ -115,24 +124,50 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   const { slug } = params;
   const { storefront } = context;
 
-  const { product } = await storefront.query(PRODUCT_QUERY, {
+  // ORIGINAL CODE (uses product() - commented out for testing)
+  // const { product } = await storefront.query(PRODUCT_QUERY, {
+  //   variables: {
+  //     handle: slug,
+  //     selectedOptions: [],
+  //   },
+  // });
+
+  // NEW CODE: Query uses productByHandle (matching working CLI pattern)
+  const data = await storefront.query(PRODUCT_QUERY, {
     variables: {
       handle: slug,
-      selectedOptions: [],
     },
+  });
+
+  // Extract product from productByHandle response
+  const product = data.productByHandle;
+
+  // DEBUG: Log metafield data to see what's being returned
+  console.log('[METAFIELD DEBUG]', {
+    handle: slug,
+    productId: product?.id,
+    productTitle: product?.title,
+    overviewPlain: product?.overviewPlain,
+    overviewMultiline: product?.overviewMultiline,
+    overviewRichtext: product?.overviewRichtext,
   });
 
   if (!product) {
     throw new Response('Product Not Found', { status: 404 });
   }
 
-  const { collection } = await storefront.query(RELATED_PRODUCTS_QUERY, {
-    variables: {
-      handle: product.collections.nodes[0].handle
-    },
-  });
+  // Handle case where product has no collections
+  let related: any[] = [];
+  if (product.collections?.nodes?.[0]?.handle) {
+    const { collection } = await storefront.query(RELATED_PRODUCTS_QUERY, {
+      variables: {
+        handle: product.collections.nodes[0].handle
+      },
+    });
+    related = collection?.products?.nodes || [];
+  }
 
-  return { product, related: collection.products.nodes };
+  return { product, related };
 }
 
 export default function ProductDetailPage() {
@@ -463,10 +498,20 @@ export default function ProductDetailPage() {
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">{isBundle ? 'Bundle' : 'Product'} Overview</h2>
                 {/* Display metafield if it exists, otherwise fall back to description */}
-                {product.productOverviewMultiline?.value ? (
-                  <div className="text-white/70 text-lg leading-relaxed mb-8 whitespace-pre-line">
-                    {product.productOverviewMultiline.value}
+                {/* Try all three metafield variants in priority order: richtext > multiline > plain */}
+                {product.overviewRichtext?.value ? (
+                  <div className="text-white/70 text-lg leading-relaxed mb-8">
+                    {/* Rich text needs JSON parsing - for now just display raw */}
+                    <div dangerouslySetInnerHTML={{ __html: product.overviewRichtext.value }} />
                   </div>
+                ) : product.overviewMultiline?.value ? (
+                  <div className="text-white/70 text-lg leading-relaxed mb-8 whitespace-pre-line">
+                    {product.overviewMultiline.value}
+                  </div>
+                ) : product.overviewPlain?.value ? (
+                  <p className="text-white/70 text-lg leading-relaxed mb-8">
+                    {product.overviewPlain.value}
+                  </p>
                 ) : (
                   <p className="text-white/70 text-lg leading-relaxed mb-8">
                     {product.description}

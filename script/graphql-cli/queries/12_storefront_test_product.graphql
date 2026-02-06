@@ -2,7 +2,7 @@ query TestProductMetafield($handle: String!) {
   product(handle: $handle) {
     id
     title
-    metafield(namespace: "custom", key: "product_overview_multiline") {
+    metafield(namespace: "custom", key: "product_overview_richtext") {
       value
       type
     }
