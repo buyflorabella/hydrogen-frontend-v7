@@ -55,7 +55,7 @@ export default function ContactPage() {
       env.mailApiBase
     ).toString();
 
-    console.log("---------->>>>>>>> SENDING A REQUEST FOR MAILER: " + mailUrl);
+    //console.log("---------->>>>>>>> SENDING A REQUEST FOR MAILER: " + mailUrl);
     try {
       const response = await fetch(mailUrl, 
         {
@@ -211,7 +211,7 @@ export default function ContactPage() {
               <Mail className="w-8 h-8 text-[#7cb342]" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Email Us</h3>
-            <p className="text-white/70 mb-2">support@florabella.com</p>
+            <p className="text-white/70 mb-2">support@buyflorabella.com</p>
             <p className="text-white/50 text-sm">We'll respond within 24 hours</p>
           </div>
 
@@ -220,7 +220,7 @@ export default function ContactPage() {
               <Phone className="w-8 h-8 text-[#7cb342]" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Call Us</h3>
-            <p className="text-white/70 mb-2">1-800-MINERALS</p>
+            <p className="text-white/70 mb-2">415-860-1455</p>
             <p className="text-white/50 text-sm">Mon-Fri 9AM-6PM EST</p>
           </div>
 
@@ -417,9 +417,9 @@ export default function ContactPage() {
                 <div className="flex items-start gap-3 text-white/70">
                   <MapPin className="w-5 h-5 text-[#7cb342] flex-shrink-0 mt-1" />
                   <div>
-                    <p>Flora Bella Minerals</p>
-                    <p>123 Wellness Way</p>
-                    <p>Boulder, CO 80302</p>
+                    <p>Flora Bella Trace Minerals</p>
+                    <p>218 Julia Street</p>
+                    <p>Bay St. Louis, MS 39520</p>
                   </div>
                 </div>
               </div>
