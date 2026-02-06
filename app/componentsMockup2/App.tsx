@@ -18,6 +18,7 @@ import AbandonedCartPopup from './components/AbandonedCartPopup';
 import DiscountBanner from './components/DiscountBanner';
 import SoloShopButton from '../componentsMockup2/components/SoloShopButton';
 import FloatingWidgetColumn from '../componentsMockup2/components/FloatingWidgetColumn';
+import {CartReturnHandler} from '~/components/CartReturnHandler';
 
 import { useRouteLoaderData } from 'react-router';
 export type RootLoader = typeof loader;
@@ -63,6 +64,7 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
                       {showSoloShopButton && <SoloShopButton />}
                       <Footer />
                       <CartDrawer />
+                      <CartReturnHandler />
                       <SurveyPopup />
                       <FloatingWidgetColumn />
                       <AbandonedCartPopup />

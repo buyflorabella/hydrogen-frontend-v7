@@ -1,6 +1,7 @@
 import {
   useLoaderData,
   data,
+  redirect,
   type HeadersFunction,
 } from 'react-router';
 import type {Route} from './+types/cart';
@@ -104,7 +105,14 @@ export async function action({request, context}: Route.ActionArgs) {
   );
 }
 
-export async function loader({context}: Route.LoaderArgs) {
+export async function loader({request, context}: Route.LoaderArgs) {
+  const url = new URL(request.url);
+
+  // Redirect to shop with cart tray open if returning from Shopify checkout
+  if (url.searchParams.get('logged_in') === 'true') {
+    return redirect('/shop?cart_return=true');
+  }
+
   const {cart} = context;
   return await cart.get();
 }
