@@ -222,8 +222,9 @@ export default function Footer() {
             <p className="text-white/50 text-sm">
               © 2026 Flora Bella Trace Minerals. All rights reserved.
             </p>
-            <p className="text-white/50 text-sm">
-              Site [ v7.14 ] by: BIRD Labs
+            <p className="text-white/50 text-sm flex items-center gap-1">
+              Site [ v7.14.1 ] by: BIRD Labs
+              <span className="text-[10px] leading-none text-blue-400">🐦</span>
             </p>
             <div className="flex items-center gap-4">
               <div className="flex gap-2 items-center">
