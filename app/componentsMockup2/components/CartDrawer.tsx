@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, RefreshCw } from 'lucide-react'; // PnT: Added RefreshCw for subscription icon
 import { Link, useRouteLoaderData, Await } from 'react-router';
 import { CartForm, Image, Money } from '@shopify/hydrogen';
 import type { CartLine, Cart } from '@shopify/hydrogen/storefront-api-types';
@@ -53,6 +53,18 @@ export default function CartDrawer() {
 function CartContent({ cart, closeCart }: { cart: Cart | null; closeCart: () => void }) {
   const lines = cart?.lines?.nodes ?? [];
   const totalQuantity = cart?.totalQuantity ?? 0;
+
+  // PnT: DEBUG - Log cart lines to inspect subscription data
+  console.log('[CART DEBUG]', {
+    totalQuantity,
+    lines: lines.map((line: any) => ({
+      id: line.id,
+      productTitle: line.merchandise?.product?.title,
+      quantity: line.quantity,
+      hasSubscription: !!(line as any).sellingPlanAllocation,
+      sellingPlanName: (line as any).sellingPlanAllocation?.sellingPlan?.name,
+    })),
+  });
 
   // DxB Helper function to point to subdomain
   const getCheckoutUrl = (checkoutUrl: string) => {
@@ -111,6 +123,16 @@ function CartContent({ cart, closeCart }: { cart: Cart | null; closeCart: () => 
                 <p className="text-sm text-white/50 mb-2">
                   {line.merchandise.title}
                 </p>
+              )}
+
+              {/* PnT: Subscription indicator badge */}
+              {(line as any).sellingPlanAllocation && (
+                <div className="flex items-center gap-1.5 mb-2">
+                  <RefreshCw className="w-3.5 h-3.5 text-[#7cb342]" />
+                  <span className="text-xs text-[#7cb342] font-medium">
+                    {(line as any).sellingPlanAllocation.sellingPlan?.name || 'Subscription'}
+                  </span>
+                </div>
               )}
 
               <div className="flex items-center justify-between">

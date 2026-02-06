@@ -275,6 +275,35 @@ const PRODUCT_QUERY = `#graphql
           image {
             url
           }
+          # PnT: Selling plans for subscription options
+          sellingPlanAllocations(first: 5) {
+            nodes {
+              sellingPlan {
+                id
+                name
+                billingPolicy {
+                  ... on SellingPlanRecurringBillingPolicy {
+                    interval
+                    intervalCount
+                  }
+                }
+              }
+              priceAdjustments {
+                price {
+                  amount
+                  currencyCode
+                }
+                compareAtPrice {
+                  amount
+                  currencyCode
+                }
+                perDeliveryPrice {
+                  amount
+                  currencyCode
+                }
+              }
+            }
+          }
         }
       }
       collections(first: 1) {
@@ -371,7 +400,23 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
     overviewPlain: product?.overviewPlain,
     overviewMultiline: product?.overviewMultiline,
     overviewRichtext: product?.overviewRichtext,
-    keyBenefits: product?.keyBenefits, // PnT: Added key_benefits_parsable
+    keyBenefits: product?.keyBenefits,
+  });
+
+  // PnT: DEBUG - Log selling plan allocations for subscriptions
+  const sellingPlanAllocations = product?.variants?.nodes?.[0]?.sellingPlanAllocations?.nodes || [];
+  console.log('[SUBSCRIPTION DEBUG]', {
+    handle: slug,
+    variantId: product?.variants?.nodes?.[0]?.id,
+    sellingPlansCount: sellingPlanAllocations.length,
+    sellingPlans: sellingPlanAllocations.map((allocation: any) => ({
+      id: allocation.sellingPlan?.id,
+      name: allocation.sellingPlan?.name,
+      interval: allocation.sellingPlan?.billingPolicy?.interval,
+      intervalCount: allocation.sellingPlan?.billingPolicy?.intervalCount,
+      price: allocation.priceAdjustments?.[0]?.price?.amount,
+      compareAtPrice: allocation.priceAdjustments?.[0]?.compareAtPrice?.amount,
+    })),
   });
 
   if (!product) {
@@ -398,9 +443,8 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [purchaseType, setPurchaseType] = useState('one-time');
-  const [subscriptionFrequency, setSubscriptionFrequency] = useState();
+  const [selectedSellingPlanId, setSelectedSellingPlanId] = useState<string | null>(null); // PnT: Track selected subscription plan
   const [activeTab, setActiveTab] = useState<'overview' | 'ingredients' | 'how-to' | 'technical' | 'faq'>('overview');
-  //const [toastMessage, setToastMessage] = useState<string | null>(null);  // ← ADD THIS
 
   const { openCart } = useCart();
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
@@ -412,10 +456,36 @@ export default function ProductDetailPage() {
   const images = product.images.nodes;
   const price = parseFloat(variant.price.amount);
   const compareAtPrice = variant.compareAtPrice ? parseFloat(variant.compareAtPrice.amount) : null;
-  
-  // Parse metafields if they exist
-  // const benefitsList = product.benefits ? JSON.parse(product.benefits.value) : [];
-  // const ingredientsData = product.ingredients ? JSON.parse(product.ingredients.value) : [];
+
+  // PnT: Extract selling plan allocations for subscription options
+  const sellingPlanAllocations = variant?.sellingPlanAllocations?.nodes || [];
+  const hasSubscriptionOptions = sellingPlanAllocations.length > 0;
+
+  // PnT: Get the currently selected selling plan details
+  const selectedPlanAllocation = sellingPlanAllocations.find(
+    (allocation: any) => allocation.sellingPlan?.id === selectedSellingPlanId
+  );
+  const subscriptionPrice = selectedPlanAllocation?.priceAdjustments?.[0]?.price?.amount
+    ? parseFloat(selectedPlanAllocation.priceAdjustments[0].price.amount)
+    : null;
+  const subscriptionComparePrice = selectedPlanAllocation?.priceAdjustments?.[0]?.compareAtPrice?.amount
+    ? parseFloat(selectedPlanAllocation.priceAdjustments[0].compareAtPrice.amount)
+    : null;
+
+  // PnT: Calculate discount percentage if subscription has savings
+  const subscriptionDiscount = subscriptionComparePrice && subscriptionPrice
+    ? Math.round((1 - subscriptionPrice / subscriptionComparePrice) * 100)
+    : 0;
+
+  // PnT: DEBUG - Log subscription state in component
+  console.log('[SUBSCRIPTION UI DEBUG]', {
+    hasSubscriptionOptions,
+    sellingPlansCount: sellingPlanAllocations.length,
+    selectedSellingPlanId,
+    purchaseType,
+    subscriptionPrice,
+    subscriptionDiscount,
+  });
 
   const handleToggleWishlist = () => {
     toggleWishlist({
@@ -427,7 +497,11 @@ export default function ProductDetailPage() {
     });
   };
 
-  const finalPrice = price * quantity;
+  // PnT: Calculate final price based on purchase type
+  const displayPrice = purchaseType === 'subscription' && subscriptionPrice
+    ? subscriptionPrice
+    : price;
+  const finalPrice = displayPrice * quantity;
   const isBundle = false;
 
   return (
@@ -526,11 +600,17 @@ export default function ProductDetailPage() {
                   </div>
                 </button>
 
-                {/* SUBSCRIPTON ABILITY TOGGLE */}
-                {false && (
+                {/* PnT: SUBSCRIPTION ABILITY TOGGLE - Now dynamic based on selling plans */}
+                {hasSubscriptionOptions && (
                   <>
                     <button
-                      onClick={() => setPurchaseType('subscription')}
+                      onClick={() => {
+                        setPurchaseType('subscription');
+                        // PnT: Auto-select first plan if none selected
+                        if (!selectedSellingPlanId && sellingPlanAllocations.length > 0) {
+                          setSelectedSellingPlanId(sellingPlanAllocations[0].sellingPlan?.id);
+                        }
+                      }}
                       className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
                         purchaseType === 'subscription'
                           ? 'border-[#7cb342] bg-[#7cb342]/10'
@@ -541,28 +621,51 @@ export default function ProductDetailPage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-white font-semibold">Subscribe & Save</span>
-                            <span className="bg-[#7cb342] text-white text-xs px-2 py-0.5 rounded-full">
-                              {(product as any).subscription_discount}% OFF
-                            </span>
+                            {subscriptionDiscount > 0 && (
+                              <span className="bg-[#7cb342] text-white text-xs px-2 py-0.5 rounded-full">
+                                {subscriptionDiscount}% OFF
+                              </span>
+                            )}
                           </div>
-                          <div className="text-white/70">${finalPrice.toFixed(2)} per delivery</div>
+                          <div className="text-white/70">
+                            {subscriptionPrice
+                              ? `$${subscriptionPrice.toFixed(2)} per delivery`
+                              : 'Select a plan below'}
+                          </div>
                         </div>
                         {purchaseType === 'subscription' && (
                           <Check className="w-6 h-6 text-[#7cb342]" />
                         )}
                       </div>
                     </button>
+
+                    {/* PnT: Delivery frequency selector - shows when subscription is selected */}
                     {purchaseType === 'subscription' && (
                       <div className="mt-3">
                         <label className="block text-white/70 text-sm mb-2">Delivery Frequency:</label>
                         <select
-                          value={subscriptionFrequency}
-                          onChange={(e) => setSubscriptionFrequency(e.target.value)}
+                          value={selectedSellingPlanId || ''}
+                          onChange={(e) => {
+                            setSelectedSellingPlanId(e.target.value);
+                            // PnT: DEBUG - Log plan selection
+                            console.log('[SUBSCRIPTION SELECT]', {
+                              selectedPlanId: e.target.value,
+                              plan: sellingPlanAllocations.find(
+                                (a: any) => a.sellingPlan?.id === e.target.value
+                              ),
+                            });
+                          }}
                           className="w-full p-3 glass border border-white/20 rounded-xl text-white bg-transparent"
                         >
-                          <option value="30" className="bg-[#1a1a2e]">Every 30 days</option>
-                          <option value="60" className="bg-[#1a1a2e]">Every 60 days</option>
-                          <option value="90" className="bg-[#1a1a2e]">Every 90 days</option>
+                          {sellingPlanAllocations.map((allocation: any) => (
+                            <option
+                              key={allocation.sellingPlan?.id}
+                              value={allocation.sellingPlan?.id}
+                              className="bg-[#1a1a2e]"
+                            >
+                              {allocation.sellingPlan?.name} - ${parseFloat(allocation.priceAdjustments?.[0]?.price?.amount || 0).toFixed(2)}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     )}
@@ -589,6 +692,7 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
+              {/* PnT: CartForm - conditionally includes sellingPlanId for subscriptions */}
               <CartForm
                 route="/cart"
                 action={CartForm.ACTIONS.LinesAdd}
@@ -597,6 +701,10 @@ export default function ProductDetailPage() {
                     {
                       merchandiseId: product.variants.nodes[0]?.id,
                       quantity,
+                      // PnT: Include sellingPlanId only when subscription is selected
+                      ...(purchaseType === 'subscription' && selectedSellingPlanId
+                        ? { sellingPlanId: selectedSellingPlanId }
+                        : {}),
                     },
                   ],
                 }}
@@ -606,7 +714,16 @@ export default function ProductDetailPage() {
                     <button
                       type="submit"
                       disabled={!variant.availableForSale || fetcher.state !== 'idle'}
-                      onClick={openCart}
+                      onClick={() => {
+                        // PnT: DEBUG - Log cart add action
+                        console.log('[CART ADD DEBUG]', {
+                          purchaseType,
+                          merchandiseId: product.variants.nodes[0]?.id,
+                          quantity,
+                          sellingPlanId: purchaseType === 'subscription' ? selectedSellingPlanId : null,
+                        });
+                        openCart();
+                      }}
                       className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10"
                     >
                       <ShoppingCart className="w-6 h-6" />

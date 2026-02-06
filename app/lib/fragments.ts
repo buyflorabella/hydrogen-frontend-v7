@@ -22,6 +22,24 @@ export const CART_QUERY_FRAGMENT = `#graphql
         ...Money
       }
     }
+    # PnT: Include selling plan allocation for subscription items
+    sellingPlanAllocation {
+      sellingPlan {
+        id
+        name
+      }
+      priceAdjustments {
+        price {
+          ...Money
+        }
+        compareAtPrice {
+          ...Money
+        }
+        perDeliveryPrice {
+          ...Money
+        }
+      }
+    }
     merchandise {
       ... on ProductVariant {
         id
@@ -71,6 +89,24 @@ export const CART_QUERY_FRAGMENT = `#graphql
       }
       compareAtAmountPerQuantity {
         ...Money
+      }
+    }
+    # PnT: Include selling plan allocation for subscription items
+    sellingPlanAllocation {
+      sellingPlan {
+        id
+        name
+      }
+      priceAdjustments {
+        price {
+          ...Money
+        }
+        compareAtPrice {
+          ...Money
+        }
+        perDeliveryPrice {
+          ...Money
+        }
       }
     }
     merchandise {
