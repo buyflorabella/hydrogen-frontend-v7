@@ -25,7 +25,7 @@ const policies = {
       },
       {
         section: 'Your Rights',
-        text: 'You have the right to access, correct, or delete your personal information. You may also opt out of marketing communications at any time. To exercise these rights, please contact us at privacy@florabella.com.',
+        text: 'You have the right to access, correct, or delete your personal information. You may also opt out of marketing communications at any time. To exercise these rights, please contact us at support@buyflorabella.com.',
       },
       {
         section: 'Cookies',
@@ -111,7 +111,7 @@ const policies = {
       },
       {
         section: 'How to Initiate a Return',
-        text: 'To start a return, please contact our customer support team at support@florabella.com or call 1-800-MINERALS. We will provide you with a prepaid return shipping label and instructions.',
+        text: 'To start a return, please contact our customer support team at support@buyflorabella.com or call 415-860-1455. We will provide you with a prepaid return shipping label and instructions.',
       },
       {
         section: 'Return Conditions',
@@ -186,9 +186,9 @@ export default function ReturnsPage() {
               If you have any questions about this policy, please contact us:
             </p>
             <div className="space-y-2 text-white/70">
-              <p>Email: support@florabella.com</p>
-              <p>Phone: 1-800-MINERALS</p>
-              <p>Address: 123 Wellness Way, Boulder, CO 80302</p>
+              <p>Email: support@buyflorabella.com</p>
+              <p>Phone: 415-860-1455</p>
+              <p>Address: 218 Julia Street Bay St. Louis, MS 39520</p>
             </div>
           </div>
         </div>

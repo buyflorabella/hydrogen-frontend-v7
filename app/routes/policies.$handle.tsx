@@ -120,7 +120,7 @@ const policies = {
       },
       {
         section: 'Your Rights',
-        text: 'You have the right to access, correct, or delete your personal information. You may also opt out of marketing communications at any time. To exercise these rights, please contact us at privacy@florabella.com.',
+        text: 'You have the right to access, correct, or delete your personal information. You may also opt out of marketing communications at any time. To exercise these rights, please contact us at buyflorabella.com.',
       },
       {
         section: 'Cookies',
@@ -171,28 +171,24 @@ const policies = {
     lastUpdated: 'January 1, 2026',
     content: [
       {
-        section: 'Domestic Shipping',
-        text: 'We offer free standard shipping (3-5 business days) on all orders over $75 within the continental United States. Orders under $75 have a flat shipping rate of $5.99. Express shipping (2-3 days) and overnight options are available at checkout.',
-      },
-      {
-        section: 'International Shipping',
-        text: 'We ship to most countries worldwide. International shipping rates and delivery times vary by destination. International customers are responsible for any customs fees, import duties, or taxes levied by their country.',
-      },
-      {
-        section: 'Processing Time',
-        text: 'Orders are typically processed and shipped within 1-2 business days. You will receive a shipping confirmation email with tracking information once your order has shipped.',
+        section: 'Order Processing',
+        text: 'Orders are prepared for shipment as quickly as possible after purchase. Processing times may vary based on order volume, product availability, and seasonal demand.  Once your order ships, you’ll receive a confirmation email with tracking information when available.',
       },
       {
         section: 'Tracking',
-        text: 'All orders include tracking. You can track your order by logging into your account or using the tracking number provided in your shipping confirmation email.',
+        text: 'Tracking details are provided for most shipments. You can access tracking information through your shipping confirmation email or customer account.',
       },
       {
-        section: 'Shipping Restrictions',
-        text: 'We currently do not ship to P.O. boxes or APO/FPO addresses. Please provide a physical street address for delivery.',
+        section: 'Shipping Addresses',
+        text: 'Please ensure a complete and accurate delivery address at checkout. Some shipping methods may require a physical street address.',
       },
       {
         section: 'Lost or Damaged Packages',
-        text: 'If your package is lost or damaged in transit, please contact us within 7 days of the expected delivery date. We will work with the carrier to resolve the issue and ensure you receive your order.',
+        text: 'If your order arrives damaged or appears to be lost in transit, please contact our support team so we can review the situation and assist with next steps. Resolution may involve coordination with the shipping carrier.',
+      },
+      {
+        section: 'Additional Notes',
+        text: 'Shipping options, carriers, and policies may change over time. Current details are always presented during checkout and through order confirmation communications.',
       },
     ],
   },
@@ -275,7 +271,7 @@ export default function PolicyPage() {
               If you have any questions about this policy, please contact us:
             </p>
             <div className="space-y-2 text-white/70">
-              <p>Email: support@florabella.com</p>
+              <p>Email: support@buyflorabella.com</p>
               <p>Phone: 415-860-1455</p>
               <p>Address: 218 Julia Street Bay St. Louis, MS 39520</p>
             </div>
