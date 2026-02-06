@@ -59,3 +59,11 @@ export function useAside() {
 
   return ctx;
 }
+
+/**
+ * Safe version of useAside that returns null if not within AsideProvider.
+ * Use this when the component might render outside the provider.
+ */
+export function useAsideSafe() {
+  return useContext(AsideContext);
+}

@@ -55,6 +55,8 @@ export function FeatureFlagsProvider({
     const saved: string | null = localStorage.getItem('featureFlags');
     if (saved) {
       try {
+        const savedFlags = JSON.parse(saved) as FeatureFlags; // ✅ define savedFlags here        
+        
         // PRIORITY ORDER (highest to lowest):
         // 1. localStorage (admin/user manually set)
         // 2. envOverrides (from .env)

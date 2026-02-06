@@ -6,6 +6,7 @@ import {
 } from 'react-router';
 import type {Route} from './+types/account.orders._index';
 import {useRef} from 'react';
+import {ArrowLeft} from 'lucide-react';
 import {
   Money,
   getPaginationVariables,
@@ -64,7 +65,11 @@ export default function Orders() {
   const {orders} = customer;
 
   return (
-    <div className="orders">
+    <div className="orders p-10 px-20">
+      <Link to="/account" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7cb342] mt-8 mb-4">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </Link>
+      <h2 className="text-2xl font-bold text-white mb-6">Orders</h2>
       <OrderSearchForm currentFilters={filters} />
       <OrdersTable orders={orders} filters={filters} />
     </div>
