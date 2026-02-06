@@ -1,0 +1,19 @@
+query GetAllProductMetafields($handle: String!) {
+  product(handle: $handle) {
+    id
+    title
+    metafields(
+      identifiers: [
+        { namespace: "custom", key: "product_overview_multiline" }
+        { namespace: "custom", key: "benefits" }
+        { namespace: "custom", key: "ingredients" }
+        { namespace: "custom", key: "how_to_use" }
+      ]
+    ) {
+      namespace
+      key
+      value
+      type
+    }
+  }
+}
