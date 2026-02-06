@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { useLoaderData, Link, type LoaderFunctionArgs } from 'react-router';
 import { CartForm } from '@shopify/hydrogen';
-import { 
-  Star, 
-  ShoppingCart, 
-  Share2, 
-  Heart, 
-  Check, 
-  Truck, 
-  RefreshCw, 
+import {
+  Star,
+  ShoppingCart,
+  Share2,
+  Heart,
+  Check,
+  Truck,
+  RefreshCw,
   Shield,
   Package,
   ChevronUp,
-  ChevronDown, 
-  // ThumbsUp 
+  ChevronDown,
+  // ThumbsUp
 } from 'lucide-react';
 
 import { useCart } from '../componentsMockup2/contexts/CartContext';
@@ -22,7 +22,193 @@ import { useToast } from '../componentsMockup2/contexts/ToastContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
 import DiscountBox from '../componentsMockup2/components/DiscountBox';
 import { products, faqs } from '~/componentsMockup2/data/staticData';
-//import { Toast } from '../componentsMockup2/components/Toast.tsx';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * PnT: RICHTEXT & MULTILINE PARSER UTILITIES
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Shopify RichText metafields return JSON with this structure:
+ * {
+ *   "type": "root",
+ *   "children": [
+ *     { "type": "heading", "level": 2, "children": [{ "type": "text", "value": "...", "bold": true }] },
+ *     { "type": "paragraph", "children": [{ "type": "text", "value": "..." }] },
+ *     { "type": "list", "listType": "unordered", "children": [{ "type": "list-item", "children": [...] }] }
+ *   ]
+ * }
+ *
+ * Supported node types:
+ *   - root: Container for all content
+ *   - heading: Has "level" (1-6) for h1-h6 tags
+ *   - paragraph: Standard <p> tag
+ *   - list: Has "listType" (ordered/unordered) for <ol>/<ul>
+ *   - list-item: <li> tag
+ *   - text: Inline text with optional "bold" and "italic" flags
+ *   - link: Anchor with "url" and "title" properties
+ *
+ * NOT SUPPORTED (skipped):
+ *   - image, video, and other media types
+ *
+ * Multiline text fields use \n as delimiter, converted to paragraphs with spacing.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+// PnT: Type definitions for Shopify RichText nodes
+interface RichTextNode {
+  type: string;
+  value?: string;
+  bold?: boolean;
+  italic?: boolean;
+  level?: number;
+  listType?: 'ordered' | 'unordered';
+  url?: string;
+  title?: string;
+  children?: RichTextNode[];
+}
+
+// PnT: Render inline text with formatting (bold, italic)
+function renderTextNode(node: RichTextNode, index: number): React.ReactNode {
+  if (node.type !== 'text') return null;
+
+  let content: React.ReactNode = node.value || '';
+
+  // PnT: Apply formatting in order - italic first, then bold wraps it
+  if (node.italic) {
+    content = <em key={`em-${index}`}>{content}</em>;
+  }
+  if (node.bold) {
+    content = <strong key={`strong-${index}`}>{content}</strong>;
+  }
+
+  return <span key={index}>{content}</span>;
+}
+
+// PnT: Recursively render children of a node
+function renderChildren(children: RichTextNode[] | undefined): React.ReactNode[] {
+  if (!children) return [];
+  return children.map((child, index) => renderRichTextNode(child, index));
+}
+
+// PnT: Main recursive renderer for RichText nodes
+function renderRichTextNode(node: RichTextNode, index: number): React.ReactNode {
+  switch (node.type) {
+    case 'root':
+      // PnT: Root is just a container, render its children
+      return <div key={index}>{renderChildren(node.children)}</div>;
+
+    case 'heading': {
+      // PnT: Map level (1-6) to heading tags, default to h2
+      const level = node.level || 2;
+      const HeadingTag = `h${Math.min(Math.max(level, 1), 6)}` as keyof JSX.IntrinsicElements;
+      // PnT: Apply consistent heading styles matching our design
+      const headingStyles: Record<number, string> = {
+        1: 'text-3xl font-bold text-white mb-4',
+        2: 'text-2xl font-bold text-white mb-3',
+        3: 'text-xl font-semibold text-white mb-3',
+        4: 'text-lg font-semibold text-white mb-2',
+        5: 'text-base font-semibold text-white mb-2',
+        6: 'text-sm font-semibold text-white mb-2',
+      };
+      return (
+        <HeadingTag key={index} className={headingStyles[level] || headingStyles[2]}>
+          {renderChildren(node.children)}
+        </HeadingTag>
+      );
+    }
+
+    case 'paragraph':
+      // PnT: Standard paragraph with our text styling
+      return (
+        <p key={index} className="text-white/70 text-lg leading-relaxed mb-4">
+          {renderChildren(node.children)}
+        </p>
+      );
+
+    case 'list': {
+      // PnT: Ordered vs unordered list based on listType
+      const ListTag = node.listType === 'ordered' ? 'ol' : 'ul';
+      const listStyle = node.listType === 'ordered'
+        ? 'list-decimal list-inside text-white/70 mb-4 space-y-2'
+        : 'list-disc list-inside text-white/70 mb-4 space-y-2';
+      return (
+        <ListTag key={index} className={listStyle}>
+          {renderChildren(node.children)}
+        </ListTag>
+      );
+    }
+
+    case 'list-item':
+      return (
+        <li key={index} className="text-white/70">
+          {renderChildren(node.children)}
+        </li>
+      );
+
+    case 'link':
+      // PnT: Render links with hover styling
+      return (
+        <a
+          key={index}
+          href={node.url || '#'}
+          title={node.title}
+          className="text-[#7cb342] hover:text-[#8bc34a] underline transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {renderChildren(node.children)}
+        </a>
+      );
+
+    case 'text':
+      // PnT: Inline text with formatting
+      return renderTextNode(node, index);
+
+    // PnT: Skip media types - we don't handle image/video here
+    case 'image':
+    case 'video':
+      return null;
+
+    default:
+      // PnT: Unknown node type, attempt to render children if present
+      console.warn(`[RichText] Unknown node type: ${node.type}`);
+      return node.children ? <span key={index}>{renderChildren(node.children)}</span> : null;
+  }
+}
+
+// PnT: Parse and render Shopify RichText JSON string
+function parseRichText(jsonString: string): React.ReactNode {
+  try {
+    const parsed: RichTextNode = JSON.parse(jsonString);
+    return renderRichTextNode(parsed, 0);
+  } catch (error) {
+    console.error('[RichText] Failed to parse richtext JSON:', error);
+    // PnT: Fallback - return raw string if parsing fails
+    return <p className="text-white/70 text-lg leading-relaxed">{jsonString}</p>;
+  }
+}
+
+// PnT: Parse multiline text field - splits on \n and renders as spaced paragraphs
+function parseMultilineText(text: string): React.ReactNode {
+  // PnT: Split on newlines, filter empty lines, render each as paragraph
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+    if (trimmed) {
+      // PnT: Non-empty line becomes a paragraph
+      elements.push(
+        <p key={index} className="text-white/70 text-lg leading-relaxed mb-4">
+          {trimmed}
+        </p>
+      );
+    } else if (index > 0 && index < lines.length - 1) {
+      // PnT: Empty line in middle adds visual spacing (not at start/end)
+      elements.push(<div key={`spacer-${index}`} className="h-2" />);
+    }
+  });
+
+  return <div>{elements}</div>;
+}
 
 // Updated to match working CLI pattern (query 17)
 // Uses productByHandle() and queries all three metafield variants
@@ -494,25 +680,31 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="glass border border-white/10 rounded-2xl p-8">
+            {/* PnT: OVERVIEW TAB - Renders product description from metafields
+                Priority order: richtext > multiline > plain > fallback to description
+                See parser utilities at top of file for implementation details */}
             {activeTab === 'overview' && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">{isBundle ? 'Bundle' : 'Product'} Overview</h2>
-                {/* Display metafield if it exists, otherwise fall back to description */}
-                {/* Try all three metafield variants in priority order: richtext > multiline > plain */}
+
+                {/* PnT: Metafield display with priority fallback chain */}
                 {product.overviewRichtext?.value ? (
-                  <div className="text-white/70 text-lg leading-relaxed mb-8">
-                    {/* Rich text needs JSON parsing - for now just display raw */}
-                    <div dangerouslySetInnerHTML={{ __html: product.overviewRichtext.value }} />
+                  // PnT: RichText - parse JSON and render structured content
+                  <div className="mb-8">
+                    {parseRichText(product.overviewRichtext.value)}
                   </div>
                 ) : product.overviewMultiline?.value ? (
-                  <div className="text-white/70 text-lg leading-relaxed mb-8 whitespace-pre-line">
-                    {product.overviewMultiline.value}
+                  // PnT: Multiline - split on \n and render as spaced paragraphs
+                  <div className="mb-8">
+                    {parseMultilineText(product.overviewMultiline.value)}
                   </div>
                 ) : product.overviewPlain?.value ? (
+                  // PnT: Plain text - simple paragraph
                   <p className="text-white/70 text-lg leading-relaxed mb-8">
                     {product.overviewPlain.value}
                   </p>
                 ) : (
+                  // PnT: Fallback - use product description if no metafields
                   <p className="text-white/70 text-lg leading-relaxed mb-8">
                     {product.description}
                   </p>
