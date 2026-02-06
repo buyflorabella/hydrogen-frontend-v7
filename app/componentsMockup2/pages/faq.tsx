@@ -75,16 +75,16 @@ const faqs = [
     questions: [
       {
         q: 'What is your return policy?',
-        a: 'We offer a 60-day money-back guarantee on all products. If you are not completely satisfied, return the product (even if opened) for a full refund. Just contact our support team to initiate a return.',
+        a: 'If you are not completely satisfied with or received a damaged product, please contact our support team. We are happy to assist you.',
       },
-      {
-        q: 'How long do refunds take?',
-        a: 'Once we receive your return, refunds are processed within 5-7 business days. The refund will be issued to your original payment method. Please allow additional time for your bank to process the refund.',
-      },
-      {
-        q: 'Can I exchange a product?',
-        a: 'Yes! If you would like to exchange a product for a different one, contact our support team. We will send you the new product and provide a prepaid return label for the original item.',
-      },
+      // {
+      //   q: 'How long do refunds take?',
+      //   a: 'Once we receive your return, refunds are processed within 5-7 business days. The refund will be issued to your original payment method. Please allow additional time for your bank to process the refund.',
+      // },
+      // {
+      //   q: 'Can I exchange a product?',
+      //   a: 'Yes! If you would like to exchange a product for a different one, contact our support team. We will send you the new product and provide a prepaid return label for the original item.',
+      // },
     ],
   },
   {
@@ -121,6 +121,8 @@ export default function FAQPage() {
         ),
       })).filter(category => category.questions.length > 0)
     : faqs;
+
+    console.log("----------------------=======================================");
 
   return (
     <>

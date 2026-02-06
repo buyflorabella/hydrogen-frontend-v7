@@ -53,6 +53,8 @@ export default async function handleRequest(
       'https://omnisnippet1.com',
       'https://omnisnippet.com',
       "https://survey-server.boardmansgame.com",
+      "https://email.boardmansgame.com",
+      "https://remail.buyflorabella.com",
       "https://dev1-frontend.textreader.boardmansgame.com",
       "https://dev2-frontend.textreader.boardmansgame.com",
       "wss://dev1-frontend.textreader.boardmansgame.com",

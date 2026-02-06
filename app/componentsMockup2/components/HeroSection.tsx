@@ -31,7 +31,7 @@ export default function HeroSection() {
         <div className="text-left">
           <div className="inline-block bg-[#7cb342]/10 border border-[#7cb342]/30 px-4 py-2 rounded-full mb-6">
             <Link to="/shop" className="gradient-green text-white px-8 py-4 rounded-full font-bold text-base hover:scale-110 hover:shadow-2xl hover:shadow-[#7cb342]/50 transition-all duration-300 shadow-xl flex items-center gap-2 group shiny-border relative z-10">
-              <span className="relative z-10 flex items-center gap-2">SHOP PREMIUM BIO TRACE MINERALS</span>
+              <span className="relative z-10 flex items-center gap-2">BUY NOW</span>
             </Link>
           </div>
 

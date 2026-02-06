@@ -4,13 +4,8 @@ import { useEnv } from '../contexts/EnvContext'; // adjust path if needed
 export default function AnnouncementBar() {
   const { announcementBarEnabled, announcementBarCoupon } = useEnv();
 
-  console.log(`Announcement Bar Enabled: ${announcementBarEnabled}, Coupon Code: ${announcementBarCoupon}`);
-
-
   // Hide the bar if disabled
   if (!announcementBarEnabled) return null;
-
-  console.log("RENDER ANNOUNCEMENT");
   
   return (
     <div className="w-full gradient-green py-2 px-4 fixed top-0 z-50 overflow-hidden">

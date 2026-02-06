@@ -19,7 +19,7 @@ export default function BenefitsGrid() {
       icon: Flag,
       title: 'Born in the USA',
       description: 'Sourced and crafted in the United States, Flora Bella is composted for 6-8 months to reawaken naturally occurring microbes and biology that have rested for thousands of years - brining ancient mineral vitality back into living soil.',
-      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_3_of_6_Hand_w_Tomato.jpg?v=1769724522',
+      image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Home_Page_Bottom_Banner_6_of_6.jpg?v=1770154470',
     },
     {
       icon: Sparkles,

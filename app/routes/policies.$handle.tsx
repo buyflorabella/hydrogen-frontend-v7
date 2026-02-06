@@ -201,32 +201,28 @@ const policies = {
     lastUpdated: 'January 1, 2026',
     content: [
       {
-        section: '60-Day Money-Back Guarantee',
-        text: 'We stand behind the quality of our products. If you are not completely satisfied with your purchase, you may return it within 60 days for a full refund, even if the product has been opened and used.',
-      },
-      {
-        section: 'How to Initiate a Return',
-        text: 'To start a return, please contact our customer support team at support@florabella.com or call 1-800-MINERALS. We will provide you with a prepaid return shipping label and instructions.',
-      },
-      {
-        section: 'Return Conditions',
-        text: 'Products must be returned in their original packaging when possible. We accept returns of opened products, but please include all original contents. Shipping costs for returns are covered by us.',
-      },
-      {
-        section: 'Refund Processing',
-        text: 'Once we receive your return, refunds are processed within 5-7 business days. The refund will be issued to your original payment method. Please allow additional time for your bank to process the refund.',
+        section: 'Our Commitment',
+        text: 'We take care in how Flora Bella products are sourced, prepared, and shipped. If there’s an issue with your order, our team is here to help ensure you receive the correct product in good condition.',
       },
       {
         section: 'Exchanges',
-        text: 'If you would like to exchange a product for a different one, please contact our support team. We will send you the new product and provide a prepaid return label for the original item.',
+        text: 'Flora Bella does not offer refunds. Instead, we support product exchanges in certain situations, such as damaged items or order issues.  If you believe an exchange is needed, please contact our support team so we can review the details and determine the best next step.',
       },
       {
-        section: 'Subscription Returns',
-        text: 'Subscription orders can be returned using the same process. You can also pause or cancel your subscription at any time from your account dashboard.',
+        section: 'How to Request an Exchange',
+        text: 'To request assistance with an exchange, please reach out to our customer support team using the contact information provided on our website. Include your order number and a brief description of the issue so we can assist you efficiently.',
       },
       {
-        section: 'Damaged Products',
-        text: 'If you receive a damaged product, please contact us immediately with photos of the damage. We will send a replacement at no cost to you.',
+        section: 'Damaged or Incorrect Orders',
+        text: 'If your order arrives damaged or incorrect, please contact us promptly and include photos when possible. Once reviewed, we’ll work with you to resolve the issue, which may include sending a replacement product.',
+      },
+      {
+        section: 'Subscriptions',
+        text: 'Subscription orders follow the same exchange and support process as one-time purchases. Subscription settings can be managed directly through your customer account.',
+      },
+      {
+        section: 'Additional Notes',
+        text: 'Exchange options, processes, and eligibility may change over time. Current details and instructions are always available through our customer support team.',
       },
     ],
   },
@@ -280,8 +276,8 @@ export default function PolicyPage() {
             </p>
             <div className="space-y-2 text-white/70">
               <p>Email: support@florabella.com</p>
-              <p>Phone: 1-800-MINERALS</p>
-              <p>Address: 123 Wellness Way, Boulder, CO 80302</p>
+              <p>Phone: 415-860-1455</p>
+              <p>Address: 218 Julia Street Bay St. Louis, MS 39520</p>
             </div>
           </div>
         </div>

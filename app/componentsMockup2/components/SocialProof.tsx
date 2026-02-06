@@ -7,23 +7,23 @@ export default function SocialProof() {
     {
       quote: "I have been on farms and in gardens for 40 years. I used Flora Bella on my farm and noticed an immediate difference in the vigor of all my plants, especially the palms.... I am amazed with the quality and performance of the Flora Bella product.",
       name: 'Michael M.',
-      location: 'Larue Ms',
+      location: 'Larue MS',
       rating: 5,
-      avatar: 'JR',
+      avatar: 'MM',
     },
     {
       quote: 'What surprised me most was how quickly I noticed new growth.  The plants responded faster than i expected.. with visible vitality early on!',
       name: 'Shannon L.',
-      location: 'Larue Ms',
+      location: 'Tampa FL',
       rating: 5,
-      avatar: 'MT',
+      avatar: 'SL',
     },
     {
       quote: 'I can\'t speak highly of it enough. Stuff made our plants explode! We had a pretty balanced receipe, but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft growers the most but it boosted the gardens we ran, and that was 42 acres....',
       name: 'Jacob C.',
       location: 'Cooperstate',
       rating: 5,
-      avatar: 'SK',
+      avatar: 'JC',
     },
   ];
 

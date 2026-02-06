@@ -13,7 +13,7 @@ const faqs = [
       },
       {
         q: 'Do you offer free shipping?',
-        a: 'Yes! We offer free standard shipping on all orders over $75 within the United States. Free shipping is automatically applied at checkout when your order qualifies.',
+        a: 'We offer shipping discount promotions throughout the year, follow us on social media to receive updates.',
       },
       {
         q: 'Can I track my order?',
@@ -29,24 +29,36 @@ const faqs = [
     category: 'Products & Usage',
     questions: [
       {
-        q: 'How should I take mineral supplements?',
-        a: 'Take 2 capsules daily with food, preferably in the morning for energy support. For magnesium products, we recommend taking them in the evening. Always start with the recommended dose and consult your healthcare provider if you have specific health conditions.',
+        q: 'What is Flora Bella used for?',
+        a: 'Flora Bella is designed to support soil vitality and plant development by replenishing naturally occurring trace minerals. It can be used across a wide range of gardens, from vegetables and flowers to trees, lawns, and container plants.',
       },
       {
-        q: 'Are your products suitable for vegetarians and vegans?',
-        a: 'Yes! All our products are 100% vegetarian and most are vegan-friendly. We use plant-based capsules and do not use any animal-derived ingredients. Check individual product labels for specific certifications.',
+        q: 'How do I apply Flora Bella to my garden?',
+        a: 'Flora Bella can be mixed into soil, added to water, or used as part of a regular feeding routine. Application methods may vary based on plant type, growing medium, and season. Always start with recommended guidelines and adjust as needed.',
       },
       {
-        q: 'How long until I see results?',
-        a: 'Most customers report feeling more energized within 1-2 weeks of consistent use. However, optimal mineral levels typically develop over 2-3 months of daily supplementation. Results vary based on individual needs and deficiency levels.',
+        q: 'When is the best time to use Flora Bella?',
+        a: 'Flora Bella can be used throughout the growing cycle, including planting, active growth, and maintenance phases. Many gardeners incorporate it at the beginning of the season and continue as plants develop.',
       },
       {
-        q: 'Can I take multiple mineral supplements together?',
-        a: 'Generally yes, but we recommend spacing some minerals apart for optimal absorption. Our Essential Mineral Complex is designed to provide balanced minerals in one convenient formula. Consult your healthcare provider for personalized advice.',
+        q: 'Is Flora Bella safe for edible plants?',
+        a: 'Yes. Flora Bella is intended for use in gardens that include vegetables, herbs, and fruiting plants. As with any soil input, it should be applied according to usage guidance and good gardening practices.',
       },
       {
-        q: 'Are your products third-party tested?',
-        a: 'Yes! All our products undergo rigorous third-party testing for purity, potency, and quality. We test for heavy metals, contaminants, and verify that each product contains what the label states.',
+        q: 'Can Flora Bella be used with other soil amendments or fertilizers?',
+        a: 'Flora Bella is often used alongside compost, organic matter, and standard fertilization programs. Gardeners may choose to integrate it into existing routines rather than replace other inputs.',
+      },
+      {
+        q: 'Is Flora Bella suitable for raised beds and containers?',
+        a: 'Yes. Flora Bella can be used in raised beds, container gardens, and in-ground plantings. Application amounts may differ depending on soil volume and planting density.',
+      },
+      {
+        q: 'Does Flora Bella work for indoor plants or houseplants?',
+        a: 'Many gardeners use Flora Bella for indoor plants as part of regular care. Adjust application frequency and amounts based on pot size and plant needs.',
+      },
+      {
+        q: 'Is Flora Bella tested for quality and consistency?',
+        a: 'Flora Bella is produced with attention to sourcing and consistency. Quality practices are in place to ensure the product meets internal standards before reaching customers.',
       },
     ],
   },
@@ -55,19 +67,19 @@ const faqs = [
     questions: [
       {
         q: 'How does Subscribe & Save work?',
-        a: 'Subscribe & Save offers 15% off and free shipping on recurring orders. Choose your delivery frequency (30, 60, or 90 days), and we will automatically send your products. You can modify, pause, or cancel anytime.',
+        a: 'Subscribe & Save lets you receive Flora Bella products automatically on a recurring basis. You choose a delivery schedule that fits your needs, and we take care of the rest. Subscription benefits and details may vary over time and are always shown at checkout.',
       },
       {
         q: 'Can I change my subscription frequency?',
-        a: 'Yes! Log into your account, go to Manage Subscriptions, and adjust your delivery frequency at any time. Changes will apply to your next scheduled order.',
+        a: 'Yes. You can manage your subscription at any time, including adjusting delivery frequency, skipping an order, or making changes to your selections through your customer account.',
       },
       {
         q: 'How do I cancel my subscription?',
-        a: 'You can cancel your subscription anytime from your account dashboard. Go to Manage Subscriptions and click Cancel. There are no cancellation fees or penalties.',
+        a: 'Subscriptions can be paused or canceled at any time through your customer account. Changes typically take effect before the next scheduled order processes.',
       },
       {
         q: 'Will I be notified before each shipment?',
-        a: 'Yes! We send an email reminder 3 days before each subscription order is processed, giving you time to make any changes or skip a delivery if needed.',
+        a: 'Yes. You’ll receive a notification ahead of each scheduled shipment so you have time to review, update, or make changes if needed.',
       },
     ],
   },
@@ -78,14 +90,14 @@ const faqs = [
         q: 'What is your return policy?',
         a: 'We offer a 60-day money-back guarantee on all products. If you are not completely satisfied, return the product (even if opened) for a full refund. Just contact our support team to initiate a return.',
       },
-      {
-        q: 'How long do refunds take?',
-        a: 'Once we receive your return, refunds are processed within 5-7 business days. The refund will be issued to your original payment method. Please allow additional time for your bank to process the refund.',
-      },
-      {
-        q: 'Can I exchange a product?',
-        a: 'Yes! If you would like to exchange a product for a different one, contact our support team. We will send you the new product and provide a prepaid return label for the original item.',
-      },
+      // {
+      //   q: 'How long do refunds take?',
+      //   a: 'Once we receive your return, refunds are processed within 5-7 business days. The refund will be issued to your original payment method. Please allow additional time for your bank to process the refund.',
+      // },
+      // {
+      //   q: 'Can I exchange a product?',
+      //   a: 'Yes! If you would like to exchange a product for a different one, contact our support team. We will send you the new product and provide a prepaid return label for the original item.',
+      // },
     ],
   },
   {

@@ -420,13 +420,13 @@ export default function ProductDetailPage() {
               <div className="grid grid-cols-3 gap-4 mb-8">
                 <div className="glass border border-white/10 rounded-xl p-4 text-center">
                   <Truck className="w-6 h-6 text-[#7cb342] mx-auto mb-2" />
-                  <div className="text-sm text-white/70">Free Shipping</div>
-                  <div className="text-xs text-white/50">On orders $75+</div>
+                  <div className="text-sm text-white/70">Quality Sourced</div>
+                  <div className="text-xs text-white/50">Carefully selected inputs</div>
                 </div>
                 <div className="glass border border-white/10 rounded-xl p-4 text-center">
                   <RefreshCw className="w-6 h-6 text-[#7cb342] mx-auto mb-2" />
-                  <div className="text-sm text-white/70">Easy Returns</div>
-                  <div className="text-xs text-white/50">60-day guarantee</div>
+                  <div className="text-sm text-white/70">Consistent Supply</div>
+                  <div className="text-xs text-white/50">Reliable, repeatable fulfillment</div>
                 </div>
                 <div className="glass border border-white/10 rounded-xl p-4 text-center">
                   <Shield className="w-6 h-6 text-[#7cb342] mx-auto mb-2" />

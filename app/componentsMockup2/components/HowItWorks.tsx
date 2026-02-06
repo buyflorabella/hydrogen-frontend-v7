@@ -14,7 +14,7 @@ export default function HowItWorks() {
     {
       number: '02',
       title: 'Humic Acid - Soil Structure & Retention',
-      description: 'Humic acids are largere organic compounds that:',
+      description: 'Humic acids are large organic compounds that:',
       highlights: ['Improve soil structure, aggregation, and aeration', 'Increase water-holding capacity', 'Bind and retain nutrients in the root zone', 'Support beneficial microbial activity'],
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_2_of_3_Humic_Acid.jpg?v=1769727046',
       icon: Sparkles,
@@ -22,7 +22,7 @@ export default function HowItWorks() {
     {
       number: '03',
       title: 'Fulvic Acid - Mineral Transport',
-      description: 'Fulvic acids are smaller, highly vioavailable organic compounds that:',
+      description: 'Fulvic acids are smaller, highly bioavailable organic compounds that:',
       highlights: ['Bind trace minerals into plant-usable forms', 'Facilitate movement of minerals through plant cell walls', 'Improve nutrient uptake efficiency'],
       image: 'https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Rectangle_-_How_Flora_Bella_Works_3_of_3_Fulvic_Acid.jpg?v=1769727046',
       icon: TrendingUp,
