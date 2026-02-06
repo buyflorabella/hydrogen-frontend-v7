@@ -210,6 +210,37 @@ function parseMultilineText(text: string): React.ReactNode {
   return <div>{elements}</div>;
 }
 
+// PnT: Parse key_benefits_parsable multiline metafield
+// Each line (separated by \n) represents one benefit item
+function parseKeyBenefits(text: string): string[] {
+  // PnT: Split on newlines, trim each line, filter out empty lines
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+}
+
+// PnT: Render key benefits as a grid with check icons
+function renderKeyBenefits(benefitsText: string): React.ReactNode {
+  const benefits = parseKeyBenefits(benefitsText);
+
+  if (benefits.length === 0) return null;
+
+  return (
+    <div>
+      <h3 className="text-2xl font-bold text-white mb-4">Key Benefits</h3>
+      <div className="grid md:grid-cols-2 gap-4">
+        {benefits.map((benefit, idx) => (
+          <div key={idx} className="flex items-start gap-3">
+            <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
+            <span className="text-white/80">{benefit}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Updated to match working CLI pattern (query 17)
 // Uses productByHandle() and queries all three metafield variants
 const PRODUCT_QUERY = `#graphql
@@ -262,6 +293,10 @@ const PRODUCT_QUERY = `#graphql
         type
       }
       overviewRichtext: metafield(namespace: "custom", key: "product_overview_richtext") {
+        value
+        type
+      }
+      keyBenefits: metafield(namespace: "custom", key: "key_benefits_parsable") {
         value
         type
       }
@@ -336,6 +371,7 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
     overviewPlain: product?.overviewPlain,
     overviewMultiline: product?.overviewMultiline,
     overviewRichtext: product?.overviewRichtext,
+    keyBenefits: product?.keyBenefits, // PnT: Added key_benefits_parsable
   });
 
   if (!product) {
@@ -709,19 +745,8 @@ export default function ProductDetailPage() {
                     {product.description}
                   </p>
                 )}
-                {(item as any).benefits && (item as any).benefits.length > 0 && (
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-4">Key Benefits</h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {(item as any).benefits.map((benefit: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <Check className="w-6 h-6 text-[#7cb342] flex-shrink-0 mt-1" />
-                          <span className="text-white/80">{benefit}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* PnT: Key Benefits from key_benefits_parsable metafield (multiline text) */}
+                {product.keyBenefits?.value && renderKeyBenefits(product.keyBenefits.value)}
               </div>
             )}
 
