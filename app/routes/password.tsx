@@ -241,7 +241,7 @@ export default function PasswordPage() {
 
         <CountdownTimer
           endDate='02/06/2026'
-          endTime='18:00'
+          endTime='19:00'
           period='am'
           digitsFontSize='heading-large'
         />
