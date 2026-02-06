@@ -1,5 +1,5 @@
 import { Package, MapPin, Settings, LogOut, Heart } from 'lucide-react';
-import { Link, useRouteLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
+import { Form, Link, useRouteLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar'
 // import { useCart } from '~/componentsMockup2/contexts/CartContext';
 // import { CartForm } from '@shopify/hydrogen';
@@ -333,26 +333,27 @@ const Account = () => {
       </div>
       <div className="glass border border-white/10 rounded-2xl p-6">
         <nav className="space-y-2">
-          <a href="#orders" className="flex items-center gap-3 px-4 py-3 bg-[#7cb342]/20 text-[#7cb342] rounded-xl font-semibold">
+          <Link to="orders" className="flex items-center gap-3 px-4 py-3 bg-[#7cb342]/20 text-[#7cb342] rounded-xl font-semibold">
             <Package className="w-5 h-5" />
             Orders
-          </a>
-          <a href="#addresses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+          </Link>
+          <Link to="addresses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
             <MapPin className="w-5 h-5" />
             Addresses
-          </a>
-          <a href="#wishlist" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
-            <Heart className="w-5 h-5" />
-            Wishlist
-          </a>
-          <a href="#settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+          </Link>
+          <Link to="profile" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
             <Settings className="w-5 h-5" />
             Settings
-          </a>
-          <Link to="/account/logout" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
-            <LogOut className="w-5 h-5" />
-            Sign Out
           </Link>
+          <Form method="POST" action="/account/logout">
+            <button
+              type="submit"
+              className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors cursor-pointer"
+            >
+              <LogOut className="w-5 h-5" />
+              Sign Out
+            </button>
+          </Form>
         </nav>
       </div>
     </div>

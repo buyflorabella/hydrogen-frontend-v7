@@ -179,7 +179,7 @@ export default function Header() {
                   </Link>
                 )}
               </nav>
-              <Link to={rootData.isLoggedIn ? "/account" : "/account/login"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
+              <Link to={rootData.isLoggedIn ? "/my-account" : "/my-account/login"} className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-12">
                 {rootData.isLoggedIn ?
                   <User className="w-5 h-5 text-white" strokeWidth={2} /> : 
                   <LockKeyhole className="w-5 h-5 text-white" strokeWidth={2} />

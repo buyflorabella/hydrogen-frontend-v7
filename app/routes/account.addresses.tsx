@@ -6,11 +6,13 @@ import type {
 import {
   data,
   Form,
+  Link,
   useActionData,
   useNavigation,
   useOutletContext,
   type Fetcher,
 } from 'react-router';
+import {ArrowLeft} from 'lucide-react';
 import type {Route} from './+types/account.addresses';
 import {
   UPDATE_ADDRESS_MUTATION,
@@ -262,8 +264,11 @@ export default function Addresses() {
   const {defaultAddress, addresses} = customer;
 
   return (
-    <div className="account-addresses">
-      <h2>Addresses</h2>
+    <div className="account-addresses p-10 px-20">
+      <Link to="/account" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7cb342] mt-8 mb-4">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </Link>
+      <h2 className="text-2xl font-bold text-white mb-6">Addresses</h2>
       <br />
       {!addresses.nodes.length ? (
         <p>You have no addresses saved.</p>
