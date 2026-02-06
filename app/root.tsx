@@ -233,6 +233,9 @@ export async function loader(args: Route.LoaderArgs) {
       ...(getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_COUPON) !== undefined && {
         announcementBarCoupon: getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_COUPON)
       }),            
+      ...(getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_MESSAGE) !== undefined && {
+        announcementBarMessage: getEnvString(env.PUBLIC_ANNOUNCEMENT_BAR_MESSAGE)
+      }),            
     },    
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
