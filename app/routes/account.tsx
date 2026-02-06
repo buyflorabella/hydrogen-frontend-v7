@@ -1,6 +1,12 @@
 import { Package, MapPin, Settings, LogOut, Heart } from 'lucide-react';
-import { Form, Link, useRouteLoaderData } from 'react-router';
+import { Form, Link, useRouteLoaderData, type LoaderFunctionArgs } from 'react-router';
 import AnnouncementBar from '../componentsMockup2/components/AnnouncementBar'
+
+export async function loader({context}: LoaderFunctionArgs) {
+  // Auth check - will redirect to login if not authenticated
+  await context.customerAccount.handleAuthStatus();
+  return {};
+}
 // import { useCart } from '~/componentsMockup2/contexts/CartContext';
 // import { CartForm } from '@shopify/hydrogen';
 // import { useState, useEffect } from 'react';
@@ -333,15 +339,15 @@ const Account = () => {
       </div>
       <div className="glass border border-white/10 rounded-2xl p-6">
         <nav className="space-y-2">
-          <Link to="orders" className="flex items-center gap-3 px-4 py-3 bg-[#7cb342]/20 text-[#7cb342] rounded-xl font-semibold">
+          <Link to="/account/orders" className="flex items-center gap-3 px-4 py-3 bg-[#7cb342]/20 text-[#7cb342] rounded-xl font-semibold">
             <Package className="w-5 h-5" />
             Orders
           </Link>
-          <Link to="addresses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+          <Link to="/account/addresses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
             <MapPin className="w-5 h-5" />
             Addresses
           </Link>
-          <Link to="settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
+          <Link to="/account/settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-white/70 hover:text-white rounded-xl transition-colors">
             <Settings className="w-5 h-5" />
             Settings
           </Link>
