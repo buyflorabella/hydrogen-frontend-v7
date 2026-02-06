@@ -105,7 +105,7 @@ export default function AboutPage() {
             <div className="bg-white rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-200 hover:border-[#7cb342]/30 hover:scale-105 hover:shadow-2xl hover:shadow-[#7cb342]/20 group cursor-pointer">
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src="https://images.pexels.com/photos/1459495/pexels-photo-1459495.jpeg?auto=compress&cs=tinysrgb&w=1920"
+                  src="https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Pristine_Sources_Thumbnail.jpg?v=1770386141"
                   alt="Pristine Natural Sources"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -119,7 +119,7 @@ export default function AboutPage() {
                   Pristine Sources
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-sm">
-                  Ancient sea beds and volcanic deposits, formed millions of years before modern pollution.
+                  Macros build plant structure. Micros enable function. Our 70+ Bio Trace minerals support enzymatic activity, structural integrity, flowering, and balanced growth cycles that are not addressed by macronutrients alone.
                 </p>
               </div>
             </div>
@@ -149,7 +149,7 @@ export default function AboutPage() {
             <div className="bg-white rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-200 hover:border-[#7cb342]/30 hover:scale-105 hover:shadow-2xl hover:shadow-[#7cb342]/20 group cursor-pointer">
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src="https://images.pexels.com/photos/3683056/pexels-photo-3683056.jpeg?auto=compress&cs=tinysrgb&w=1920"
+                  src="https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Bioavailable_forms.jpg?v=1770386173"
                   alt="Bioavailable Mineral Forms"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
