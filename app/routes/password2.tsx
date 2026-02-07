@@ -26,9 +26,9 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export const action: ActionFunction = async ({ request, context }) => {
-  const { session, env } = context;  
+  const { session, env } = context;
   const formData = await request.formData();
-  const _action = formData.get('_action');  
+  const _action = formData.get('_action');
   const passwordAttempt = formData.get('password') as string;
   const correctPassword = env.PUBLIC_STORE_PASSWORD;
 
@@ -49,7 +49,7 @@ export const action: ActionFunction = async ({ request, context }) => {
 
   if (passwordAttempt === correctPassword) {
     session.set('passwordAllowed', true);
-    
+
     // Commit with short expiration
     const cookie = await session.commit({ maxAge: SHORT_SESSION_MAX_AGE });
 
@@ -152,10 +152,10 @@ const CountdownTimer = ({
         'data-aos-order': animationOrder + orderOffset
       })}
     >
-      <strong 
-        style={{ 
+      <strong
+        style={{
           display: 'block',
-          fontSize: `var(--font-${digitsFontSize}, 2rem)`, 
+          fontSize: `var(--font-${digitsFontSize}, 2rem)`,
           lineHeight: '1',
           marginBottom: '4px',
           color: '#1a1a1a'
@@ -163,8 +163,8 @@ const CountdownTimer = ({
       >
         {value}
       </strong>
-      <small 
-        style={{ 
+      <small
+        style={{
           fontSize: `var(--font-${textFontSize}, 0.75rem)`,
           textTransform: 'uppercase',
           color: '#757575',
@@ -196,18 +196,18 @@ const CountdownTimer = ({
 };
 
 export default function PasswordPage() {
-  const loaderData = useRouteLoaderData('root');  
-  const { isLoggedIn } = useLoaderData<typeof loader>();  
+  const loaderData = useRouteLoaderData('root');
+  const { isLoggedIn } = useLoaderData<typeof loader>();
   const actionData = useActionData<{ error?: string, timestamp?: number }>();
   const navigation = useNavigation();
   const [mounted, setMounted] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);  
-  const [errorVisible, setErrorVisible] = useState(false);  
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
   const navigate = useNavigate();
 
   const isSubmitting = navigation.state === 'submitting';
   const canEnterStore = isLoggedIn === true;
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     if (canEnterStore) {
       e.preventDefault();
@@ -217,7 +217,7 @@ export default function PasswordPage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);  
+  }, []);
 
   useEffect(() => {
     if (actionData?.error) {
@@ -225,26 +225,19 @@ export default function PasswordPage() {
       const timeout = setTimeout(() => setErrorVisible(false), 5000);
       return () => clearTimeout(timeout);
     }
-  }, [actionData?.timestamp]);  
+  }, [actionData?.timestamp]);
 
   return (
     <div className="password-page min-h-screen flex flex-col items-center justify-center bg-[#1a1a1a] p-6">
       <div className="fireworks-background"></div>
 
-      <div className="password-page relative z-10 w-full max-w-3xl bg-white p-8 rounded-3xl shadow-xl border-2 border-black text-center mb-9">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Site is under maintenance
-        </h1>
-
-        <div className="mb-8 p-4 rounded-xl border bg-gray-50 border-gray-100">
-          <p className="text-gray-600 font-medium text-sm leading-relaxed">
-            <span className="font-bold text-[#7cb342]">We will be back shortly!</span>
-          </p>
-        </div>
+      {/* Drawing Area - Phase 2 placeholder */}
+      <div className="w-full max-w-[480px] aspect-[24/18] border border-gray-300 rounded-lg mx-auto mb-8 flex items-center justify-center bg-white">
+        <span className="text-lg font-bold text-black">buyflorabella</span>
       </div>
 
       <div className="relative z-10 w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-        
+
         <div className={`flower-orbit transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
           {[...Array(8)].map((_, i) => (
             <div key={i} className={`flower flower-${i + 1}`}>🌸</div>
@@ -320,7 +313,7 @@ export default function PasswordPage() {
         </Form>
 
         {isLoggedIn && (
-          <Form method="post" action="/password" className="mt-6 text-center">
+          <Form method="post" action="/password2" className="mt-6 text-center">
             <input type="hidden" name="_action" value="logout" />
             <button
               type="submit"
