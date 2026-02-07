@@ -20,7 +20,7 @@ export default function CommunityCallout() {
   //console.log("BRAND_ID:" + BRAND_ID);
   
 
-  console.log(`whatsappWidget: ${flags.whatsappWidget}, whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
+  //console.log(`whatsappWidget: ${flags.whatsappWidget}, whatsappGroupUrl: ${whatsappGroupUrl}, whatsappLinkCallout: ${whatsappLinkCallout}`);
 
   return (
     <section className="gradient-offwhite py-20" id="community">
