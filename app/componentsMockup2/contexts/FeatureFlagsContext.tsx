@@ -66,12 +66,7 @@ export function FeatureFlagsProvider({
           ...envOverrides,      // Apply env overrides
           ...savedFlags,        // Apply localStorage (WINS)
         });
-        console.log("[FeatureFlags] Loaded from localStorage (highest priority):", savedFlags);
-
-        //const savedFlags = JSON.parse(saved) as FeatureFlags;
-        //setFlags(JSON.parse(saved) as FeatureFlags);
       } catch (e) {
-        console.error("Failed to parse FeatureFlags from localStorage:", e);
         setFlags(baseFlags);
       }
     }
