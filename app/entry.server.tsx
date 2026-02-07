@@ -19,11 +19,11 @@ export default async function handleRequest(
       "'self'",
       'https://cdn.shopify.com',
       'https://shopify.com',
-      'https://omnisnippet1.com',
-      'https://omnisnippet.com',
+      'https://*.omnisnippet1.com',
+      //'https://omnisnippet.com',
       'https://*.omnisnippet.com',
-      'https://www.googletagmanager.com',
-      'https://www.clarity.ms',
+      'https://*.googletagmanager.com',
+      'https://*.clarity.ms',
     ],
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
@@ -47,6 +47,10 @@ export default async function handleRequest(
     ],
     connectSrc: [
       "'self'",
+      // Analytics
+      'https://*.google-analytics.com',
+      'https://*.analytics.google.com',
+      // Omnisend      
       'https://api.omnisend.com',
       'https://*.omnisend.com',
       'https://forms.soundestlink.com', // ✅ Add this for form rendering
@@ -54,14 +58,20 @@ export default async function handleRequest(
       'https://wt.omnisendlink.com',
       'https://omnisnippet1.com',
       'https://omnisnippet.com',
-      "https://survey-server.boardmansgame.com",
-      "https://email.boardmansgame.com",
-      "https://remail.buyflorabella.com",
-      "https://dev1-frontend.textreader.boardmansgame.com",
-      "https://dev2-frontend.textreader.boardmansgame.com",
-      "wss://dev1-frontend.textreader.boardmansgame.com",
-      "wss://dev2-frontend.textreader.boardmansgame.com",
-      "wss://dev1-frontend.buyflorabella.com"
+      // Our services
+      //"https://survey-server.boardmansgame.com",
+      //"https://email.boardmansgame.com",
+      //"https://remail.buyflorabella.com",
+      "https://*.buyflorabella.com",
+      "https://*.boardmansgame.com",
+      // Shopify telemetry (Hydrogen often needs this)
+      'https://monorail-edge.shopifysvc.com', 
+      // Websockets     
+      // "wss://dev1-frontend.textreader.boardmansgame.com",
+      // "wss://dev2-frontend.textreader.boardmansgame.com",
+      // "wss://dev1-frontend.buyflorabella.com"
+      "wss://*.buyflorabella.com",
+      "wss://*.boardmansgame.com",
     ],
     frameSrc: [
       "'self'",

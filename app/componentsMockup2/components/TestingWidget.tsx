@@ -20,12 +20,12 @@ export default function TestingWidget() {
   useEffect(() => {
     const isVisible = localStorage.getItem("testingWidgetVisible");
 
-    console.log("Get visibility: " + isVisible);
+    //console.log("Get visibility: " + isVisible);
     setIsVisible(isVisible === "true");
   }, []);
 
   useEffect(() => {
-    console.log("Set visibility: " + isVisible);
+    //console.log("Set visibility: " + isVisible);
 
     localStorage.setItem("testingWidgetVisible", String(isVisible));
   }, [isVisible]);
