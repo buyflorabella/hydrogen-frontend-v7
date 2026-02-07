@@ -231,6 +231,18 @@ export default function PasswordPage() {
     <div className="password-page min-h-screen flex flex-col items-center justify-center bg-[#1a1a1a] p-6">
       <div className="fireworks-background"></div>
 
+      <div className="password-page relative z-10 w-full max-w-3xl bg-white p-8 rounded-3xl shadow-xl border-2 border-black text-center mb-9">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Site is under maintenance
+        </h1>
+
+        <div className="mb-8 p-4 rounded-xl border bg-gray-50 border-gray-100">
+          <p className="text-gray-600 font-medium text-sm leading-relaxed">
+            <span className="font-bold text-[#7cb342]">We will be back shortly!</span>
+          </p>
+        </div>
+      </div>
+
       <div className="relative z-10 w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
         
         <div className={`flower-orbit transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
