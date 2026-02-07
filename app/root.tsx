@@ -26,6 +26,8 @@ import { useState, useEffect } from 'react';
 
 import { redirect } from 'react-router';
 import SurveyPopup from './componentsMockup2/components/SurveyPopup';
+import PageTracker from './componentsMockup2/components/PageTracker';
+import ClarityTracker from './componentsMockup2/components/ClarityTracker';
 import { FeatureFlagsProvider } from './componentsMockup2/contexts/FeatureFlagsContext';
 //import { createCookieSessionStorage } from '@shopify/remix-oxygen';
 
@@ -282,37 +284,7 @@ export async function loader(args: Route.LoaderArgs) {
 async function loadCriticalData({context}: Route.LoaderArgs) {
   const {storefront, customerAccount} = context;
 
-  /*
-  const [header, isLoggedIn] = await Promise.all([
-    storefront.query(HEADER_QUERY, {
-      cache: storefront.CacheLong(),
-      variables: {
-        headerMenuHandle: 'main-menu',
-      },
-    }),
-    customerAccount.isLoggedIn(),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
-  */
   return {}; // DxB isLoggedIn is queried above - remove this (probably) in entirety
-
-  //return {header, isLoggedIn};
-
-  /*
-  DxB
-  const [header, isLoggedIn] = await Promise.all([
-    storefront.query(HEADER_QUERY, {
-      cache: storefront.CacheLong(),
-      variables: {
-        headerMenuHandle: 'main-menu',
-      },
-    }),
-    customerAccount.isLoggedIn(),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
-
-  return {header, isLoggedIn};
-  */
 }
 
 /**
@@ -363,9 +335,32 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
         <Links />
-        {/* Google Analytics GA4 + Microsoft Clarity */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MYFE3JJT6S"></script>
-        <script src="/scripts/analytics.js"></script>
+         {/* ✅ Google Analytics */}
+        <script
+          nonce={nonce}
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-MYFE3JJT6S"
+        />
+
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MYFE3JJT6S', {
+                page_path: window.location.pathname,
+              });
+
+              (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "v5m5vwm2b4");
+            `,
+          }}
+        />
       </head>
       <body>
         {children}
@@ -410,6 +405,8 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
+    <PageTracker />    
+    <ClarityTracker />
       <Mockup2Root>
         <Outlet />
       </Mockup2Root>
