@@ -19,9 +19,11 @@ export default async function handleRequest(
       "'self'",
       'https://cdn.shopify.com',
       'https://shopify.com',
-      'https://omnisnippet1.com',   // ✅ REQUIRED
+      'https://omnisnippet1.com',
       'https://omnisnippet.com',
-      'https://*.omnisnippet.com'
+      'https://*.omnisnippet.com',
+      'https://www.googletagmanager.com',
+      'https://www.clarity.ms',
     ],
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
