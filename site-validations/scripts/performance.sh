@@ -40,23 +40,23 @@ check_page_performance() {
     local slow_time="${SLOW_RESPONSE_TIME_SECONDS:-2}"
 
     local size_flag="ok"
-    if (( $(echo "$size_download > $max_size" | bc -l 2>/dev/null || echo 0) )); then
+    if awk "BEGIN{exit(!($size_download > $max_size))}"; then
         size_flag="over_limit"
     fi
 
     local time_flag="ok"
-    if (( $(echo "$time_total > $max_time" | bc -l 2>/dev/null || echo 0) )); then
+    if awk "BEGIN{exit(!($time_total > $max_time))}"; then
         time_flag="over_limit"
-    elif (( $(echo "$time_total > $slow_time" | bc -l 2>/dev/null || echo 0) )); then
+    elif awk "BEGIN{exit(!($time_total > $slow_time))}"; then
         time_flag="slow"
     fi
 
     # Human-readable size
     local size_human
     if (( ${size_download%.*} > 1048576 )); then
-        size_human="$(echo "scale=2; $size_download / 1048576" | bc)MB"
+        size_human="$(awk "BEGIN{printf \"%.2f\", $size_download / 1048576}")MB"
     elif (( ${size_download%.*} > 1024 )); then
-        size_human="$(echo "scale=2; $size_download / 1024" | bc)KB"
+        size_human="$(awk "BEGIN{printf \"%.2f\", $size_download / 1024}")KB"
     else
         size_human="${size_download}B"
     fi
@@ -76,19 +76,30 @@ run_performance() {
         return 0
     fi
 
-    # Use sitemap if available
+    # Use sitemap if it exists AND belongs to the same domain
     local urls=()
     local sitemap_file="${OUTPUT_DIR}/sitemap.json"
+    local target_host
+    target_host=$(get_host "$start_url")
 
     if [[ -f "$sitemap_file" ]] && has_jq; then
-        log_info "Using existing sitemap: $sitemap_file"
-        while IFS= read -r url; do
-            urls+=("$url")
-        done < <(jq -r '.pages[] | select(.status=="ok") | .url' "$sitemap_file" 2>/dev/null)
+        local sitemap_host
+        sitemap_host=$(jq -r '.pages[0].url // empty' "$sitemap_file" 2>/dev/null)
+        sitemap_host=$(get_host "${sitemap_host:-}")
+
+        if [[ -n "$sitemap_host" && "$sitemap_host" == "$target_host" ]]; then
+            log_info "Using existing sitemap (matching domain): $sitemap_file"
+            while IFS= read -r url; do
+                urls+=("$url")
+            done < <(jq -r '.pages[] | select(.status=="ok") | .url' "$sitemap_file" 2>/dev/null)
+        else
+            log_info "Ignoring sitemap (domain mismatch: $sitemap_host != $target_host)"
+        fi
     fi
 
+    # Always fall back to the provided URL if sitemap didn't match
     if [[ ${#urls[@]} -eq 0 ]]; then
-        log_info "No sitemap found. Checking provided URL only."
+        log_info "Checking provided URL only."
         urls+=("$start_url")
     fi
 
@@ -177,7 +188,7 @@ write_performance_report() {
     echo ""
     echo "=== Performance Summary ==="
     echo "Pages checked:  ${#_results[@]}"
-    echo "Oversized (>$(echo "scale=0; ${MAX_PAGE_SIZE_BYTES:-3145728}/1048576" | bc)MB): ${#_flag_size[@]}"
+    echo "Oversized (>$(awk "BEGIN{printf \"%d\", ${MAX_PAGE_SIZE_BYTES:-3145728}/1048576}")MB): ${#_flag_size[@]}"
     echo "Slow (>${SLOW_RESPONSE_TIME_SECONDS:-2}s):     ${#_flag_slow[@]}"
     echo "Over limit (>${MAX_RESPONSE_TIME_SECONDS:-5}s): ${#_flag_over[@]}"
     echo "============================="

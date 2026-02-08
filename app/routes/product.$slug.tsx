@@ -22,6 +22,7 @@ import { useToast } from '../componentsMockup2/contexts/ToastContext';
 import { useFeatureFlags } from '../componentsMockup2/contexts/FeatureFlagsContext';
 import DiscountBox from '../componentsMockup2/components/DiscountBox';
 import { products, faqs } from '~/componentsMockup2/data/staticData';
+import { Money } from '@shopify/hydrogen';
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * PnT: RICHTEXT & MULTILINE PARSER UTILITIES
@@ -361,6 +362,7 @@ const RELATED_PRODUCTS_QUERY = `#graphql
               availableForSale
               price {
                 amount
+                currencyCode
               }
             }
           }
@@ -1045,7 +1047,9 @@ export default function ProductDetailPage() {
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-white mb-2">{relatedProduct.title}</h3>
                     <p className="text-white/70 mb-4 line-clamp-2">{relatedProduct.description}</p>
-                    <div className="text-2xl font-bold text-white">${relatedProduct.variants.nodes[0].price.amount}</div>
+                    <div className="text-2xl font-bold text-white">
+                      <Money data={relatedProduct.variants.nodes[0].price} />
+                    </div>
                   </div>
                 </Link>
               ))}

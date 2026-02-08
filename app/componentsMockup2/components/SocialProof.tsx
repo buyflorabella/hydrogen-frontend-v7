@@ -19,7 +19,7 @@ export default function SocialProof() {
       avatar: 'SL',
     },
     {
-      quote: 'I can\'t speak highly of it enough. Stuff made our plants explode! We had a pretty balanced receipe, but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft growers the most but it boosted the gardens we ran, and that was 42 acres....',
+      quote: 'I can\'t speak highly of it enough. Stuff made our plants explode! We had a pretty balanced recipe, but it helped give the plants a slower release version of the micronutrients a lot of growers struggle finding the right balance for. I\'d say it benefits smaller craft growers the most but it boosted the gardens we ran, and that was 42 acres....',
       name: 'Jacob C.',
       location: 'Cooperstate',
       rating: 5,
