@@ -5,7 +5,7 @@ export default function HowItWorks() {
     {
       number: '01',
       title: 'Beneficial Microbes',
-      description: 'Naturally ocurring beneficial bacteria:',
+      description: 'Naturally occurring beneficial bacteria:',
       highlights: ['Convert nutrients into forms plants can absorb', 'Support root development through natural growth signaling', 'Compete with harmful organisms in the root zone', 'Improve tolerance to environmental stress (drought, heat, poor soil condition)'],
       //video: 'https://cdn.shopify.com/videos/c/o/v/12248bcbad704361b1fad8c56073383f.mp4',
       image: "https://cdn.shopify.com/s/files/1/0640/4833/2903/files/Why_Growers_Choose_5_of_6_lighted_roots.jpg?v=1769724521",
