@@ -7,6 +7,19 @@ import {
 } from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
 
+const googanalytics = [
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
+  'https://*.googletagmanager.com',
+]
+
+const clarity = [
+  'https://clarity.ms',
+  'https://*.clarity.ms',
+  'https://c.clarity.ms',
+  'https://l.clarity.ms',
+];
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -22,8 +35,8 @@ export default async function handleRequest(
       'https://*.omnisnippet1.com',
       //'https://omnisnippet.com',
       'https://*.omnisnippet.com',
-      'https://*.googletagmanager.com',
-      'https://*.clarity.ms',
+      ...googanalytics,
+      ...clarity,
     ],
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
@@ -39,6 +52,7 @@ export default async function handleRequest(
       "https://*.omnisendlink.com",       
       'https://forms.soundestlink.com',
       "https://i.vtimg.com",
+      ...clarity,
     ],
     styleSrc: [
       "'self'",
@@ -48,8 +62,8 @@ export default async function handleRequest(
     connectSrc: [
       "'self'",
       // Analytics
-      'https://*.google-analytics.com',
-      'https://*.analytics.google.com',
+      ...googanalytics,
+      ...clarity,
       // Omnisend      
       'https://api.omnisend.com',
       'https://*.omnisend.com',

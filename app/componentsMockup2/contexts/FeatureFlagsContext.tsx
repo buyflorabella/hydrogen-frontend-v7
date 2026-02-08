@@ -77,7 +77,7 @@ export function FeatureFlagsProvider({
   useEffect(() => {
     if (isHydrated) {
       localStorage.setItem('featureFlags', JSON.stringify(flags));
-      console.log("[FeatureFlags] Saved to localStorage:", flags);
+      //console.log("[FeatureFlags] Saved to localStorage:", flags);
     }
   }, [flags, isHydrated]);
 
@@ -98,11 +98,11 @@ export function FeatureFlagsProvider({
     if (typeof window !== 'undefined') {
       localStorage.removeItem('featureFlags');
     }
-    console.log("[FeatureFlags] Reset to env overrides + defaults:", resetTo);
+    //console.log("[FeatureFlags] Reset to env overrides + defaults:", resetTo);
   };
 
-  console.log("[FeatureFlags] Active flags:", flags);
-  console.log("[FeatureFlags] Env overrides:", envOverrides);
+  //console.log("[FeatureFlags] Active flags:", flags);
+  //console.log("[FeatureFlags] Env overrides:", envOverrides);
 
   return (
     <FeatureFlagsContext.Provider value={{ flags, updateFlag, resetFlags }}>
