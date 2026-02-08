@@ -1,30 +1,30 @@
 /**
  * Site Validator - Dashboard client
- * Handles SocketIO streaming, form submission, and result rendering.
+ * Uses Server-Sent Events (EventSource) for live log streaming.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const socket = io();
-
     // DOM elements
-    const commandForm = document.getElementById('commandForm');
-    const commandSelect = document.getElementById('command');
-    const urlInput = document.getElementById('url');
-    const pageUrlGroup = document.getElementById('pageUrlGroup');
-    const pageUrlInput = document.getElementById('pageUrl');
-    const saveGroup = document.getElementById('saveGroup');
-    const runBtn = document.getElementById('runBtn');
-    const statusBar = document.getElementById('statusBar');
-    const statusText = document.getElementById('statusText');
-    const logPanel = document.getElementById('logPanel');
-    const clearLogBtn = document.getElementById('clearLog');
-    const stdoutCard = document.getElementById('stdoutCard');
-    const stdoutContent = document.getElementById('stdoutContent');
-    const refreshBtn = document.getElementById('refreshResults');
+    var commandForm = document.getElementById('commandForm');
+    var commandSelect = document.getElementById('command');
+    var urlInput = document.getElementById('url');
+    var pageUrlGroup = document.getElementById('pageUrlGroup');
+    var pageUrlInput = document.getElementById('pageUrl');
+    var saveGroup = document.getElementById('saveGroup');
+    var runBtn = document.getElementById('runBtn');
+    var statusBar = document.getElementById('statusBar');
+    var statusText = document.getElementById('statusText');
+    var logPanel = document.getElementById('logPanel');
+    var clearLogBtn = document.getElementById('clearLog');
+    var stdoutCard = document.getElementById('stdoutCard');
+    var stdoutContent = document.getElementById('stdoutContent');
+    var refreshBtn = document.getElementById('refreshResults');
+
+    var eventSource = null;
 
     // Show/hide conditional fields based on selected command
     function updateFormFields() {
-        const cmd = commandSelect.value;
+        var cmd = commandSelect.value;
         pageUrlGroup.classList.toggle('d-none', cmd !== 'analytics');
         saveGroup.classList.toggle('d-none', cmd !== 'html');
     }
@@ -32,68 +32,74 @@ document.addEventListener('DOMContentLoaded', function () {
     commandSelect.addEventListener('change', updateFormFields);
     updateFormFields();
 
-    // Submit command via SocketIO
+    // Submit command via SSE
     commandForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const data = {
-            command: commandSelect.value,
-            url: urlInput.value,
-            verbose: document.getElementById('verbose').checked,
-        };
-
-        if (commandSelect.value === 'analytics' && pageUrlInput.value) {
-            data.page_url = pageUrlInput.value;
-        }
+        // Build query params
+        var params = new URLSearchParams();
+        params.set('command', commandSelect.value);
+        params.set('url', urlInput.value);
+        if (document.getElementById('verbose').checked) params.set('verbose', '1');
         if (commandSelect.value === 'html' && document.getElementById('saveHtml').checked) {
-            data.save = true;
+            params.set('save', '1');
+        }
+        if (commandSelect.value === 'analytics' && pageUrlInput.value) {
+            params.set('page_url', pageUrlInput.value);
         }
 
         // Clear log and stdout for a fresh run
         logPanel.innerHTML = '';
         stdoutCard.classList.add('d-none');
         stdoutContent.textContent = '';
+        setRunning(true, commandSelect.value);
 
-        socket.emit('run_command', data);
-        setRunning(true, data.command);
-    });
+        // Open SSE connection
+        if (eventSource) eventSource.close();
+        eventSource = new EventSource('/run?' + params.toString());
 
-    // SocketIO event: live log line
-    socket.on('log_line', function (data) {
-        appendLog(data.line);
-    });
+        eventSource.addEventListener('log', function (e) {
+            appendLog(JSON.parse(e.data));
+        });
 
-    // SocketIO event: command completed
-    socket.on('command_complete', function (data) {
-        setRunning(false);
+        eventSource.addEventListener('complete', function (e) {
+            eventSource.close();
+            eventSource = null;
+            var data = JSON.parse(e.data);
+            if (data.stdout && data.stdout.trim()) {
+                stdoutContent.textContent = data.stdout;
+                stdoutCard.classList.remove('d-none');
+            }
+            setRunning(false);
+            refreshResultsList();
+        });
 
-        // Show stdout if present
-        if (data.stdout && data.stdout.trim()) {
-            stdoutContent.textContent = data.stdout;
-            stdoutCard.classList.remove('d-none');
-        }
+        eventSource.addEventListener('cmd_error', function (e) {
+            eventSource.close();
+            eventSource = null;
+            var data = JSON.parse(e.data);
+            appendLog('[ERROR] ' + data.error);
+            if (data.stdout && data.stdout.trim()) {
+                stdoutContent.textContent = data.stdout;
+                stdoutCard.classList.remove('d-none');
+            }
+            setRunning(false);
+        });
 
-        // Refresh results list
-        refreshResultsList();
-    });
-
-    // SocketIO event: command error
-    socket.on('command_error', function (data) {
-        setRunning(false);
-        appendLog('[ERROR] ' + data.error);
-
-        if (data.stdout && data.stdout.trim()) {
-            stdoutContent.textContent = data.stdout;
-            stdoutCard.classList.remove('d-none');
-        }
+        eventSource.onerror = function () {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            setRunning(false);
+        };
     });
 
     // Append a line to the log panel
     function appendLog(line) {
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.className = 'log-line';
 
-        // Classify by log level for color-coding
         if (line.startsWith('[INFO]'))       div.classList.add('log-info');
         else if (line.startsWith('[WARN]'))  div.classList.add('log-warn');
         else if (line.startsWith('[ERROR]')) div.classList.add('log-error');
@@ -102,8 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         div.textContent = line;
         logPanel.appendChild(div);
-
-        // Auto-scroll to bottom
         logPanel.scrollTop = logPanel.scrollHeight;
     }
 
@@ -169,14 +173,4 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(function () {});
     }
-
-    // Check initial status on page load
-    fetch('/status')
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.running) {
-                setRunning(true, data.current_command);
-            }
-        })
-        .catch(function () {});
 });

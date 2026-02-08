@@ -2,10 +2,13 @@
 
 import json
 import os
+import subprocess
+import tempfile
 from datetime import datetime
 
 from flask import (
     Flask,
+    Response,
     flash,
     jsonify,
     redirect,
@@ -13,9 +16,9 @@ from flask import (
     request,
     send_from_directory,
     session,
+    stream_with_context,
     url_for,
 )
-from flask_socketio import SocketIO
 
 from auth import login_required, verify_credentials
 from config import (
@@ -26,14 +29,11 @@ from config import (
     PORT,
     SECRET_KEY,
     VALID_COMMANDS,
+    VALIDATOR_SCRIPT,
 )
-from executor import ScriptExecutor
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
-
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
-executor = ScriptExecutor()
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +73,6 @@ def logout():
 @app.route("/")
 @login_required
 def dashboard():
-    # Read default URL from config
     default_url = _get_config_value("DEFAULT_URL", "")
     result_files = _list_output_files()
     return render_template(
@@ -81,8 +80,98 @@ def dashboard():
         commands=VALID_COMMANDS,
         default_url=default_url,
         result_files=result_files,
-        running=executor.is_running,
-        current_command=executor.current_command,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Run command (SSE streaming)
+# ---------------------------------------------------------------------------
+
+def _sse_event(event, data):
+    """Format a Server-Sent Event."""
+    return f"event: {event}\ndata: {json.dumps(data)}\n\n"
+
+
+@app.route("/run")
+@login_required
+def run_command():
+    command = request.args.get("command", "").strip()
+    url = request.args.get("url", "").strip()
+    verbose = request.args.get("verbose") == "1"
+    save = request.args.get("save") == "1"
+    page_url = request.args.get("page_url", "").strip()
+
+    if command not in VALID_COMMANDS:
+        return Response(
+            _sse_event("cmd_error", {"error": f"Invalid command: {command}"}),
+            mimetype="text/event-stream",
+        )
+
+    # Build argument list
+    args = [VALIDATOR_SCRIPT, command]
+    if url:
+        args.append(url)
+    if verbose:
+        args.append("--verbose")
+    if save and command == "html":
+        args.append("--save")
+    if page_url and command == "analytics":
+        args.extend(["--page", page_url])
+
+    def generate():
+        label = " ".join(args[1:])
+        yield _sse_event("log", f"[UI] Starting: ./validator.sh {label}")
+
+        # Redirect stdout to a temp file so we only need to read the stderr
+        # pipe in the loop below — avoids the classic deadlock where a large
+        # stdout (e.g. the html command) fills the OS pipe buffer.
+        fd, stdout_path = tempfile.mkstemp(suffix=".txt", prefix="sv_stdout_")
+        os.close(fd)
+
+        try:
+            with open(stdout_path, "w") as stdout_f:
+                proc = subprocess.Popen(
+                    args,
+                    stdout=stdout_f,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    cwd=os.path.dirname(VALIDATOR_SCRIPT),
+                )
+
+                # Stream stderr (log lines) to the browser in real time
+                for line in proc.stderr:
+                    stripped = line.rstrip("\n")
+                    if stripped:
+                        yield _sse_event("log", stripped)
+
+                proc.wait()
+
+            # Read captured stdout
+            with open(stdout_path, "r", errors="replace") as f:
+                stdout_data = f.read()
+
+            if proc.returncode == 0:
+                yield _sse_event("log", f"[UI] Command '{command}' completed successfully.")
+                yield _sse_event("complete", {"stdout": stdout_data})
+            else:
+                yield _sse_event("log", f"[UI] Command '{command}' failed (exit code {proc.returncode}).")
+                yield _sse_event("cmd_error", {
+                    "error": f"Exit code {proc.returncode}",
+                    "stdout": stdout_data,
+                })
+
+        except FileNotFoundError:
+            yield _sse_event("cmd_error", {"error": f"Script not found: {VALIDATOR_SCRIPT}"})
+        except Exception as e:
+            yield _sse_event("cmd_error", {"error": str(e)})
+        finally:
+            if os.path.isfile(stdout_path):
+                os.unlink(stdout_path)
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
@@ -167,48 +256,6 @@ def config_editor():
 
 
 # ---------------------------------------------------------------------------
-# Status endpoint (AJAX)
-# ---------------------------------------------------------------------------
-
-@app.route("/status")
-@login_required
-def status():
-    return jsonify({
-        "running": executor.is_running,
-        "current_command": executor.current_command,
-    })
-
-
-# ---------------------------------------------------------------------------
-# SocketIO event handlers
-# ---------------------------------------------------------------------------
-
-@socketio.on("run_command")
-def handle_run_command(data):
-    if not session.get("logged_in"):
-        socketio.emit("command_error", {"error": "Not authenticated."})
-        return
-
-    command = data.get("command", "").strip()
-    url = data.get("url", "").strip()
-    options = []
-
-    if data.get("verbose"):
-        options.append("--verbose")
-    if data.get("save") and command == "html":
-        options.append("--save")
-    if data.get("page_url") and command == "analytics":
-        options.extend(["--page", data["page_url"]])
-
-    if not command:
-        socketio.emit("command_error", {"error": "No command specified."})
-        return
-
-    # URL is optional — the script falls back to DEFAULT_URL from config
-    executor.run(command, url, socketio, options=options if options else None)
-
-
-# ---------------------------------------------------------------------------
 # Config helpers
 # ---------------------------------------------------------------------------
 
@@ -223,7 +270,6 @@ def _get_config_value(key, default=""):
                 continue
             k, v = stripped.split("=", 1)
             if k.strip() == key:
-                # Strip inline comments
                 v = v.split("#")[0].strip()
                 return v.strip('"').strip("'")
     return default
@@ -244,7 +290,6 @@ def _read_config_lines():
                 lines.append({"type": "comment", "raw": raw})
             elif "=" in stripped:
                 key, value = stripped.split("=", 1)
-                # Check for inline comment
                 comment = ""
                 if "#" in value:
                     value, comment = value.rsplit("#", 1)
@@ -276,7 +321,6 @@ def _update_config_file(new_values):
         if stripped and not stripped.startswith("#") and "=" in stripped:
             key = stripped.split("=", 1)[0].strip()
             if key in new_values:
-                # Preserve inline comment if present
                 comment_part = ""
                 if "#" in stripped.split("=", 1)[1]:
                     _, comment_part = stripped.split("=", 1)[1].rsplit("#", 1)
@@ -320,4 +364,4 @@ if __name__ == "__main__":
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     print(f"Site Validations Web UI starting on http://{HOST}:{PORT}")
     print(f"Login: admin / validator2026 (change via VALIDATOR_USERNAME/PASSWORD env vars)")
-    socketio.run(app, host=HOST, port=PORT, debug=DEBUG, allow_unsafe_werkzeug=True)
+    app.run(host=HOST, port=PORT, debug=DEBUG)

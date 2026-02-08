@@ -20,7 +20,7 @@ AUTH_USERNAME = os.environ.get("VALIDATOR_USERNAME", "admin")
 AUTH_PASSWORD = os.environ.get("VALIDATOR_PASSWORD", "validator2026")
 
 # Valid commands the UI can execute
-VALID_COMMANDS = ["crawl", "analytics", "performance", "html", "robots", "all", "clean"]
+VALID_COMMANDS = ["crawl", "analytics", "performance", "html", "robots", "all"]
 
 # Map commands to their expected output files
 COMMAND_OUTPUT_FILES = {
