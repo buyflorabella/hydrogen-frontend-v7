@@ -41,6 +41,7 @@ COMMANDS:
     html <url>               Fetch and display raw HTML for any page
     robots <url>             Inspect and parse robots.txt with SEO warnings
     all <url>                Run all checks in sequence
+    clean                    Remove all files from the output directory
 
 OPTIONS:
     --dry-run           Preview what would happen without executing
@@ -99,7 +100,7 @@ main() {
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            crawl|analytics|performance|html|robots|all)
+            crawl|analytics|performance|html|robots|all|clean)
                 command="$1"
                 shift
                 ;;
@@ -152,6 +153,19 @@ main() {
     fi
 
     load_config
+
+    # Clean doesn't need a URL
+    if [[ "$command" == "clean" ]]; then
+        if [[ -d "$OUTPUT_DIR" ]]; then
+            local count
+            count=$(find "$OUTPUT_DIR" -type f | wc -l)
+            rm -f "$OUTPUT_DIR"/*
+            log_info "Cleaned output directory: removed $count file(s) from $OUTPUT_DIR"
+        else
+            log_info "Output directory does not exist: $OUTPUT_DIR"
+        fi
+        return 0
+    fi
 
     # Fall back to default URL from config if none provided
     if [[ -z "$url" ]]; then

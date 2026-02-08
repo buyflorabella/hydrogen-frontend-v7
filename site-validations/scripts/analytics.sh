@@ -148,20 +148,30 @@ run_analytics() {
         return 0
     fi
 
-    # First, check if sitemap exists from a previous crawl
+    # Use sitemap if it exists AND belongs to the same domain
     local urls=()
     local sitemap_file="${OUTPUT_DIR}/sitemap.json"
+    local target_host
+    target_host=$(get_host "$start_url")
 
     if [[ -f "$sitemap_file" ]] && has_jq; then
-        log_info "Using existing sitemap: $sitemap_file"
-        while IFS= read -r url; do
-            urls+=("$url")
-        done < <(jq -r '.pages[] | select(.status=="ok") | .url' "$sitemap_file" 2>/dev/null)
+        local sitemap_host
+        sitemap_host=$(jq -r '.pages[0].url // empty' "$sitemap_file" 2>/dev/null)
+        sitemap_host=$(get_host "${sitemap_host:-}")
+
+        if [[ -n "$sitemap_host" && "$sitemap_host" == "$target_host" ]]; then
+            log_info "Using existing sitemap (matching domain): $sitemap_file"
+            while IFS= read -r url; do
+                urls+=("$url")
+            done < <(jq -r '.pages[] | select(.status=="ok") | .url' "$sitemap_file" 2>/dev/null)
+        else
+            log_info "Ignoring sitemap (domain mismatch: $sitemap_host != $target_host)"
+        fi
     fi
 
-    # If no sitemap or no URLs, just check the provided URL
+    # Always fall back to the provided URL if sitemap didn't match
     if [[ ${#urls[@]} -eq 0 ]]; then
-        log_info "No sitemap found. Checking provided URL only."
+        log_info "Checking provided URL only."
         urls+=("$start_url")
     fi
 
