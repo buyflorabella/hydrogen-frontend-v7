@@ -36,6 +36,13 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 
+# Handle stale SocketIO polling from cached JS — return the error format
+# that the SocketIO client recognizes as fatal, so it stops retrying.
+@app.route("/socket.io/")
+def socketio_gone():
+    return jsonify({"code": 0, "message": "Transport unknown"}), 400
+
+
 # ---------------------------------------------------------------------------
 # Auth routes
 # ---------------------------------------------------------------------------
