@@ -122,8 +122,6 @@ export default function FAQPage() {
       })).filter(category => category.questions.length > 0)
     : faqs;
 
-    console.log("----------------------=======================================");
-
   return (
     <>
       <div className="relative min-h-screen bg-gradient-to-b from-[#0a0015] to-[#1a1a2e] pt-32 pb-20 overflow-hidden">

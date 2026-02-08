@@ -55,16 +55,16 @@ function CartContent({ cart, closeCart }: { cart: Cart | null; closeCart: () => 
   const totalQuantity = cart?.totalQuantity ?? 0;
 
   // PnT: DEBUG - Log cart lines to inspect subscription data
-  console.log('[CART DEBUG]', {
-    totalQuantity,
-    lines: lines.map((line: any) => ({
-      id: line.id,
-      productTitle: line.merchandise?.product?.title,
-      quantity: line.quantity,
-      hasSubscription: !!(line as any).sellingPlanAllocation,
-      sellingPlanName: (line as any).sellingPlanAllocation?.sellingPlan?.name,
-    })),
-  });
+  // console.log('[CART DEBUG]', {
+  //   totalQuantity,
+  //   lines: lines.map((line: any) => ({
+  //     id: line.id,
+  //     productTitle: line.merchandise?.product?.title,
+  //     quantity: line.quantity,
+  //     hasSubscription: !!(line as any).sellingPlanAllocation,
+  //     sellingPlanName: (line as any).sellingPlanAllocation?.sellingPlan?.name,
+  //   })),
+  // });
 
   // DxB Helper function to point to subdomain
   const getCheckoutUrl = (checkoutUrl: string) => {

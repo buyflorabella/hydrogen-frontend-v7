@@ -114,28 +114,28 @@ export default function LearnPage() {
   //console.info(blogs);
 
   // DxB Developer debugging
-  useEffect(() => {
-    console.group('📘 BLOGS');
-    blogs.forEach((blog) => {
-      console.log(`Blog: ${blog.title} (${blog.handle})`);
-      console.log(`Articles: ${blog.articles.nodes.length}`);
-    });
-    console.groupEnd();
+  // useEffect(() => {
+  //   console.group('📘 BLOGS');
+  //   blogs.forEach((blog) => {
+  //     console.log(`Blog: ${blog.title} (${blog.handle})`);
+  //     console.log(`Articles: ${blog.articles.nodes.length}`);
+  //   });
+  //   console.groupEnd();
 
-    if (featuredArticle) {
-      console.group('⭐ FEATURED ARTICLE');
-      console.table(summarizeArticle(featuredArticle));
-      console.groupEnd();
-    }
+  //   if (featuredArticle) {
+  //     console.group('⭐ FEATURED ARTICLE');
+  //     console.table(summarizeArticle(featuredArticle));
+  //     console.groupEnd();
+  //   }
 
-    console.group('📰 FILTERED ARTICLES');
-    filteredArticles.forEach((article, index) => {
-      console.group(`Article ${index + 1}`);
-      console.table(summarizeArticle(article));
-      console.groupEnd();
-    });
-    console.groupEnd();
-  }, [blogs, featuredArticle, filteredArticles]);
+  //   console.group('📰 FILTERED ARTICLES');
+  //   filteredArticles.forEach((article, index) => {
+  //     console.group(`Article ${index + 1}`);
+  //     console.table(summarizeArticle(article));
+  //     console.groupEnd();
+  //   });
+  //   console.groupEnd();
+  // }, [blogs, featuredArticle, filteredArticles]);
 
   const SHOW_GUIDES_IN_BLOG_LISTINGS = false; // 🔹 set to false in production
 

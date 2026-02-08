@@ -395,31 +395,31 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   const product = data.productByHandle;
 
   // DEBUG: Log metafield data to see what's being returned
-  console.log('[METAFIELD DEBUG]', {
-    handle: slug,
-    productId: product?.id,
-    productTitle: product?.title,
-    overviewPlain: product?.overviewPlain,
-    overviewMultiline: product?.overviewMultiline,
-    overviewRichtext: product?.overviewRichtext,
-    keyBenefits: product?.keyBenefits,
-  });
+  // console.log('[METAFIELD DEBUG]', {
+  //   handle: slug,
+  //   productId: product?.id,
+  //   productTitle: product?.title,
+  //   overviewPlain: product?.overviewPlain,
+  //   overviewMultiline: product?.overviewMultiline,
+  //   overviewRichtext: product?.overviewRichtext,
+  //   keyBenefits: product?.keyBenefits,
+  // });
 
   // PnT: DEBUG - Log selling plan allocations for subscriptions
   const sellingPlanAllocations = product?.variants?.nodes?.[0]?.sellingPlanAllocations?.nodes || [];
-  console.log('[SUBSCRIPTION DEBUG]', {
-    handle: slug,
-    variantId: product?.variants?.nodes?.[0]?.id,
-    sellingPlansCount: sellingPlanAllocations.length,
-    sellingPlans: sellingPlanAllocations.map((allocation: any) => ({
-      id: allocation.sellingPlan?.id,
-      name: allocation.sellingPlan?.name,
-      interval: allocation.sellingPlan?.billingPolicy?.interval,
-      intervalCount: allocation.sellingPlan?.billingPolicy?.intervalCount,
-      price: allocation.priceAdjustments?.[0]?.price?.amount,
-      compareAtPrice: allocation.priceAdjustments?.[0]?.compareAtPrice?.amount,
-    })),
-  });
+  // console.log('[SUBSCRIPTION DEBUG]', {
+  //   handle: slug,
+  //   variantId: product?.variants?.nodes?.[0]?.id,
+  //   sellingPlansCount: sellingPlanAllocations.length,
+  //   sellingPlans: sellingPlanAllocations.map((allocation: any) => ({
+  //     id: allocation.sellingPlan?.id,
+  //     name: allocation.sellingPlan?.name,
+  //     interval: allocation.sellingPlan?.billingPolicy?.interval,
+  //     intervalCount: allocation.sellingPlan?.billingPolicy?.intervalCount,
+  //     price: allocation.priceAdjustments?.[0]?.price?.amount,
+  //     compareAtPrice: allocation.priceAdjustments?.[0]?.compareAtPrice?.amount,
+  //   })),
+  // });
 
   if (!product) {
     throw new Response('Product Not Found', { status: 404 });
@@ -480,14 +480,14 @@ export default function ProductDetailPage() {
     : 0;
 
   // PnT: DEBUG - Log subscription state in component
-  console.log('[SUBSCRIPTION UI DEBUG]', {
-    hasSubscriptionOptions,
-    sellingPlansCount: sellingPlanAllocations.length,
-    selectedSellingPlanId,
-    purchaseType,
-    subscriptionPrice,
-    subscriptionDiscount,
-  });
+  // console.log('[SUBSCRIPTION UI DEBUG]', {
+  //   hasSubscriptionOptions,
+  //   sellingPlansCount: sellingPlanAllocations.length,
+  //   selectedSellingPlanId,
+  //   purchaseType,
+  //   subscriptionPrice,
+  //   subscriptionDiscount,
+  // });
 
   const handleToggleWishlist = () => {
     toggleWishlist({
@@ -650,12 +650,12 @@ export default function ProductDetailPage() {
                           onChange={(e) => {
                             setSelectedSellingPlanId(e.target.value);
                             // PnT: DEBUG - Log plan selection
-                            console.log('[SUBSCRIPTION SELECT]', {
-                              selectedPlanId: e.target.value,
-                              plan: sellingPlanAllocations.find(
-                                (a: any) => a.sellingPlan?.id === e.target.value
-                              ),
-                            });
+                            // console.log('[SUBSCRIPTION SELECT]', {
+                            //   selectedPlanId: e.target.value,
+                            //   plan: sellingPlanAllocations.find(
+                            //     (a: any) => a.sellingPlan?.id === e.target.value
+                            //   ),
+                            // });
                           }}
                           className="w-full p-3 glass border border-white/20 rounded-xl text-white bg-transparent"
                         >
@@ -718,13 +718,13 @@ export default function ProductDetailPage() {
                       disabled={!variant.availableForSale || fetcher.state !== 'idle'}
                       onClick={() => {
                         // PnT: DEBUG - Log cart add action
-                        console.log('[CART ADD DEBUG]', {
-                          purchaseType,
-                          merchandiseId: product.variants.nodes[0]?.id,
-                          quantity,
-                          sellingPlanId: purchaseType === 'subscription' ? selectedSellingPlanId : null,
-                        });
-                        openCart();
+                        // console.log('[CART ADD DEBUG]', {
+                        //   purchaseType,
+                        //   merchandiseId: product.variants.nodes[0]?.id,
+                        //   quantity,
+                        //   sellingPlanId: purchaseType === 'subscription' ? selectedSellingPlanId : null,
+                        // });
+                        // openCart();
                       }}
                       className="flex-1 py-3 bg-[#7cb342] hover:bg-[#8bc34a] text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shiny-border relative z-10"
                     >

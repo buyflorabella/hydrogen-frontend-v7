@@ -149,12 +149,12 @@ export async function loader(args: Route.LoaderArgs) {
   };    
 
   // ADD THIS DEBUG OUTPUT
-  console.log('[AUTH DEBUG]', {
-    isLoggedIn,
-    userId: userData?.data?.customer?.id || 'NOT_LOGGED_IN',
-    userName: userData?.data?.customer?.firstName || 'GUEST',
-    timestamp: new Date().toISOString(),
-  });
+  // console.log('[AUTH DEBUG]', {
+  //   isLoggedIn,
+  //   userId: userData?.data?.customer?.id || 'NOT_LOGGED_IN',
+  //   userName: userData?.data?.customer?.firstName || 'GUEST',
+  //   timestamp: new Date().toISOString(),
+  // });
 
   //const session = await storage.getSession(args.request.headers.get('Cookie'));
   //console.log("[DxB][loader] Session object:", session.data);

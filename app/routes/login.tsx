@@ -2,7 +2,7 @@ import {redirect} from 'react-router';
 import type {Route} from './+types/account_.login';
 
 export async function loader({request, context}: Route.LoaderArgs) {
-  console.log("DxB - login loader ------------> checking auth");
+  //console.log("DxB - login loader ------------> checking auth");
   
   // handleAuthStatus() checks if we're in an OAuth callback
   // If already logged in, it redirects to /account
@@ -14,7 +14,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
   }
   
   // Not logged in and not a callback - initiate Shopify login immediately
-  console.log("DxB - login loader ------------> redirecting to Shopify OAuth");
+  //console.log("DxB - login loader ------------> redirecting to Shopify OAuth");
   const url = new URL(request.url);
   
   return context.customerAccount.login({

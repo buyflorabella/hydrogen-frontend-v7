@@ -39,7 +39,7 @@ export const EnvProvider = ({
   env: EnvValues; // ← Changed from Env to EnvValues (already transformed by root.tsx)
 }) => {
   // No transformation needed - data is already clean from root.tsx!
-  console.log("EnvProvider values:", env);
+  //console.log("EnvProvider values:", env);
   
   return (
     <EnvContext.Provider value={env}>
