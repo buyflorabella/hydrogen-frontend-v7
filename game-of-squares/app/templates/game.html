@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <header class="game-header">
+        <h1>Memory Garden</h1>
+        <p class="tagline">Test your memory. Takes 3 seconds.</p>
+    </header>
+
+    <!-- Garden Progress -->
+    <div class="garden-section">
+        <div class="garden-label">Your Memory Garden</div>
+        <div class="garden-grid" id="gardenGrid">
+            {% for i in range(12) %}
+            <div class="garden-square" data-index="{{ i }}"></div>
+            {% endfor %}
+        </div>
+        <div class="garden-stats">
+            <span id="gardensCompleted">Gardens Completed: 0</span>
+        </div>
+    </div>
+
+    <!-- Game Status / Cooldown -->
+    <div id="cooldownSection" class="cooldown-section hidden">
+        <p class="cooldown-label">New board available in</p>
+        <p class="cooldown-timer" id="cooldownTimer">--:--:--</p>
+    </div>
+
+    <!-- Target Prompt -->
+    <div id="targetPrompt" class="target-prompt hidden">
+        <p>Find this tile:</p>
+        <div class="target-tile-wrapper">
+            <img id="targetImage" src="" alt="Target tile">
+        </div>
+    </div>
+
+    <!-- Game Board -->
+    <div class="board-wrapper">
+        <div class="game-board" id="gameBoard"></div>
+    </div>
+
+    <!-- Result Overlay -->
+    <div id="resultOverlay" class="result-overlay hidden">
+        <div class="result-content">
+            <div id="resultMessage" class="result-message"></div>
+            <!-- Reward Roller -->
+            <div id="rewardRoller" class="reward-roller hidden">
+                <div class="roller-window">
+                    <div class="roller-strip" id="rollerStrip"></div>
+                </div>
+                <div class="reward-final" id="rewardFinal"></div>
+            </div>
+            <!-- Coupon Display -->
+            <div id="couponDisplay" class="coupon-display hidden">
+                <p class="coupon-label">Your discount code:</p>
+                <div class="coupon-code" id="couponCode"></div>
+                <p class="coupon-pct" id="couponPct"></p>
+            </div>
+            <!-- Garden Complete -->
+            <div id="gardenComplete" class="garden-complete hidden">
+                <p>Garden Complete!</p>
+            </div>
+            <button id="resultDismiss" class="btn-dismiss">Continue</button>
+        </div>
+    </div>
+
+    <!-- Premium Placeholder -->
+    <div class="premium-placeholder">
+        <span class="lock-icon">&#128274;</span> Premium Attempts &mdash; Coming Soon
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+        <div class="spinner"></div>
+        <p>Preparing your board...</p>
+    </div>
+
+    <!-- Start / Play Button -->
+    <button id="playBtn" class="btn-play hidden">Play</button>
+
+    {% if dev_mode %}
+    <!-- Dev Panel -->
+    <details class="dev-panel">
+        <summary>Dev Tools</summary>
+        <div class="dev-buttons">
+            <button onclick="devAction('reset-cooldown')">Reset Cooldown</button>
+            <button onclick="devAction('set-cooldown?seconds=10')">Set 10s Cooldown</button>
+            <button onclick="devAction('reset-garden')">Reset Garden</button>
+            <button onclick="devAction('force-win')">Force Win</button>
+            <button onclick="devAction('force-loss')">Force Loss</button>
+            <button onclick="devRevealTiles()">Reveal Tiles</button>
+            <button onclick="devShowState()">Show User State</button>
+        </div>
+        <pre id="devOutput" class="dev-output"></pre>
+    </details>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.GAME_CONFIG = {
+        revealMs: {{ reveal_ms }},
+        tileCount: {{ tile_count }},
+        devMode: {{ 'true' if dev_mode else 'false' }}
+    };
+</script>
+<script src="/static/js/game.js"></script>
+{% endblock %}
