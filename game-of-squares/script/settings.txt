@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+#
+# settings.txt — Shared defaults for Memory Garden (Game of Squares)
+#
+# These are non-secret baseline values sourced by all environments.
+# Environment-specific files (settings.dev.sh, settings.prod.sh, etc.)
+# are sourced AFTER this file and override any variable set here.
+#
+# ═══════════════════════════════════════════════════════════════════════
+# INFRASTRUCTURE — paths, hosts, process config
+# ═══════════════════════════════════════════════════════════════════════
+
+# Python executable (override if using a virtualenv or specific version)
+PYTHON_BIN="python3"
+
+# Backend (Flask — Memory Garden)
+# BACKEND_DIR:        Directory containing the app entrypoint, relative to WORKTREE_ROOT.
+#                     "." means run.py lives at the project root.
+# BACKEND_APP_SCRIPT: Python file to execute (without .py extension).
+#                     run-backend.sh runs: ${PYTHON_BIN} ${BACKEND_APP_SCRIPT}.py
+# BACKEND_HOST:       IP address Flask listens on.
+#                     "0.0.0.0" = all interfaces, "127.0.0.1" = localhost only.
+BACKEND_DIR="backend"
+BACKEND_APP_SCRIPT=run
+BACKEND_HOST="0.0.0.0"
+
+# Gunicorn worker count (used by run-gunicorn.sh for production)
+WORKERS=3
+
+# Frontend (future — React/Vite layer, not yet wired)
+FRONTEND_DIR="frontend"
+FRONTEND_HOST=localhost
+
+# CORS — comma-separated list of allowed origins. Empty = no CORS headers.
+# Example: "https://example.com,https://staging.example.com"
+ALLOWED_CORS_DOMAINS=""
+
+# ═══════════════════════════════════════════════════════════════════════
+# APPLICATION — Flask / Memory Garden config
+#
+# These map to GARDEN_* environment variables read by app/config.py.
+# run-backend.sh exports them as GARDEN_<NAME> before starting Flask.
+# ═══════════════════════════════════════════════════════════════════════
+
+# ─── Database ───────────────────────────────────────────────────────
+
+# GARDEN_MONGO_URI:  MongoDB connection string.
+#                    Default assumes a local mongod on port 27028.
+# GARDEN_MONGO_DB:   Database name within MongoDB.
+GARDEN_MONGO_URI="mongodb://127.0.0.1:27028"
+GARDEN_MONGO_DB="memory_garden"
+
+# ─── Security ──────────────────────────────────────────────────────
+
+# GARDEN_SECRET_KEY: Flask session signing key.
+#                    MUST be changed in production — a leaked key lets
+#                    attackers forge session cookies (force-win, etc.).
+GARDEN_SECRET_KEY="memory-garden-dev-key-change-me"
+
+# ─── Dev Mode ──────────────────────────────────────────────────────
+
+# GARDEN_DEV_MODE:   Master switch for development features.
+#                    When "true" (case-insensitive):
+#                      - Registers /api/dev/* routes (reset-cooldown,
+#                        force-win, force-loss, reset-garden, etc.)
+#                      - Shows the "Dev Tools" panel in the game UI
+#                        (buttons, continuous-play checkbox, JSON output,
+#                        button docs, "Run Walkthrough")
+#                      - Walkthrough auto-calls /api/dev/force-win so
+#                        the guided tour always ends in a win
+#                    When "false":
+#                      - Dev routes return 404
+#                      - Dev panel is hidden from the HTML
+#                      - Walkthrough runs without forced outcomes
+#                    ⚠ NEVER set to "true" in production.
+GARDEN_DEV_MODE="false"
+
+# ─── Gameplay Tuning ───────────────────────────────────────────────
+
+# GARDEN_COOLDOWN_SECONDS: Seconds between plays per user.
+#                          86400 = 24 hours (one play per day).
+#                          Set to a small value (e.g. 10) for testing.
+GARDEN_COOLDOWN_SECONDS="86400"
+
+# GARDEN_REVEAL_MS:  How long tiles are shown face-up (milliseconds).
+#                    Passed to the JS client as window.GAME_CONFIG.revealMs
+#                    and used by the countdown timer. 2000 = 2 seconds.
+GARDEN_REVEAL_MS="2000"
+
+# GARDEN_TILE_COUNT: Number of tiles on the board (must be ≤ size of
+#                    PICSUM_POOL in app/game.py, currently 45).
+#                    Passed to JS as window.GAME_CONFIG.tileCount.
+#                    The board renders as a 4-column grid, so 12 = 3 rows.
+GARDEN_TILE_COUNT="12"
+
+# GARDEN_SQUARES_PER_GARDEN: Wins needed to complete one garden.
+#                             When a user's squares_claimed reaches this
+#                             value, the garden resets and gardens_completed
+#                             increments. Displayed as a 6×2 grid in the UI.
+GARDEN_SQUARES_PER_GARDEN="12"
+
+# ─── Reward Weights ────────────────────────────────────────────────
+#
+# Weighted probability for each discount tier on a win.
+# Values are relative weights, not percentages.
+# Default: 1% off = 70 weight, 2% off = 25 weight, 3% off = 5 weight.
+# Effective probabilities: 1% → 70%, 2% → 25%, 3% → 5%.
+
+GARDEN_REWARD_1_WEIGHT="70"
+GARDEN_REWARD_2_WEIGHT="25"
+GARDEN_REWARD_3_WEIGHT="5"
