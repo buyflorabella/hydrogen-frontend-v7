@@ -90,7 +90,7 @@ export default function HeroSection() {
             </div>
             <div className="flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-[#7cb342] flex-shrink-0" />
-              <span>Money back guarantee</span>
+              <span>From farmers to you</span>
             </div>
           </div>
         </div>
