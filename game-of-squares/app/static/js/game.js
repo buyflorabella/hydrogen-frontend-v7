@@ -31,9 +31,33 @@
     const gardenGrid = $("#gardenGrid");
     const gardensCompleted = $("#gardensCompleted");
 
+    // New DOM refs
+    const teaserSection = $("#teaserSection");
+    const howToPlayBtn = $("#howToPlayBtn");
+    const instructionsModal = $("#instructionsModal");
+    const modalClose = $("#modalClose");
+    const replayTourLink = $("#replayTourLink");
+    const walkthroughOverlay = $("#walkthroughOverlay");
+    const walkthroughCard = $("#walkthroughCard");
+    const continuousPlayBox = $("#continuousPlay"); // may be null if !dev_mode
+    const revealCountdown = $("#revealCountdown");
+    const revealTimerEl = $("#revealTimer");
+    const sidePanel = $("#sidePanel");
+    const sidePanelTab = $("#sidePanelTab");
+
     let state = "INIT";
     let gameData = null; // response from /api/game/status
     let cooldownInterval = null;
+
+    // ─── Reveal countdown state ───
+
+    let revealEndTime = 0;
+    let revealRAF = null;
+
+    // ─── Walkthrough state ───
+
+    let walkthroughActive = false;
+    let walkthroughStep = 0;
 
     // ─── API helpers ───
 
@@ -100,6 +124,7 @@
         setState("COOLDOWN");
         cooldownSection.classList.remove("hidden");
         playBtn.classList.add("hidden");
+        teaserSection.classList.add("hidden");
         board.innerHTML = "";
         targetPrompt.classList.add("hidden");
 
@@ -124,6 +149,41 @@
         const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
         const s = String(seconds % 60).padStart(2, "0");
         cooldownTimer.textContent = `${h}:${m}:${s}`;
+    }
+
+    // ─── Reveal Countdown ───
+
+    function startRevealCountdown(durationMs) {
+        // Cancel any existing countdown (e.g. dev reveal while game reveal is active)
+        if (revealRAF) cancelAnimationFrame(revealRAF);
+
+        revealEndTime = performance.now() + durationMs;
+        revealCountdown.classList.remove("hidden");
+        revealTimerEl.classList.remove("urgent");
+        tickRevealCountdown();
+    }
+
+    function tickRevealCountdown() {
+        const remaining = Math.max(0, revealEndTime - performance.now());
+        const ms = Math.ceil(remaining);
+        revealTimerEl.textContent = ms > 0 ? `${ms}ms` : "0ms";
+
+        // Turn red under 500ms
+        revealTimerEl.classList.toggle("urgent", ms <= 500);
+
+        if (ms > 0) {
+            revealRAF = requestAnimationFrame(tickRevealCountdown);
+        } else {
+            stopRevealCountdown();
+        }
+    }
+
+    function stopRevealCountdown() {
+        if (revealRAF) {
+            cancelAnimationFrame(revealRAF);
+            revealRAF = null;
+        }
+        revealCountdown.classList.add("hidden");
     }
 
     // ─── Board rendering ───
@@ -217,6 +277,9 @@
                     result.garden_just_completed ? result.squares_per_garden : result.squares_claimed,
                     result.garden_just_completed ? result.gardens_completed - 1 : result.gardens_completed
                 );
+
+                // Advance walkthrough on result
+                if (walkthroughActive) advanceWalkthrough();
             });
         } else {
             resultMessage.textContent = "So close.";
@@ -233,6 +296,9 @@
             }
 
             updateGarden(result.squares_claimed, result.gardens_completed);
+
+            // Advance walkthrough on result (even on loss — shouldn't happen with force-win)
+            if (walkthroughActive) advanceWalkthrough();
         }
     }
 
@@ -280,6 +346,8 @@
 
     function setState(s) {
         state = s;
+        // Notify walkthrough of state transitions
+        if (walkthroughActive) onStateChangeForWalkthrough(s);
     }
 
     async function init() {
@@ -289,6 +357,8 @@
         resultOverlay.classList.add("hidden");
         cooldownSection.classList.add("hidden");
         playBtn.classList.add("hidden");
+        teaserSection.classList.add("hidden");
+        stopRevealCountdown();
 
         const user = await ensureUser();
         updateGarden(user.squares_claimed, user.gardens_completed);
@@ -304,13 +374,15 @@
         gameData = status;
         updateGarden(status.squares_claimed, status.gardens_completed);
 
-        // Show play button
+        // Show play button and teaser
         playBtn.classList.remove("hidden");
         playBtn.textContent = "Play";
+        teaserSection.classList.remove("hidden");
     }
 
     async function startGame() {
         playBtn.classList.add("hidden");
+        teaserSection.classList.add("hidden");
         setState("LOADING");
         spinner.classList.remove("hidden");
 
@@ -322,8 +394,19 @@
         setState("REVEAL");
         renderBoard(gameData.tiles, true);
 
+        if (walkthroughActive) {
+            // Walkthrough controls pacing — don't auto-flip on timer.
+            // The walkthrough's onStateChangeForWalkthrough("REVEAL") will
+            // advance to the "revealed" step, which pauses here until the
+            // user clicks "Next".
+            return;
+        }
+
+        startRevealCountdown(gameData.reveal_ms);
+
         // MEMORIZE: after reveal_ms, flip all down
         setTimeout(() => {
+            stopRevealCountdown();
             setState("MEMORIZE");
             flipAllDown();
 
@@ -340,13 +423,232 @@
         }, gameData.reveal_ms);
     }
 
+    // ─── Instructions Modal ───
+
+    function openModal() {
+        instructionsModal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+        instructionsModal.classList.add("hidden");
+    }
+
+    modalClose.addEventListener("click", closeModal);
+
+    instructionsModal.addEventListener("click", (e) => {
+        // Close when clicking outside the modal content box
+        if (e.target === instructionsModal) closeModal();
+    });
+
+    replayTourLink.addEventListener("click", () => {
+        closeModal();
+        localStorage.removeItem("mg_walkthrough_done");
+        startWalkthrough();
+    });
+
+    // ─── Side Panel ───
+
+    function toggleSidePanel() {
+        sidePanel.classList.toggle("collapsed");
+    }
+
+    sidePanelTab.addEventListener("click", toggleSidePanel);
+    howToPlayBtn.addEventListener("click", toggleSidePanel);
+
+    // ─── Walkthrough ───
+
+    const WALKTHROUGH_STEPS = [
+        {
+            id: "welcome",
+            title: "Welcome to Memory Garden!",
+            text: "A quick memory game where you can win discount coupons. Let\u2019s take a quick tour!",
+            position: "center",
+            buttons: [
+                { label: "Skip", action: "skip", style: "secondary" },
+                { label: "Start Tour", action: "next", style: "primary" },
+            ],
+        },
+        {
+            id: "garden",
+            title: "Your Garden",
+            text: "Win games to fill squares. 12 squares = 1 completed garden.",
+            position: "top-area",
+            buttons: [{ label: "Next", action: "next", style: "primary" }],
+        },
+        {
+            id: "play",
+            title: "Start Playing",
+            text: "Press Play to begin!",
+            position: "above-play",
+            arrow: "\u2193",
+            buttons: [],
+            waitForState: "REVEAL",
+        },
+        {
+            id: "revealed",
+            title: "Memorize the Tiles!",
+            text: "These are the 12 tiles. In a real game you get 2 seconds to memorize their positions. Take your time now \u2014 when you\u2019re ready, we\u2019ll hide them.",
+            position: "top-area",
+            buttons: [{ label: "I\u2019m ready \u2014 hide them", action: "wt-flip-tiles", style: "primary" }],
+        },
+        {
+            id: "target",
+            title: "Find This Tile",
+            text: "See the highlighted tile above the board? That\u2019s your target. You need to remember where it was and pick the right square.",
+            position: "top-area",
+            buttons: [{ label: "Got it \u2014 let me pick!", action: "wt-enable-select", style: "primary" }],
+        },
+        {
+            id: "pick",
+            title: "Tap a Tile",
+            text: "Tap the tile you think matches the target. Go ahead!",
+            position: "top-area",
+            buttons: [],
+            waitForState: "RESULT",
+        },
+        {
+            id: "result",
+            title: "Tour Complete!",
+            text: "That\u2019s how it works! Play once every 24 hours for a chance to earn discount coupons. Good luck!",
+            position: "center",
+            buttons: [{ label: "Done", action: "done", style: "primary" }],
+        },
+    ];
+
+    function startWalkthrough() {
+        walkthroughActive = true;
+        walkthroughStep = 0;
+
+        // Force-win so the user sees a win during the walkthrough
+        if (CFG.devMode) {
+            fetch("/api/dev/force-win", { method: "POST" }).catch(() => {});
+        }
+
+        showWalkthroughStep();
+    }
+
+    function showWalkthroughStep() {
+        const step = WALKTHROUGH_STEPS[walkthroughStep];
+        if (!step) {
+            endWalkthrough();
+            return;
+        }
+
+        // Show overlay
+        walkthroughOverlay.classList.remove("hidden");
+
+        // Reset position styles
+        walkthroughCard.style.top = "";
+        walkthroughCard.style.bottom = "";
+
+        // Position card
+        walkthroughCard.className = "walkthrough-card " + step.position;
+        walkthroughCard.classList.remove("hidden");
+
+        // Build card content — always include a close × button
+        let html = '<button class="wt-close" data-wt-action="skip">&times;</button>';
+        html += `<h3>${step.title}</h3>`;
+        if (step.arrow) {
+            html += `<div class="wt-arrow">${step.arrow}</div>`;
+        }
+        html += `<p>${step.text}</p>`;
+
+        if (step.buttons.length > 0) {
+            html += '<div class="walkthrough-btns">';
+            step.buttons.forEach((btn) => {
+                html += `<button class="wt-btn ${btn.style}" data-wt-action="${btn.action}">${btn.label}</button>`;
+            });
+            html += '</div>';
+        }
+
+        walkthroughCard.innerHTML = html;
+
+        // Position above-play: place the card so its bottom edge is above the Play button
+        if (step.position === "above-play" && playBtn) {
+            const btnRect = playBtn.getBoundingClientRect();
+            walkthroughCard.style.bottom = (window.innerHeight - btnRect.top + 12) + "px";
+            walkthroughCard.style.top = "auto";
+        }
+
+        // Bind button clicks
+        walkthroughCard.querySelectorAll("[data-wt-action]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const action = e.target.dataset.wtAction;
+                if (action === "skip" || action === "done") {
+                    endWalkthrough();
+                } else if (action === "next") {
+                    walkthroughStep++;
+                    showWalkthroughStep();
+                } else if (action === "wt-flip-tiles") {
+                    // Walkthrough-controlled: flip tiles down, show target, advance
+                    flipAllDown();
+                    setTimeout(() => {
+                        targetImage.src = gameData.target.url;
+                        targetPrompt.classList.remove("hidden");
+                        walkthroughStep++;
+                        showWalkthroughStep();
+                    }, 500);
+                } else if (action === "wt-enable-select") {
+                    // Walkthrough-controlled: enable tile selection, advance
+                    enableSelection();
+                    walkthroughStep++;
+                    showWalkthroughStep();
+                }
+            });
+        });
+
+        // If this step waits for a game state, hide the overlay so user can interact
+        if (step.waitForState) {
+            walkthroughOverlay.classList.add("hidden");
+        }
+    }
+
+    function onStateChangeForWalkthrough(newState) {
+        const step = WALKTHROUGH_STEPS[walkthroughStep];
+        if (!step || !step.waitForState) return;
+
+        if (newState === step.waitForState) {
+            walkthroughStep++;
+            showWalkthroughStep();
+        }
+    }
+
+    function advanceWalkthrough() {
+        // Called from handleResult to move to the "result" step
+        const step = WALKTHROUGH_STEPS[walkthroughStep];
+        if (step && step.waitForState === "RESULT") {
+            walkthroughStep++;
+            showWalkthroughStep();
+        }
+    }
+
+    function endWalkthrough() {
+        const wasActive = walkthroughActive;
+        walkthroughActive = false;
+        walkthroughStep = 0;
+        walkthroughOverlay.classList.add("hidden");
+        walkthroughCard.classList.add("hidden");
+        localStorage.setItem("mg_walkthrough_done", "1");
+
+        // If ended mid-game (tiles on screen but game not finished), reset cleanly
+        if (wasActive && state !== "INIT" && state !== "COOLDOWN" && state !== "RESULT") {
+            init();
+        }
+    }
+
     // ─── Event bindings ───
 
     playBtn.addEventListener("click", startGame);
 
-    resultDismiss.addEventListener("click", () => {
+    resultDismiss.addEventListener("click", async () => {
         resultOverlay.classList.add("hidden");
-        init(); // re-fetch status (will show cooldown)
+
+        // Continuous play: auto-reset cooldown if checkbox is checked
+        if (continuousPlayBox && continuousPlayBox.checked) {
+            await fetch("/api/dev/reset-cooldown", { method: "POST" }).catch(() => {});
+        }
+
+        init(); // re-fetch status (will show cooldown or new board)
     });
 
     // ─── Dev panel (global functions for onclick) ───
@@ -371,15 +673,18 @@
             out.textContent = "No hidden tiles to reveal.";
             return;
         }
+        const revealDuration = 1500;
         // Flip all face-up for 1.5s, then back down
         tiles.forEach((t) => t.classList.remove("flipped"));
+        startRevealCountdown(revealDuration);
         out.textContent = "Tiles revealed for 1.5s...";
         setTimeout(() => {
+            stopRevealCountdown();
             board.querySelectorAll(".tile").forEach((t) => {
                 if (t.classList.contains("selectable")) t.classList.add("flipped");
             });
             out.textContent = "Tiles hidden again.";
-        }, 1500);
+        }, revealDuration);
     };
 
     window.devShowState = async function () {
@@ -393,7 +698,32 @@
         }
     };
 
+    window.devRunWalkthrough = async function () {
+        const out = $("#devOutput");
+        out.textContent = "Starting walkthrough...";
+        // End any active walkthrough without saving to localStorage
+        if (walkthroughActive) {
+            walkthroughActive = false;
+            walkthroughStep = 0;
+            walkthroughOverlay.classList.add("hidden");
+            walkthroughCard.classList.add("hidden");
+        }
+        // Reset cooldown so Play button is available, force a win for the tour
+        try {
+            await fetch("/api/dev/reset-cooldown", { method: "POST" });
+            await fetch("/api/dev/force-win", { method: "POST" });
+        } catch (e) { /* best-effort */ }
+        localStorage.removeItem("mg_walkthrough_done");
+        await init();
+        startWalkthrough();
+    };
+
     // ─── Boot ───
 
-    init();
+    init().then(() => {
+        // Check if walkthrough should auto-start
+        if (!localStorage.getItem("mg_walkthrough_done")) {
+            startWalkthrough();
+        }
+    });
 })();

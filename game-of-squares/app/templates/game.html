@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="page-layout">
 <div class="game-container">
     <header class="game-header">
         <h1>Memory Garden</h1>
         <p class="tagline">Test your memory. Takes 3 seconds.</p>
+        <button id="howToPlayBtn" class="btn-how-to-play">How to Play</button>
     </header>
 
     <!-- Garden Progress -->
@@ -32,6 +34,12 @@
         <div class="target-tile-wrapper">
             <img id="targetImage" src="" alt="Target tile">
         </div>
+    </div>
+
+    <!-- Reveal Countdown -->
+    <div id="revealCountdown" class="reveal-countdown hidden">
+        <div class="rc-label">Ready!</div>
+        <div class="rc-timer" id="revealTimer"></div>
     </div>
 
     <!-- Game Board -->
@@ -75,6 +83,19 @@
         <p>Preparing your board...</p>
     </div>
 
+    <!-- Teaser Roller -->
+    <div id="teaserSection" class="teaser-section hidden">
+        <div class="teaser-label">Win up to 3% off!</div>
+        <div class="teaser-window">
+            <div class="teaser-strip">
+                <div class="teaser-item">1%</div>
+                <div class="teaser-item">2%</div>
+                <div class="teaser-item">3%</div>
+                <div class="teaser-item">1%</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Start / Play Button -->
     <button id="playBtn" class="btn-play hidden">Play</button>
 
@@ -90,11 +111,94 @@
             <button onclick="devAction('force-loss')">Force Loss</button>
             <button onclick="devRevealTiles()">Reveal Tiles</button>
             <button onclick="devShowState()">Show User State</button>
+            <button onclick="devRunWalkthrough()">Run Walkthrough</button>
+        </div>
+        <div class="dev-continuous">
+            <label><input type="checkbox" id="continuousPlay"> Continuous Play (auto-reset cooldown)</label>
         </div>
         <pre id="devOutput" class="dev-output"></pre>
+        <div class="dev-docs">
+            <h4>Button Reference</h4>
+            <dl>
+                <dt>Reset Cooldown</dt>
+                <dd>Clears the 24h cooldown so you can play again immediately.</dd>
+                <dt>Set 10s Cooldown</dt>
+                <dd>Sets cooldown to expire in 10 seconds (tests countdown timer).</dd>
+                <dt>Reset Garden</dt>
+                <dd>Resets squares to 0 and gardens completed to 0.</dd>
+                <dt>Force Win</dt>
+                <dd>Next play will be a win regardless of tile selection.</dd>
+                <dt>Force Loss</dt>
+                <dd>Next play will be a loss regardless of tile selection.</dd>
+                <dt>Reveal Tiles</dt>
+                <dd>Flips all hidden tiles face-up for 1.5s during SELECT phase.</dd>
+                <dt>Show User State</dt>
+                <dd>Dumps full user document from MongoDB as JSON.</dd>
+                <dt>Run Walkthrough</dt>
+                <dd>Resets and restarts the guided first-play walkthrough tour (also resets cooldown and forces a win).</dd>
+                <dt>Continuous Play</dt>
+                <dd>When checked, auto-resets cooldown after dismissing results so the next board loads immediately.</dd>
+            </dl>
+        </div>
     </details>
     {% endif %}
 </div>
+
+<!-- Side Panel: How to Play -->
+<div class="side-panel collapsed" id="sidePanel">
+    <button class="side-panel-tab" id="sidePanelTab">
+        <span class="tab-icon">?</span> How to Play
+    </button>
+    <div class="side-panel-body">
+        <h3>How to Play</h3>
+        <ol>
+            <li>
+                <span class="sp-num">1</span>
+                <span class="sp-text"><strong>Look</strong> &mdash; 12 tiles are revealed for 2 seconds. Memorize them!</span>
+            </li>
+            <li>
+                <span class="sp-num">2</span>
+                <span class="sp-text"><strong>Find</strong> &mdash; One tile is highlighted as your target. Find it on the board.</span>
+            </li>
+            <li>
+                <span class="sp-num">3</span>
+                <span class="sp-text"><strong>Win</strong> &mdash; Pick correctly to earn a discount coupon (1&ndash;3% off).</span>
+            </li>
+        </ol>
+        <hr class="sp-divider">
+        <p class="sp-tip">Fill all 12 garden squares to complete a garden. Play once every 24 hours.</p>
+    </div>
+</div>
+</div>
+
+<!-- Instructions Modal -->
+<div id="instructionsModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button id="modalClose" class="modal-close">&times;</button>
+        <h2>How to Play</h2>
+        <ol class="modal-steps">
+            <li>
+                <span class="step-num">1</span>
+                <span class="step-text"><strong>Look</strong> &mdash; 12 tiles are revealed for 2 seconds. Memorize them.</span>
+            </li>
+            <li>
+                <span class="step-num">2</span>
+                <span class="step-text"><strong>Find</strong> &mdash; One tile is highlighted as your target. Find it on the board.</span>
+            </li>
+            <li>
+                <span class="step-num">3</span>
+                <span class="step-text"><strong>Win</strong> &mdash; Pick correctly to earn a discount coupon (1&ndash;3% off).</span>
+            </li>
+        </ol>
+        <div class="modal-footer">
+            <a id="replayTourLink">Replay Tour</a>
+        </div>
+    </div>
+</div>
+
+<!-- Walkthrough Container (populated by JS) -->
+<div id="walkthroughOverlay" class="walkthrough-overlay hidden"></div>
+<div id="walkthroughCard" class="walkthrough-card center hidden"></div>
 {% endblock %}
 
 {% block scripts %}

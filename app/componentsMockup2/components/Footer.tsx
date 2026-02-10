@@ -30,7 +30,7 @@ export default function Footer() {
     window.omnisend.push(['brandID', BRAND_ID]);
     window.omnisend.push(['track', '$pageViewed']);
 
-    console.log(window.omnisend);
+    //console.log(window.omnisend);
 
     // Load SDK once
     if (!document.getElementById('omnisend-script')) {
@@ -43,13 +43,13 @@ export default function Footer() {
   }, [BRAND_ID]);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    console.log("NewLetterSubmit() [ entry ] ");
+    //console.log("NewLetterSubmit() [ entry ] ");
     e.preventDefault();
     //setStatus('loading');
 
     // Omnisend push commands are safe to call as soon as the array is initialized
     if (window.omnisend) {
-      console.log("Send to omnisend");
+      //console.log("Send to omnisend");
 
       try {
         window.omnisend.push(["identifyContact", {
@@ -77,11 +77,11 @@ export default function Footer() {
         // Reset to idle after 5 seconds
         setTimeout(() => setStatus('idle'), 5000);
       } catch (err) {
-        console.error("Omnisend submission error:", err);
+        //console.error("Omnisend submission error:", err);
         setStatus('error');
       }
     } else {
-      console.log("ERROR Sending to omnisend");
+      //console.log("ERROR Sending to omnisend");
       setStatus('error');
     }
   };  
@@ -223,7 +223,7 @@ export default function Footer() {
               © 2026 Flora Bella Trace Minerals. All rights reserved.
             </p>
             <p className="text-white/50 text-sm flex items-center gap-1">
-              Site [ v7.15.2 ] by: BIRD Labs
+              Site [ v7.15.4 ] by: BIRD Labs
               <span className="text-[10px] leading-none text-blue-400">🐦</span>
             </p>
             <div className="flex items-center gap-4">

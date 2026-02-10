@@ -7,6 +7,16 @@ import {
 } from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
 
+const omnisendHosts = [
+  'https://*.omnisend.com',
+  'https://*.omnisendlink.com',
+  'https://omnisnippet1.com', // <-- newly added
+  'https://forms.soundestlink.com',
+  'https://wt.soundestlink.com',
+  'https://wt.omnisendlink.com',
+  'https://omnisnippet.com',
+];
+
 const googanalytics = [
   'https://*.google-analytics.com',
   'https://*.analytics.google.com',
@@ -18,6 +28,7 @@ const clarity = [
   'https://*.clarity.ms',
   'https://c.clarity.ms',
   'https://l.clarity.ms',
+  'https://script.clarity.ms',  
 ];
 
 export default async function handleRequest(
@@ -33,8 +44,8 @@ export default async function handleRequest(
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://*.omnisnippet1.com',
-      //'https://omnisnippet.com',
       'https://*.omnisnippet.com',
+      ...omnisendHosts,
       ...googanalytics,
       ...clarity,
     ],
@@ -48,30 +59,23 @@ export default async function handleRequest(
       "data:",
       "blob:",
       "https://images.pexels.com",
-      "https://*.omnisend.com",
-      "https://*.omnisendlink.com",       
       'https://forms.soundestlink.com',
       "https://i.vtimg.com",
       ...clarity,
+      ...omnisendHosts,
     ],
     styleSrc: [
       "'self'",
-      "'unsafe-inline'",                // Omnisend often injects inline styles
-      "https://*.omnisnippet.com",      // Add this      
+      "'unsafe-inline'",            
+      "https://*.omnisnippet.com",
+      ...omnisendHosts, 
     ],
     connectSrc: [
       "'self'",
       // Analytics
       ...googanalytics,
       ...clarity,
-      // Omnisend      
-      'https://api.omnisend.com',
-      'https://*.omnisend.com',
-      'https://forms.soundestlink.com', // ✅ Add this for form rendering
-      'https://wt.soundestlink.com',    // ✅ Add this for legacy tracking
-      'https://wt.omnisendlink.com',
-      'https://omnisnippet1.com',
-      'https://omnisnippet.com',
+      ...omnisendHosts,
       // Our services
       //"https://survey-server.boardmansgame.com",
       //"https://email.boardmansgame.com",

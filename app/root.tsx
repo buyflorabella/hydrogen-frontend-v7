@@ -30,6 +30,7 @@ import PageTracker from './componentsMockup2/components/PageTracker';
 import ClarityTracker from './componentsMockup2/components/ClarityTracker';
 import { FeatureFlagsProvider } from './componentsMockup2/contexts/FeatureFlagsContext';
 //import { createCookieSessionStorage } from '@shopify/remix-oxygen';
+import AppContainer from './componentsMockup2/App';
 
 export type RootLoader = typeof loader;
 
@@ -405,11 +406,9 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
-    <PageTracker />    
-    <ClarityTracker />
-      <Mockup2Root>
-        <Outlet />
-      </Mockup2Root>
+    <AppContainer >    
+      <Outlet />
+    </AppContainer>
     </Analytics.Provider>
   );
 }
