@@ -7,9 +7,28 @@ import {
 } from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
 
+const omniSend = [
+  'https://omnisnippet.com',
+  'https://*.omnisnippet.com',  
+  'https://omnisnippet1.com',
+  'https://*.omnisnippet1.com',
+  'https://omnisend.com',
+  'https://*.omnisend.com',
+  'https://omnisendlink.com',       
+  'https://*.omnisendlink.com',       
+  'https://api.omnisend.com',
+  'https://wt.soundestlink.com',    // ✅ Add this for legacy tracking
+  'https://wt.omnisendlink.com',
+  'https://forms.soundestlink.com',
+  'https://forms.omnisend.com',     // REQUIRED: This is the iframe source
+];
+
 const googanalytics = [
+  'https://google-analytics.com',
   'https://*.google-analytics.com',
+  'https://analytics.google.com',
   'https://*.analytics.google.com',
+  'https://googletagmanager.com',
   'https://*.googletagmanager.com',
 ]
 
@@ -32,9 +51,7 @@ export default async function handleRequest(
       "'self'",
       'https://cdn.shopify.com',
       'https://shopify.com',
-      'https://*.omnisnippet1.com',
-      //'https://omnisnippet.com',
-      'https://*.omnisnippet.com',
+      ...omniSend,
       ...googanalytics,
       ...clarity,
     ],
@@ -48,10 +65,8 @@ export default async function handleRequest(
       "data:",
       "blob:",
       "https://images.pexels.com",
-      "https://*.omnisend.com",
-      "https://*.omnisendlink.com",       
-      'https://forms.soundestlink.com',
       "https://i.vtimg.com",
+      ...omniSend,      
       ...clarity,
     ],
     styleSrc: [
@@ -64,14 +79,7 @@ export default async function handleRequest(
       // Analytics
       ...googanalytics,
       ...clarity,
-      // Omnisend      
-      'https://api.omnisend.com',
-      'https://*.omnisend.com',
-      'https://forms.soundestlink.com', // ✅ Add this for form rendering
-      'https://wt.soundestlink.com',    // ✅ Add this for legacy tracking
-      'https://wt.omnisendlink.com',
-      'https://omnisnippet1.com',
-      'https://omnisnippet.com',
+      ...omniSend,
       // Our services
       //"https://survey-server.boardmansgame.com",
       //"https://email.boardmansgame.com",
@@ -89,7 +97,7 @@ export default async function handleRequest(
     ],
     frameSrc: [
       "'self'",
-      'https://forms.omnisend.com',     // REQUIRED: This is the iframe source
+      ...omniSend,
       'https://*.youtube.com',
       // ... rest of your youtube entries ...
     ],
@@ -114,8 +122,9 @@ export default async function handleRequest(
     ],    
   });
 
+  // DxB - moved {nonce} into here instead of <ServerRouter /> according to chatgpt suggestion
   const body = await renderToReadableStream(
-    <NonceProvider>
+    <NonceProvider >
       <ServerRouter
         context={reactRouterContext}
         url={request.url}

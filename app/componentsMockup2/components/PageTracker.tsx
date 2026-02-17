@@ -1,40 +1,77 @@
-import {useAnalytics} from '@shopify/hydrogen';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
+import { useAnalytics } from '@shopify/hydrogen';
+import { useNonce } from '@shopify/hydrogen';
 
 export default function PageTracker() {
   const location = useLocation();
-  const {subscribe} = useAnalytics();
+  const { subscribe } = useAnalytics();
+  const nonce = useNonce();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'G-MYFE3JJT6S', {
-        page_path: location.pathname,
-      });
+    if (typeof window === 'undefined') return;
+
+    // ---- Inject GA script dynamically once ----
+    if (!document.getElementById('gtag-js')) {
+      // GA library
+      const script = document.createElement('script');
+      script.id = 'gtag-js';
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-MYFE3JJT6S';
+      script.nonce = nonce;
+      document.head.appendChild(script);
+
+      // Inline initialization
+      const inline = document.createElement('script');
+      inline.nonce = nonce;
+      inline.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-MYFE3JJT6S', {
+          page_path: window.location.pathname,
+        });
+      `;
+      document.head.appendChild(inline);
     }
 
-    // Subscribe to the 'page_viewed' event from Hydrogen
-    subscribe('page_viewed', (data) => {
-      window.gtag('event', 'page_view', {
-        page_path: data.url,
-        page_title: document.title,
-      });
+    // ---- Track page view for this route ----
+    if (window.gtag) {
+      window.gtag('config', 'G-MYFE3JJT6S', { page_path: location.pathname });
+    }
+
+    // ---- Hydrogen events subscription ----
+    const unsubscribePage = subscribe('page_viewed', (data) => {
+      if (window.gtag) {
+        window.gtag('event', 'page_view', {
+          page_path: data.url,
+          page_title: document.title,
+        });
+      }
     });
 
-    // Optional: Track 'product_viewed'
-    subscribe('product_viewed', (data) => {
-      window.gtag('event', 'view_item', {
-        ecommerce: {
-          items: data.products.map(p => ({
-            item_id: p.id,
-            item_name: p.title,
-            price: p.price
-          }))
-        }
-      });
+    const unsubscribeProduct = subscribe('product_viewed', (data) => {
+      if (window.gtag) {
+        window.gtag('event', 'view_item', {
+          ecommerce: {
+            items: data.products.map(p => ({
+              item_id: p.id,
+              item_name: p.title,
+              price: p.price
+            }))
+          }
+        });
+      }
     });
 
-  }, [location, subscribe]);
+    // Cleanup subscriptions on unmount
+    return () => {
+      if (typeof unsubscribePage === 'function') unsubscribePage();
+      if (typeof unsubscribeProduct === 'function') unsubscribeProduct();
+    };
+
+
+  }, [location, subscribe, nonce]);
 
   return null;
 }

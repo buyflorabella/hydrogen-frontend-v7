@@ -335,7 +335,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
         <Links />
-         {/* ✅ Google Analytics */}
+        {/* Dxb Remove Google and clarity analytics from here 
         <script
           nonce={nonce}
           async
@@ -361,6 +361,8 @@ export function Layout({children}: {children?: React.ReactNode}) {
             `,
           }}
         />
+        */}
+        
       </head>
       <body>
         {children}
