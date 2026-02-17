@@ -33,12 +33,12 @@ const App: FC<{ children: ReactNode }> = ({children}) => {
   const data = useRouteLoaderData<RootLoader>('root');
   
   // CLIENT-SIDE AUTH DEBUG
-  useEffect(() => {
-    console.log('[CLIENT AUTH DEBUG]', {
-      userData: data?.userData,
-      isLoggedIn: !!data?.userData,
-    });
-  }, [data?.userData]);
+  // useEffect(() => {
+  //   console.log('[CLIENT AUTH DEBUG]', {
+  //     userData: data?.userData,
+  //     isLoggedIn: !!data?.userData,
+  //   });
+  // }, [data?.userData]);
   
 
   return (
