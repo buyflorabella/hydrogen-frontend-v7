@@ -20,7 +20,7 @@ export default function AboutPage() {
             Our Story
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            <i>Founded on the belief</i> that optimal health begins with proper mineral nutrition, <b>Flora Bella</b> is committed to providing the <i>highest quality trace minerals</i> to support your soil's <i>Daily</i> nutritional uptake!
+            <i>Founded on the belief</i> that optimal <b>soil</b> begins with proper <b>soil</b> mineral nutrition, <b>Flora Bella</b> is committed to providing the <i>highest quality trace minerals</i> to support your soil's <i>Daily</i> nutritional uptake!
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
               </p>
               
               <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                Sourced from <strong>ancient plant and animal deposits</strong> formed <strong>deep within the Earth</strong> over hundreds of thousands of years, each bag of Flora Bella delivers a naturally balanced spectrum of trace minerals to support long-term soil vitality.
+                Sourced from <strong>ancient plant and animal deposits</strong> formed <strong>deep within the Earth</strong> over hundreds of thousands of years, each bag of Flora Bella delivers a naturally balanced spectrum of trace minerals to support long-term <i>soil vitality</i>.
               </p>
               
               <p className="text-gray-700 text-lg leading-relaxed">
