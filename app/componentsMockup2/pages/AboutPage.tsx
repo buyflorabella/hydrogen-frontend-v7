@@ -17,7 +17,7 @@ export default function AboutPage() {
             Our Story
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            Founded on the belief that optimal health begins with proper mineral nutrition, Flora Bella is committed to providing the highest quality trace minerals to support your wellness journey.
+            Founded on the belief that optimal **SOIL** begins with proper mineral nutrition, Flora Bella is committed to providing the highest quality trace minerals to support your wellness journey.
           </p>
         </div>
 
